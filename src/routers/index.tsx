@@ -228,6 +228,10 @@ const routeObjects: RouteObject[] = [
       {path: 'employee-management', Component: EmployeeListPage},
       {path: 'employees/:employeeId', Component: EmployeeDetailPage},
       {path: 'employees/add', Component: EmployeeCreatePage},
+      {path: 'po-management', Component: BlankPage},
+      {path: 'department-management', Component: BlankPage},
+      {path: 'product-management', Component: BlankPage},
+      {path: 'customer-management', Component: BlankPage},
     ],
   },
   // Old APP routes
@@ -249,8 +253,6 @@ const routeObjects: RouteObject[] = [
         path: '',
         Component: RootUserLayout,
         children: [
-          // {path: 'employee-management', Component: EmployeeListPage},
-          // {path: 'employees/:employeeId', Component: EmployeeDetailPage},
           {path: 'store-management', Component: BlankPage},
           {path: 'salary-management', Component: BlankPage},
           {path: 'stores', Component: StoreListPage},
