@@ -1,0 +1,32 @@
+{
+  "ignorePaths": [
+    "scripts/seed-data/name.json",
+    ".gitignore",
+    "package.json",
+    "node_modules",
+    "src/locales/vi.json",
+    "dist"
+  ],
+  "words": [
+    "beforeinstallprompt",
+    "Cantarell",
+    "defval",
+    "Fira",
+    "gstatic",
+    "hammerjs",
+    "languagedetector",
+    "mantine",
+    "Neue",
+    "partialize",
+    "qrcode",
+    "Segoe",
+    "SUBKEYS",
+    "tabler",
+    "Tiếng",
+    "timesheet",
+    "unhandledrejection",
+    "Việt",
+    "webfonts",
+    "zustand"
+  ]
+}
