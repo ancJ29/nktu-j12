@@ -46,6 +46,7 @@ import useTranslation from '@/hooks/useTranslation';
 import {useAppStore} from '@/stores/useAppStore';
 import type {User} from '@/services/auth';
 import useIsDesktop from '@/hooks/useIsDesktop';
+import {ROUTERS} from '@/config/routeConfig';
 
 interface NavigationItem {
   label: string;
@@ -116,12 +117,12 @@ function buildNavigationItems(t: TFunction, user?: User): NavigationItem[] {
     {
       label: t('common.roleManagement'),
       icon: IconShield,
-      path: '/role-management',
+      path: ROUTERS.ROLE_MANAGEMENT,
     },
     {
       label: t('permission.management'),
       icon: IconLock,
-      path: '/permission-management',
+      path: ROUTERS.PERMISSION_MANAGEMENT,
     },
   ];
 
@@ -129,29 +130,29 @@ function buildNavigationItems(t: TFunction, user?: User): NavigationItem[] {
     {
       label: t('common.home'),
       icon: IconLayoutDashboard,
-      path: '/home',
+      path: ROUTERS.HOME,
     },
     {
       label: t('common.storeManagement'),
       icon: IconBuildingStore,
-      path: '/stores',
+      path: ROUTERS.STORES,
       hidden: true,
-      activePaths: ['/stores', '/store-config'],
+      activePaths: [ROUTERS.STORES, ROUTERS.STORE_CONFIG],
     },
     {
       label: t('common.employeeManagement'),
       icon: IconAddressBook,
-      path: '/employee-management',
+      path: ROUTERS.EMPLOYEE_MANAGEMENT,
       activePaths: [
-        '/employee-management',
-        '/employees/add',
-        '/employees/edit',
+        ROUTERS.EMPLOYEE_MANAGEMENT,
+        ROUTERS.EMPLOYEES_ADD,
+        ROUTERS.EMPLOYEES_EDIT,
       ],
     },
     {
       label: t('common.poManagement'),
       icon: IconClipboardList,
-      path: '/po-management',
+      path: ROUTERS.PO_MANAGEMENT,
     },
     {
       label: t('common.configuration'),
@@ -161,17 +162,17 @@ function buildNavigationItems(t: TFunction, user?: User): NavigationItem[] {
         {
           label: t('common.customerManagement'),
           icon: IconUserSquare,
-          path: '/customer-management',
+          path: ROUTERS.CUSTOMER_MANAGEMENT,
         },
         {
           label: t('common.productManagement'),
           icon: IconShoppingCart,
-          path: '/product-management',
+          path: ROUTERS.PRODUCT_MANAGEMENT,
         },
         {
           label: t('common.departmentManagement'),
           icon: IconBuildingStore,
-          path: '/department-management',
+          path: ROUTERS.DEPARTMENT_MANAGEMENT,
         },
         // {
         //   label: t('common.storeManagement'),
@@ -190,34 +191,24 @@ function buildNavigationItems(t: TFunction, user?: User): NavigationItem[] {
     {
       label: t('common.staffManagement'),
       icon: IconUsersGroup,
-      path: '/staff',
+      path: ROUTERS.STAFF,
       dummy: true,
       hidden: true,
-      activePaths: ['/staff', '/staff/add'],
+      activePaths: [ROUTERS.STAFF, ROUTERS.STAFF_ADD],
     },
     {
       label: t('common.userManagement'),
       icon: IconUsers,
-      path: '/user-management',
+      path: ROUTERS.USER_MANAGEMENT,
       hidden: true,
     },
     ...(isAdminRoutesEnabled ? adminItems : []),
     {
       label: t('common.profile'),
       icon: IconUserCircle,
-      path: '/profile',
+      path: ROUTERS.PROFILE,
     },
   ].filter((item) => ('hidden' in item ? !item.hidden : true));
-  // .map(el => {
-  //   const subs = el.subs?.filter((item) => ('hidden' in item ? !item.hidden : true))
-  //   if (subs?.length) {
-  //     return {
-  //       ...el,
-  //       subs,
-  //     }
-  //   }
-  //   return el
-  // });
 }
 
 function UserMenu({c}: {readonly c?: string}) {
@@ -227,7 +218,7 @@ function UserMenu({c}: {readonly c?: string}) {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate(ROUTERS.LOGIN);
   };
 
   const userInitials = user ? `${user.email.charAt(0).toUpperCase()}` : 'U';
@@ -261,7 +252,7 @@ function UserMenu({c}: {readonly c?: string}) {
         <Menu.Label>{t('common.account')}</Menu.Label>
         <Menu.Item
           leftSection={<IconUser style={{width: rem(14), height: rem(14)}} />}
-          onClick={() => navigate('/profile')}
+          onClick={() => navigate(ROUTERS.PROFILE)}
         >
           {t('common.profile')}
         </Menu.Item>
@@ -269,7 +260,7 @@ function UserMenu({c}: {readonly c?: string}) {
           leftSection={
             <IconSettings style={{width: rem(14), height: rem(14)}} />
           }
-          onClick={() => navigate('/settings')}
+          onClick={() => navigate(ROUTERS.SETTINGS)}
         >
           {t('common.settings')}
         </Menu.Item>
