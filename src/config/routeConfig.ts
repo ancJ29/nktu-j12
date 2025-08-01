@@ -27,19 +27,19 @@ export const ROUTERS = {
   EMPLOYEE_MANAGEMENT: '/employee-management',
   EMPLOYEE_DETAIL: '/employees/:employeeId',
   EMPLOYEES_ADD: '/employees/add',
-  EMPLOYEES_EDIT: '/employees/edit/:employeeId',
-
-  // Purchasing order management
-  PO_MANAGEMENT: '/po-management',
+  EMPLOYEE_EDIT: '/employees/edit/:employeeId',
 
   // Customer management
   CUSTOMER_MANAGEMENT: '/customer-management',
+  CUSTOMER_DETAIL: '/customers/:customerId',
+  CUSTOMER_ADD: '/customers/add',
+  CUSTOMER_EDIT: '/customers/edit/:customerId',
 
-  // Product management
-  PRODUCT_MANAGEMENT: '/product-management',
-
-  // Department management
-  DEPARTMENT_MANAGEMENT: '/department-management',
+  // PO management
+  PO_MANAGEMENT: '/po-management',
+  PO_DETAIL: '/po/:poId',
+  PO_ADD: '/po/add',
+  PO_EDIT: '/po/edit/:poId',
 
   // Staff management
   STAFF: '/staff',
@@ -73,7 +73,9 @@ export const ROUTERS = {
 
   // Sample/Error routes
   SAMPLE_ERRORS: '/sample/errors',
-};
+} as const;
+
+export type RouteConfig = Partial<Record<keyof typeof ROUTERS, boolean>>;
 
 // Helper functions for parameterized routes
 export const getClientLoginRoute = (clientCode: string) =>
