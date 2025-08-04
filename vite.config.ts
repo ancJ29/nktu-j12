@@ -3,25 +3,35 @@ import process from 'node:process';
 import {defineConfig} from 'vite';
 import react from '@vitejs/plugin-react';
 import {VitePWA} from 'vite-plugin-pwa';
+import {htmlTransformPlugin} from './vite-plugins/html-transform';
 
 process.env.VITE_APP_VERSION = process.env.npm_package_version;
-process.env.VITE_APP_BUILD = new Date()
+const tzOffset = 7 * 36e5
+process.env.VITE_APP_BUILD = new Date(Date.now() + tzOffset)
   .toISOString()
   .replaceAll(/[-:]/g, '')
   .replace('T', '_')
   .slice(0, -7);
 
+// Default app branding values (can be overridden by .env file)
+const APP_NAME = process.env.VITE_APP_NAME || 'Credo';
+const APP_SHORT_NAME = process.env.VITE_APP_SHORT_NAME || 'Credo';
+const APP_DESCRIPTION = process.env.VITE_APP_DESCRIPTION || 'Credo Progressive Web Application';
+const THEME_COLOR = process.env.VITE_THEME_COLOR || '#324e71';
+
 // https://vite.dev/config/
 export default defineConfig({
   server: {
-    allowedHosts: ['f3c82d943be5.ngrok-free.app'],
+    allowedHosts: ['b1a271709375.ngrok-free.app'],
   },
   resolve: {
     alias: {
+      // eslint-disable-next-line no-undef
       '@': resolve(__dirname, './src'),
     },
   },
   build: {
+    target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
     rollupOptions: {
       output: {
         manualChunks: {
@@ -63,14 +73,15 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    htmlTransformPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
-        name: 'Credo App',
-        short_name: 'Credo',
-        description: 'Credo Progressive Web Application',
-        theme_color: '#3F60A0',
+        name: `${APP_NAME} App`,
+        short_name: APP_SHORT_NAME,
+        description: APP_DESCRIPTION,
+        theme_color: THEME_COLOR,
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',
@@ -102,13 +113,28 @@ export default defineConfig({
         ],
       },
       workbox: {
+        // Enable immediate activation and control of existing tabs
+        skipWaiting: true,
+        clientsClaim: true,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         navigateFallback: null,
-        // Exclude large lazy-loaded chunks from precaching
-        globIgnores: ['**/icons-*.js', '**/xlsx-*.js'],
+        // Exclude large lazy-loaded chunks and version.json from precaching
+        globIgnores: ['**/icons-*.js', '**/xlsx-*.js', '**/version.json'],
         // Increase cache size limit to handle remaining assets
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4MB
         runtimeCaching: [
+          // Always fetch version.json fresh from network
+          {
+            urlPattern: /\/version\.json/,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'version-check',
+              networkTimeoutSeconds: 3,
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+            },
+          },
           // Cache lazy-loaded icons and large chunks on demand
           {
             urlPattern: /\/assets\/icons-.*\.js$/,

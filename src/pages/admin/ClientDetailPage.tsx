@@ -1,35 +1,24 @@
-import {useState} from 'react';
-import {useNavigate, useParams} from 'react-router';
-import {
-  Container,
-  Title,
-  Stack,
-  Card,
-  Group,
-  Box,
-  Alert,
-  Divider,
-  Tabs,
-} from '@mantine/core';
-import {useDisclosure} from '@mantine/hooks';
-import {notifications} from '@mantine/notifications';
+import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router';
+import { Container, Title, Stack, Card, Group, Box, Alert, Divider, Tabs } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import {
   IconAlertCircle,
-  IconBan,
-  IconTrash,
-  IconCheck,
-  IconAlertTriangle,
   IconInfoCircle,
   IconLock,
   IconFlag,
   IconUsers,
 } from '@tabler/icons-react';
-import {useTranslation} from '@/hooks/useTranslation';
-import {useIsDarkMode} from '@/hooks/useIsDarkMode';
-import {useClientDetail} from '@/hooks/useClientDetail';
-import {useClientActions} from '@/stores/useClientStore';
-import {GoBack} from '@/components/common';
-import {TabErrorBoundary} from '@/components/admin/TabErrorBoundary';
+import { useTranslation } from '@/hooks/useTranslation';
+import { useClientDetail } from '@/hooks/useClientDetail';
+import { useClientActions } from '@/stores/useClientStore';
+import { GoBack } from '@/components/common';
+import { TabErrorBoundary } from '@/components/admin/TabErrorBoundary';
+import {
+  showErrorNotification,
+  showInfoNotification,
+  showSuccessNotification,
+} from '@/utils/notifications';
 import {
   ClientBasicInfo,
   RootUserInfo,
@@ -39,25 +28,20 @@ import {
   ClientFeatureFlagsSection,
   ClientUsersSection,
 } from '@/components/admin/ClientManagementComponents';
-import {ROUTERS} from '@/config/routeConfig';
+import { ROUTERS } from '@/config/routeConfig';
 
 export function ClientDetailPage() {
-  const {clientCode} = useParams<{clientCode: string}>();
+  const { clientCode } = useParams<{ clientCode: string }>();
   const navigate = useNavigate();
-  const {t} = useTranslation();
-  const isDarkMode = useIsDarkMode();
-  const {client, isLoading, error, reload} = useClientDetail(clientCode);
+  const { t } = useTranslation();
+  const { client, isLoading, error, reload } = useClientDetail(clientCode);
   const [deleteConfirmCode, setDeleteConfirmCode] = useState('');
   const [deleteReason, setDeleteReason] = useState('');
   const [suspendReason, setSuspendReason] = useState('');
-  const [actionType, setActionType] = useState<
-    'suspend' | 'reactivate' | 'delete' | undefined
-  >();
+  const [actionType, setActionType] = useState<'suspend' | 'reactivate' | 'delete' | undefined>();
 
-  const [modalOpened, {open: openModal, close: closeModal}] =
-    useDisclosure(false);
-  const {suspendClient, reactivateClient, hardDeleteClient} =
-    useClientActions();
+  const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
+  const { suspendClient, reactivateClient, hardDeleteClient } = useClientActions();
 
   const handleSuspend = () => {
     setActionType('suspend');
@@ -84,26 +68,22 @@ export function ClientDetailPage() {
       switch (actionType) {
         case 'suspend': {
           if (!suspendReason.trim()) {
-            notifications.show({
-              title: t('validation.error'),
-              message: t('admin.clients.validation.suspendReasonRequired'),
-              color: 'red',
-              icon: <IconAlertCircle size={16} />,
-            });
+            showErrorNotification(
+              t('validation.error'),
+              t('admin.clients.validation.suspendReasonRequired'),
+            );
             return;
           }
 
           await suspendClient(clientCode, suspendReason);
           await reload(false);
 
-          notifications.show({
-            title: t('admin.clients.clientSuspended'),
-            message: t('admin.clients.clientSuspendedMessage', {
+          showInfoNotification(
+            t('admin.clients.clientSuspended'),
+            t('admin.clients.clientSuspendedMessage', {
               name: client.clientName,
             }),
-            color: isDarkMode ? 'yellow.7' : 'yellow.9',
-            icon: <IconBan size={16} />,
-          });
+          );
 
           break;
         }
@@ -112,49 +92,41 @@ export function ClientDetailPage() {
           await reactivateClient(clientCode);
           await reload(false);
 
-          notifications.show({
-            title: t('admin.clients.clientActivated'),
-            message: t('admin.clients.clientActivatedMessage', {
+          showSuccessNotification(
+            t('admin.clients.clientActivated'),
+            t('admin.clients.clientActivatedMessage', {
               name: client.clientName,
             }),
-            color: isDarkMode ? 'green.7' : 'green.9',
-            icon: <IconCheck size={16} />,
-          });
+          );
 
           break;
         }
 
         case 'delete': {
           if (deleteConfirmCode !== clientCode) {
-            notifications.show({
-              title: t('validation.error'),
-              message: t('admin.clients.validation.confirmCodeMismatch'),
-              color: 'red',
-              icon: <IconAlertCircle size={16} />,
-            });
+            showErrorNotification(
+              t('validation.error'),
+              t('admin.clients.validation.confirmCodeMismatch'),
+            );
             return;
           }
 
           if (!deleteReason.trim()) {
-            notifications.show({
-              title: t('validation.error'),
-              message: t('admin.clients.validation.deleteReasonRequired'),
-              color: 'red',
-              icon: <IconAlertCircle size={16} />,
-            });
+            showErrorNotification(
+              t('validation.error'),
+              t('admin.clients.validation.deleteReasonRequired'),
+            );
             return;
           }
 
           await hardDeleteClient(clientCode, deleteConfirmCode, deleteReason);
 
-          notifications.show({
-            title: t('admin.clients.clientDeleted'),
-            message: t('admin.clients.clientDeletedMessage', {
+          showErrorNotification(
+            t('admin.clients.clientDeleted'),
+            t('admin.clients.clientDeletedMessage', {
               name: client.clientName,
             }),
-            color: 'red',
-            icon: <IconTrash size={16} />,
-          });
+          );
 
           navigate(ROUTERS.ADMIN_CLIENTS);
 
@@ -167,15 +139,8 @@ export function ClientDetailPage() {
       closeModal();
     } catch (error) {
       const errorMessage =
-        error instanceof Error
-          ? error.message
-          : t('errors.failedToUpdateClient');
-      notifications.show({
-        title: t('admin.clients.updateFailed'),
-        message: errorMessage,
-        color: 'red',
-        icon: <IconAlertTriangle size={16} />,
-      });
+        error instanceof Error ? error.message : t('errors.failedToUpdateClient');
+      showErrorNotification(t('admin.clients.updateFailed'), errorMessage);
     }
   };
 
@@ -199,7 +164,7 @@ export function ClientDetailPage() {
               icon={<IconAlertCircle size={16} />}
               color="red"
               variant="light"
-              style={{maxWidth: '600px', width: '100%'}}
+              style={{ maxWidth: '600px', width: '100%' }}
             >
               {error}
             </Alert>
@@ -235,18 +200,14 @@ export function ClientDetailPage() {
           {client ? (
             <Tabs defaultValue="info">
               <Tabs.List grow fw="bold" ta="left">
-                <Tabs.Tab
-                  value="info"
-                  leftSection={<IconInfoCircle size={16} />}
-                >
+                <Tabs.Tab value="info" leftSection={<IconInfoCircle size={16} />}>
                   {t('admin.clients.information')}
                 </Tabs.Tab>
                 <Tabs.Tab value="roles" leftSection={<IconLock size={16} />}>
                   {t('admin.clients.roles')} ({client.roles.length})
                 </Tabs.Tab>
                 <Tabs.Tab value="features" leftSection={<IconFlag size={16} />}>
-                  {t('admin.clients.featureFlags')} (
-                  {client.dynamicFeatureFlags.length})
+                  {t('admin.clients.featureFlags')} ({client.dynamicFeatureFlags.length})
                 </Tabs.Tab>
                 <Tabs.Tab value="users" leftSection={<IconUsers size={16} />}>
                   {t('admin.clients.users')} ({client.users.length})
@@ -262,7 +223,7 @@ export function ClientDetailPage() {
                       width: '100%',
                     }}
                   >
-                    <Box style={{maxWidth: '80vw', width: '100%'}}>
+                    <Box style={{ maxWidth: '80vw', width: '100%' }}>
                       <Card shadow="sm" padding="xl" radius="md">
                         <Stack gap="lg">
                           <ClientBasicInfo client={client} />

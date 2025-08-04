@@ -1,21 +1,26 @@
-import {useEffect, useState} from 'react';
+import { useState } from 'react';
 
-export default function useIsDesktop() {
-  const [isDesktop, setIsDesktop] = useState(true);
-  useEffect(() => {
-    if (globalThis.window === undefined) {
-      return;
-    }
+function checkIsDesktop() {
+  return Math.min(window.innerWidth, window.innerHeight) > 500;
+}
 
-    const handleResize = () => {
-      setIsDesktop(Math.min(window.innerWidth, window.innerHeight) > 769);
-    };
+export function useIsDesktop() {
+  const [isDesktop] = useState(checkIsDesktop());
+  // useEffect(() => {
+  //   if (globalThis.window === undefined) {
+  //     return;
+  //   }
 
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+  //   const handleResize = () => {
+  //     setIsDesktop(checkIsDesktop());
+  //   };
+
+  //   handleResize();
+  //   window.addEventListener('resize', handleResize);
+  //   return () => {
+  //     window.removeEventListener('resize', handleResize);
+  //   };
+  // }, []);
   return isDesktop;
 }
+export default useIsDesktop;

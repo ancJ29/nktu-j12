@@ -1,4 +1,4 @@
-import {BaseApiClient} from '../base';
+import { BaseApiClient } from '../base';
 import {
   GetEmployeesResponseSchema,
   CreateEmployeesRequestSchema,
@@ -23,16 +23,10 @@ export class HrApi extends BaseApiClient {
     const queryParams = new URLSearchParams();
     queryParams.append('limit', '1000');
     const url = `/api/hr/employees${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
-    return this.get<GetEmployeesResponse, void>(
-      url,
-      undefined,
-      GetEmployeesResponseSchema,
-    );
+    return this.get<GetEmployeesResponse, void>(url, undefined, GetEmployeesResponseSchema);
   }
 
-  async addEmployee(
-    data: CreateEmployeesRequest,
-  ): Promise<CreateEmployeesResponse> {
+  async addEmployee(data: CreateEmployeesRequest): Promise<CreateEmployeesResponse> {
     return this.post<CreateEmployeesResponse, CreateEmployeesRequest>(
       '/api/hr/employees',
       data,
@@ -54,7 +48,7 @@ export class HrApi extends BaseApiClient {
     employeeId: string,
     data: UpdateEmployeeRequest,
   ): Promise<UpdateEmployeeResponse> {
-    return this.put<UpdateEmployeeResponse, UpdateEmployeeRequest>(
+    return this.patch<UpdateEmployeeResponse, UpdateEmployeeRequest>(
       `/api/hr/employees/${employeeId}`,
       data,
       UpdateEmployeeResponseSchema,
@@ -79,11 +73,7 @@ export class HrApi extends BaseApiClient {
     queryParams.append('limit', '1000');
     const url = `/api/hr/departments${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
 
-    const response = await this.get<GetUnitsResponse, void>(
-      url,
-      undefined,
-      GetUnitsResponseSchema,
-    );
+    const response = await this.get<GetUnitsResponse, void>(url, undefined, GetUnitsResponseSchema);
     return response.departments;
   }
 
@@ -92,10 +82,6 @@ export class HrApi extends BaseApiClient {
     queryParams.append('limit', '1000');
     const url = `/api/hr/positions${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
 
-    return this.get<GetPositionsResponse, void>(
-      url,
-      undefined,
-      GetPositionsResponseSchema,
-    );
+    return this.get<GetPositionsResponse, void>(url, undefined, GetPositionsResponseSchema);
   }
 }

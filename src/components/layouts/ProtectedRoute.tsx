@@ -1,12 +1,13 @@
-import {Navigate} from 'react-router';
-import {useAppStore} from '@/stores/useAppStore';
+import React from 'react';
+import { Navigate } from 'react-router';
+import { useAppStore } from '@/stores/useAppStore';
 
 type ProtectedRouteProps = {
   readonly children: React.ReactNode;
 };
 
-export function ProtectedRoute({children}: ProtectedRouteProps) {
-  const {isAuthenticated} = useAppStore();
+export function ProtectedRoute({ children }: ProtectedRouteProps) {
+  const { isAuthenticated } = useAppStore();
 
   if (!isAuthenticated) {
     return <Navigate replace to="/login" />;

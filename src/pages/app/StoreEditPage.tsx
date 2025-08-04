@@ -1,5 +1,5 @@
-import {useState, useEffect} from 'react';
-import {useNavigate, useParams} from 'react-router';
+import { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router';
 import {
   Container,
   Title,
@@ -11,26 +11,25 @@ import {
   Alert,
   Transition,
 } from '@mantine/core';
-import {useForm} from '@mantine/form';
-import {notifications} from '@mantine/notifications';
-import {IconAlertCircle, IconCheck, IconEdit} from '@tabler/icons-react';
-import {useIsDarkMode} from '@/hooks/useIsDarkMode';
-import {useTranslation} from '@/hooks/useTranslation';
+import { useForm } from '@mantine/form';
+import { IconAlertCircle, IconEdit } from '@tabler/icons-react';
+import { showErrorNotification, showSuccessNotification } from '@/utils/notifications';
+import { useTranslation } from '@/hooks/useTranslation';
 import {
   useStoreActions,
   useStores,
   useStoreLoading,
   useStoreError,
 } from '@/stores/useStoreConfigStore';
-import {GoBack} from '@/components/common';
-import {StoreConfigForm} from '@/components/store/StoreConfigForm';
-import type {DaySchedule} from '@/components/store/OperatingHoursInput';
+import { GoBack } from '@/components/common';
+import { StoreConfigForm } from '@/components/store/StoreConfigForm';
+import type { DaySchedule } from '@/components/store/OperatingHoursInput';
 import type {
   Store,
   UpdateStoreRequest,
   UpdateStoreOperatingHoursRequest,
 } from '@/lib/api/schemas/store.schemas';
-import {ROUTERS} from '@/config/routeConfig';
+import { ROUTERS } from '@/config/routeConfig';
 
 type StoreEditFormValues = {
   // Required fields
@@ -57,36 +56,28 @@ type StoreEditFormValues = {
 };
 
 const defaultOperatingHours: StoreEditFormValues['operatingHours'] = {
-  monday: {open: '09:00', close: '17:00'},
-  tuesday: {open: '09:00', close: '17:00'},
-  wednesday: {open: '09:00', close: '17:00'},
-  thursday: {open: '09:00', close: '17:00'},
-  friday: {open: '09:00', close: '17:00'},
-  saturday: {open: '10:00', close: '16:00'},
-  sunday: {closed: true},
+  monday: { open: '09:00', close: '17:00' },
+  tuesday: { open: '09:00', close: '17:00' },
+  wednesday: { open: '09:00', close: '17:00' },
+  thursday: { open: '09:00', close: '17:00' },
+  friday: { open: '09:00', close: '17:00' },
+  saturday: { open: '10:00', close: '16:00' },
+  sunday: { closed: true },
 };
 
 export function StoreEditPage() {
   const navigate = useNavigate();
-  const {storeId} = useParams<{storeId: string}>();
+  const { storeId } = useParams<{ storeId: string }>();
   const [showAlert, setShowAlert] = useState(false);
-  const [currentStore, setCurrentStore] = useState<Store | undefined>(
-    undefined,
-  );
+  const [currentStore, setCurrentStore] = useState<Store | undefined>(undefined);
   const [isPageLoading, setIsPageLoading] = useState(true);
-  const {t} = useTranslation();
-  const isDarkMode = useIsDarkMode();
+  const { t } = useTranslation();
 
   const stores = useStores();
   const isLoading = useStoreLoading();
   const error = useStoreError();
-  const {
-    loadStores,
-    clearError,
-    updateStore,
-    updateOperatingHours,
-    loadOperatingHours,
-  } = useStoreActions();
+  const { loadStores, clearError, updateStore, updateOperatingHours, loadOperatingHours } =
+    useStoreActions();
 
   const form = useForm<StoreEditFormValues>({
     initialValues: {
@@ -177,12 +168,7 @@ export function StoreEditPage() {
         const store = stores.find((s) => s.id === storeId);
 
         if (!store) {
-          notifications.show({
-            title: t('store.storeNotFound'),
-            message: t('store.storeNotFoundMessage'),
-            color: 'red',
-            icon: <IconAlertCircle size={16} />,
-          });
+          showErrorNotification(t('store.storeNotFound'), t('store.storeNotFoundMessage'));
           navigate(ROUTERS.STORES);
           return;
         }
@@ -216,17 +202,9 @@ export function StoreEditPage() {
           form.setFieldValue('operatingHours', defaultOperatingHours);
         }
       } catch (error) {
-        const errorMessage =
-          error instanceof Error
-            ? error.message
-            : t('errors.failedToLoadStore');
+        const errorMessage = error instanceof Error ? error.message : t('errors.failedToLoadStore');
 
-        notifications.show({
-          title: t('store.loadFailed'),
-          message: errorMessage,
-          color: 'red',
-          icon: <IconAlertCircle size={16} />,
-        });
+        showErrorNotification(t('store.loadFailed'), errorMessage);
 
         navigate(ROUTERS.STORES);
       } finally {
@@ -272,29 +250,19 @@ export function StoreEditPage() {
       const operatingHours = convertToApiFormat(values.operatingHours);
       await updateOperatingHours(currentStore.id, operatingHours);
 
-      notifications.show({
-        title: t('store.storeUpdated'),
-        message: t('store.storeUpdatedMessage', {name: values.name}),
-        color: isDarkMode ? 'green.7' : 'green.9',
-        icon: <IconCheck size={16} />,
-      });
+      showSuccessNotification(
+        t('store.storeUpdated'),
+        t('store.storeUpdatedMessage', { name: values.name }),
+      );
 
       // Navigate back to store list
       navigate(ROUTERS.STORES);
     } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : t('errors.failedToUpdateStore');
+      const errorMessage = error instanceof Error ? error.message : t('errors.failedToUpdateStore');
 
       setShowAlert(true);
 
-      notifications.show({
-        title: t('store.storeUpdateFailed'),
-        message: errorMessage,
-        color: 'red',
-        icon: <IconAlertCircle size={16} />,
-      });
+      showErrorNotification(t('store.storeUpdateFailed'), errorMessage);
     }
   };
 
@@ -329,22 +297,14 @@ export function StoreEditPage() {
       isClosed: boolean;
     }>,
   ): Record<string, DaySchedule> => {
-    const dayNames = [
-      'sunday',
-      'monday',
-      'tuesday',
-      'wednesday',
-      'thursday',
-      'friday',
-      'saturday',
-    ];
+    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     const result: Record<string, DaySchedule> = {};
 
     for (const hour of hours) {
       const dayName = dayNames[hour.dayOfWeek];
       result[dayName] = hour.isClosed
-        ? {closed: true}
-        : {open: hour.openTime, close: hour.closeTime};
+        ? { closed: true }
+        : { open: hour.openTime, close: hour.closeTime };
     }
 
     // Fill in any missing days with defaults
@@ -355,10 +315,7 @@ export function StoreEditPage() {
     return result;
   };
 
-  const handleLocationChange = (
-    location: {lat: number; lng: number},
-    address: string,
-  ) => {
+  const handleLocationChange = (location: { lat: number; lng: number }, address: string) => {
     form.setFieldValue('location', location);
     if (address && address !== form.values.address) {
       form.setFieldValue('address', address);
@@ -369,20 +326,14 @@ export function StoreEditPage() {
     form.setFieldValue('address', address);
   };
 
-  const handleOperatingHoursChange = (
-    operatingHours: StoreEditFormValues['operatingHours'],
-  ) => {
+  const handleOperatingHoursChange = (operatingHours: StoreEditFormValues['operatingHours']) => {
     form.setFieldValue('operatingHours', operatingHours);
   };
 
   if (isPageLoading) {
     return (
       <Container size="md" mt="xl">
-        <LoadingOverlay
-          visible
-          overlayProps={{blur: 2}}
-          transitionProps={{duration: 300}}
-        />
+        <LoadingOverlay visible overlayProps={{ blur: 2 }} transitionProps={{ duration: 300 }} />
       </Container>
     );
   }
@@ -402,13 +353,11 @@ export function StoreEditPage() {
         <Card shadow="sm" padding="xl" radius="md">
           <LoadingOverlay
             visible={isLoading}
-            overlayProps={{blur: 2}}
-            transitionProps={{duration: 300}}
+            overlayProps={{ blur: 2 }}
+            transitionProps={{ duration: 300 }}
           />
           <Transition
-            mounted={Boolean(
-              showAlert && (error || Object.keys(form.errors).length > 0),
-            )}
+            mounted={Boolean(showAlert && (error || Object.keys(form.errors).length > 0))}
             transition="fade"
             duration={300}
             timingFunction="ease"
@@ -446,10 +395,7 @@ export function StoreEditPage() {
 
               <Group justify="flex-end" mt="xl">
                 {currentStore ? (
-                  <Button
-                    variant="light"
-                    onClick={() => navigate(ROUTERS.STORES)}
-                  >
+                  <Button variant="light" onClick={() => navigate(ROUTERS.STORES)}>
                     {t('common.cancel')}
                   </Button>
                 ) : null}

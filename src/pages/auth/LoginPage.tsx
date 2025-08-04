@@ -1,5 +1,5 @@
-import {useEffect, useState} from 'react';
-import {useNavigate, useSearchParams} from 'react-router';
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router';
 import {
   Group,
   Anchor,
@@ -8,18 +8,22 @@ import {
   Button,
   TextInput,
   PasswordInput,
+  Divider,
+  Text,
 } from '@mantine/core';
-import {useForm} from '@mantine/form';
-import {useAppStore} from '@/stores/useAppStore';
-import {useTranslation} from '@/hooks/useTranslation';
-import {useAuthForm} from '@/hooks/useAuthForm';
-import {GuestLayout} from '@/components/layouts/GuestLayout';
-import {getFormValidators} from '@/utils/validation';
-import {FormContainer} from '@/components/form/FormContainer';
-import {AuthHeader, AuthAlert, AuthFormLink} from '@/components/auth';
-import {useClientCode} from '@/hooks/useClientCode';
-import {isDevelopment} from '@/utils/env';
-import {ROUTERS} from '@/config/routeConfig';
+import { IconQrcode } from '@tabler/icons-react';
+import { useForm } from '@mantine/form';
+import { useAppStore } from '@/stores/useAppStore';
+import { useTranslation } from '@/hooks/useTranslation';
+import { useAuthForm } from '@/hooks/useAuthForm';
+import { GuestLayout } from '@/components/layouts/GuestLayout';
+import { getFormValidators } from '@/utils/validation';
+import { FormContainer } from '@/components/form/FormContainer';
+import { AuthHeader, AuthAlert, AuthFormLink } from '@/components/auth';
+import { useClientCode } from '@/hooks/useClientCode';
+import { isDevelopment } from '@/utils/env';
+import { ROUTERS } from '@/config/routeConfig';
+import { useOnce } from '@/hooks/useOnce';
 
 type LoginFormValues = {
   identifier: string;
@@ -30,41 +34,39 @@ type LoginFormValues = {
 export function LoginPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const {login} = useAppStore();
+  const { login } = useAppStore();
   const [mounted, setMounted] = useState(false);
-  const {t} = useTranslation();
-
-  // Extract client-code from URL query params
-  const clientCodeFromUrl = searchParams.get('client-code');
-
-  // Use client code from URL if available, otherwise use default
-  const defaultClientCode = useClientCode();
-  const clientCode = clientCodeFromUrl ?? defaultClientCode;
+  const { t } = useTranslation();
+  const clientCode = useClientCode();
 
   // Update localStorage if client-code is provided in URL
-  useEffect(() => {
-    if (clientCodeFromUrl && clientCodeFromUrl !== defaultClientCode) {
+  useOnce(() => {
+    // Extract client-code from URL query params
+    const clientCodeFromUrl = searchParams.get('client-code');
+    console.log('clientCodeFromUrl', clientCodeFromUrl);
+
+    // Use client code from URL if available
+    if (clientCodeFromUrl && clientCodeFromUrl !== clientCode) {
       localStorage.setItem('clientCode', clientCodeFromUrl);
-      // Reload the page without search params
-      navigate(ROUTERS.LOGIN, {replace: true});
     }
-  }, [navigate, defaultClientCode, clientCodeFromUrl]);
+
+    if (clientCodeFromUrl) {
+      // Reload the page without search params
+      navigate(ROUTERS.LOGIN, { replace: true });
+    }
+  });
 
   const form = useForm<LoginFormValues>({
     initialValues: {
       identifier:
-        (isDevelopment ? 'admin' : '') ||
-        localStorage.getItem('rememberedIdentifier') ||
-        '',
-      password: isDevelopment
-        ? (localStorage.getItem('__PASSWORD__') ?? '')
-        : '',
+        (isDevelopment ? 'admin' : '') || localStorage.getItem('rememberedIdentifier') || '',
+      password: isDevelopment ? (localStorage.getItem('__PASSWORD__') ?? '') : '',
       clientCode,
     },
     validate: getFormValidators(t, ['identifier', 'password', 'clientCode']),
   });
 
-  const {isLoading, showAlert, clearErrors, handleSubmit} = useAuthForm(form, {
+  const { isLoading, showAlert, clearErrors, handleSubmit } = useAuthForm(form, {
     successTitle: t('notifications.loginSuccess'),
     successMessage: t('notifications.loginSuccessMessage'),
     errorTitle: t('notifications.loginFailed'),
@@ -75,9 +77,7 @@ export function LoginPage() {
   useEffect(() => {
     setMounted(true);
     const timer = setTimeout(() => {
-      const emailInput = document.querySelector<HTMLInputElement>(
-        'input[name="identifier"]',
-      );
+      const emailInput = document.querySelector<HTMLInputElement>('input[name="identifier"]');
       emailInput?.focus();
     }, 300);
     return () => {
@@ -123,11 +123,7 @@ export function LoginPage() {
             />
 
             <AuthAlert
-              show={
-                showAlert
-                  ? Boolean(form.errors.identifier && form.errors.password)
-                  : false
-              }
+              show={showAlert ? Boolean(form.errors.identifier && form.errors.password) : false}
               message={t('notifications.invalidCredentials')}
               onClose={clearErrors}
             />
@@ -149,6 +145,27 @@ export function LoginPage() {
             </Button>
           </Stack>
         </form>
+
+        <Stack gap="md" mt="xl">
+          <Divider
+            label={
+              <Text size="sm" c="dimmed">
+                {t('auth.magicLink.or')}
+              </Text>
+            }
+            labelPosition="center"
+          />
+
+          <Button
+            variant="default"
+            fullWidth
+            leftSection={<IconQrcode size={20} />}
+            onClick={() => navigate(ROUTERS.MAGIC_LINK)}
+            disabled={isLoading}
+          >
+            {t('auth.magicLink.useMagicLink')}
+          </Button>
+        </Stack>
 
         <AuthFormLink
           text={t('auth.noAccount')}

@@ -1,5 +1,5 @@
 import * as z from 'zod/v4';
-import {idSchema, optionalStringSchema} from './common.schemas';
+import { idSchema, optionalStringSchema } from './common.schemas';
 
 export const GetUsersRequestSchema = z.object({
   cursor: optionalStringSchema,
@@ -31,6 +31,12 @@ export const GetUsersResponseSchema = z.object({
   }),
 });
 
+export const GetMagicLinkResponseSchema = z.object({
+  magicToken: z.string(),
+});
+
 export type GetUsersRequest = z.infer<typeof GetUsersRequestSchema>;
 
 export type GetUsersResponse = z.infer<typeof GetUsersResponseSchema>;
+
+export type GetMagicLinkResponse = z.infer<typeof GetMagicLinkResponseSchema>;

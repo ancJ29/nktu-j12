@@ -3,6 +3,7 @@ swagger-*.json
 scripts/i18n-cleanup-report.json
 scripts/i18n-analysis-report.json
 scripts/i18n-analysis-safe-report.json
+public/version.json
 # Sample data
 sample/
 
@@ -32,3 +33,7 @@ dist-ssr
 *.sln
 *.sw?
 .env.production
+en-flattened.json
+i18n-analysis-results.json
+used-translation-keys.json
+*.backup.json

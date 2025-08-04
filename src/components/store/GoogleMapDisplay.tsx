@@ -1,7 +1,8 @@
-import {Box, Text, Alert} from '@mantine/core';
-import {IconAlertCircle} from '@tabler/icons-react';
-import {GoogleMap, useLoadScript, Marker} from '@react-google-maps/api';
-import {useTranslation} from '@/hooks/useTranslation';
+/* global google */
+import { Box, Text, Alert } from '@mantine/core';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { GoogleMap, useLoadScript, Marker } from '@react-google-maps/api';
+import { useTranslation } from '@/hooks/useTranslation';
 
 const libraries: Array<'places'> = ['places'];
 
@@ -28,15 +29,11 @@ type GoogleMapDisplayProps = {
   readonly zoom?: number;
 };
 
-export function GoogleMapDisplay({
-  location,
-  address,
-  zoom = 15,
-}: GoogleMapDisplayProps) {
-  const {t} = useTranslation();
+export function GoogleMapDisplay({ location, address, zoom = 15 }: GoogleMapDisplayProps) {
+  const { t } = useTranslation();
   // Const [mapError] = useState<string | undefined>(undefined);
 
-  const {isLoaded, loadError} = useLoadScript({
+  const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
     libraries,
   });
@@ -70,11 +67,7 @@ export function GoogleMapDisplay({
 
   if (!import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
     return (
-      <Alert
-        icon={<IconAlertCircle size={16} />}
-        color="orange"
-        variant="light"
-      >
+      <Alert icon={<IconAlertCircle size={16} />} color="orange" variant="light">
         {t('store.mapApiKeyNotConfigured')}
         {address ? (
           <Text size="sm" mt="xs">
@@ -112,10 +105,7 @@ export function GoogleMapDisplay({
         zoom={zoom}
         options={mapOptions}
       >
-        <Marker
-          position={location}
-          title={address || t('store.selectedLocation')}
-        />
+        <Marker position={location} title={address || t('store.selectedLocation')} />
       </GoogleMap>
     </Box>
   );

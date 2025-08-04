@@ -1,4 +1,5 @@
-import {useNavigate} from 'react-router';
+import React from 'react';
+import { useNavigate } from 'react-router';
 import {
   Container,
   Title,
@@ -12,24 +13,16 @@ import {
   Alert,
   Text,
 } from '@mantine/core';
-import {useForm} from '@mantine/form';
-import {notifications} from '@mantine/notifications';
-import {
-  IconAlertCircle,
-  IconCheck,
-  IconBuilding,
-  IconMail,
-  IconUser,
-  IconLock,
-} from '@tabler/icons-react';
-import {useTranslation} from '@/hooks/useTranslation';
-import {useIsDarkMode} from '@/hooks/useIsDarkMode';
-import {useClientActions} from '@/stores/useClientStore';
-import {GoBack} from '@/components/common';
-import {getFormValidators} from '@/utils/validation';
-import type {RegisterClientRequest} from '@/lib/api';
-import {isDevelopment} from '@/utils/env';
-import {ROUTERS} from '@/config/routeConfig';
+import { useForm } from '@mantine/form';
+import { IconAlertCircle, IconBuilding, IconMail, IconUser, IconLock } from '@tabler/icons-react';
+import { useTranslation } from '@/hooks/useTranslation';
+import { useClientActions } from '@/stores/useClientStore';
+import { GoBack } from '@/components/common';
+import { showSuccessNotification } from '@/utils/notifications';
+import { getFormValidators } from '@/utils/validation';
+import type { RegisterClientRequest } from '@/lib/api';
+import { isDevelopment } from '@/utils/env';
+import { ROUTERS } from '@/config/routeConfig';
 
 function fakeClient() {
   const clientCode = Math.random().toString(36).slice(2, 8);
@@ -46,10 +39,9 @@ function fakeClient() {
 
 export function ClientCreatePage() {
   const navigate = useNavigate();
-  const {t} = useTranslation();
-  const isDarkMode = useIsDarkMode();
+  const { t } = useTranslation();
 
-  const {createClient} = useClientActions();
+  const { createClient } = useClientActions();
 
   const form = useForm<RegisterClientRequest>({
     initialValues: isDevelopment
@@ -103,9 +95,7 @@ export function ClientCreatePage() {
         return null;
       },
       rootUserFirstName(value: string) {
-        const baseValidation = getFormValidators(t, ['firstName']).firstName(
-          value,
-        );
+        const baseValidation = getFormValidators(t, ['firstName']).firstName(value);
         if (baseValidation) return baseValidation;
         if (value.length > 50) {
           return t('admin.clients.validation.nameLength');
@@ -114,9 +104,7 @@ export function ClientCreatePage() {
         return null;
       },
       rootUserLastName(value: string) {
-        const baseValidation = getFormValidators(t, ['lastName']).lastName(
-          value,
-        );
+        const baseValidation = getFormValidators(t, ['lastName']).lastName(value);
         if (baseValidation) return baseValidation;
         if (value.length > 50) {
           return t('admin.clients.validation.nameLength');
@@ -130,21 +118,17 @@ export function ClientCreatePage() {
   const handleSubmit = async (values: RegisterClientRequest) => {
     await createClient(values);
 
-    notifications.show({
-      title: t('admin.clients.clientCreated'),
-      message: t('admin.clients.clientCreatedMessage', {
+    showSuccessNotification(
+      t('admin.clients.clientCreated'),
+      t('admin.clients.clientCreatedMessage', {
         name: values.clientName,
       }),
-      color: isDarkMode ? 'green.7' : 'green.9',
-      icon: <IconCheck size={16} />,
-    });
+    );
 
     navigate(ROUTERS.ADMIN_CLIENTS);
   };
 
-  const handleClientCodeChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleClientCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     // Force uppercase for client code
     const upperValue = event.currentTarget.value.toUpperCase();
     form.setFieldValue('clientCode', upperValue);
@@ -171,7 +155,7 @@ export function ClientCreatePage() {
             padding: '0 16px',
           }}
         >
-          <Box style={{maxWidth: '600px', width: '100%'}}>
+          <Box style={{ maxWidth: '600px', width: '100%' }}>
             <Card shadow="sm" padding="xl" radius="md">
               <form onSubmit={form.onSubmit(handleSubmit)}>
                 <Stack gap="lg">
@@ -236,26 +220,15 @@ export function ClientCreatePage() {
                     {...form.getInputProps('rootUserPassword')}
                   />
 
-                  <Alert
-                    icon={<IconAlertCircle size={16} />}
-                    variant="light"
-                    color="blue"
-                  >
-                    <Text size="sm">
-                      {t('admin.clients.createClientNotice')}
-                    </Text>
+                  <Alert icon={<IconAlertCircle size={16} />} variant="light" color="blue">
+                    <Text size="sm">{t('admin.clients.createClientNotice')}</Text>
                   </Alert>
 
                   <Group justify="flex-end" mt="xl">
-                    <Button
-                      variant="light"
-                      onClick={() => navigate(ROUTERS.ADMIN_CLIENTS)}
-                    >
+                    <Button variant="light" onClick={() => navigate(ROUTERS.ADMIN_CLIENTS)}>
                       {t('common.cancel')}
                     </Button>
-                    <Button type="submit">
-                      {t('admin.clients.createClient')}
-                    </Button>
+                    <Button type="submit">{t('admin.clients.createClient')}</Button>
                   </Group>
                 </Stack>
               </form>

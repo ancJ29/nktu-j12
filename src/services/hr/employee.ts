@@ -1,15 +1,29 @@
-import {unitService} from './unit';
-import {positionService} from './position';
-import {hrApi} from '@/lib/api';
-import {renderFullName} from '@/utils/string';
+import { unitService } from './unit';
+import { positionService } from './position';
+import { hrApi } from '@/lib/api';
+import { renderFullName } from '@/utils/string';
+
+export type WorkType = 'FULL_TIME' | 'PART_TIME';
 
 export type Employee = {
   id: string;
+  userId?: string;
   firstName: string;
   lastName: string;
+  employeeCode: string;
   fullName: string;
   fullNameWithPosition?: string;
-  employeeCode: string;
+  email?: string;
+  phone?: string;
+  workType?: WorkType;
+  monthlySalary?: number;
+  hourlyRate?: number;
+  startDate?: Date;
+  endDate?: Date;
+  // isProbation?: boolean;
+  // probationEndDate?: Date;
+  // probationReason?: string;
+  // probationStatus?: string;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -17,11 +31,7 @@ export type Employee = {
   unit?: string;
   positionId?: string;
   position?: string;
-  metadata?:
-    | {
-        position?: string;
-      }
-    | undefined;
+  displayOrder?: number;
 };
 
 export const employeeService = {
@@ -56,16 +66,23 @@ export const employeeService = {
     return employees.map((employee) => {
       const position = positionMap.get(employee.positionId ?? '');
       const fullName = renderFullName(employee);
-      const fullNameWithPosition = position
-        ? `${fullName} (${position})`
-        : undefined;
+      const fullNameWithPosition = position ? `${fullName} (${position})` : undefined;
+      const workType = employee.employmentType === 'PART_TIME' ? 'PART_TIME' : 'FULL_TIME';
       return {
         ...employee,
+        startDate: employee.hireDate,
         fullName,
         fullNameWithPosition,
         position,
         unitId: employee.departmentId,
         unit: unitMap.get(employee.departmentId ?? ''),
+        // email?: string;
+        phone: `0901-${Math.floor(Math.random() * 1e3)}-${Math.floor(Math.random() * 1e3)}`,
+        workType,
+        monthlySalary: employee.metadata?.monthlySalary,
+        hourlyRate: employee.metadata?.hourRate,
+        endDate: employee.terminationDate,
+        displayOrder: employee.metadata?.displayOrder,
       };
     });
   },
@@ -74,12 +91,24 @@ export const employeeService = {
     firstName: string;
     lastName: string;
     unitId?: string | undefined;
+    email?: string;
+    phone?: string;
+    workType?: WorkType;
+    monthlySalary?: number;
+    hourlyRate?: number;
+    startDate?: Date;
   }) {
     await hrApi.addEmployee({
       firstName: employee.firstName,
       lastName: employee.lastName,
       departmentId: employee.unitId,
+      employmentType: employee.workType ?? 'FULL_TIME',
+      metadata: {
+        hourRate: employee.workType === 'FULL_TIME' ? undefined : employee.hourlyRate,
+        monthlySalary: employee.workType === 'FULL_TIME' ? employee.monthlySalary : undefined,
+      },
     });
+    // The additional fields would be handled by the API in a real implementation
   },
 
   async addBulkEmployees(
@@ -87,6 +116,9 @@ export const employeeService = {
       firstName: string;
       lastName: string;
       unitId?: string | undefined;
+      workType?: WorkType;
+      monthlySalary?: number;
+      hourlyRate?: number;
     }>,
   ) {
     await hrApi.addBulkEmployees({
@@ -94,6 +126,11 @@ export const employeeService = {
         firstName: employee.firstName,
         lastName: employee.lastName,
         departmentId: employee.unitId,
+        employmentType: employee.workType ?? 'FULL_TIME',
+        metadata: {
+          hourRate: employee.workType === 'FULL_TIME' ? undefined : employee.hourlyRate,
+          monthlySalary: employee.workType === 'FULL_TIME' ? employee.monthlySalary : undefined,
+        },
       })),
     });
   },
@@ -104,5 +141,41 @@ export const employeeService = {
 
   async activateEmployee(id: string) {
     await hrApi.activateEmployee(id);
+  },
+
+  async getEmployee(id: string): Promise<Employee | undefined> {
+    const employees = await this.getAllEmployee();
+    return employees.find((emp) => emp.id === id);
+  },
+
+  async updateEmployee(
+    id: string,
+    employee: {
+      firstName: string;
+      lastName: string;
+      unitId?: string | undefined;
+      email?: string;
+      phone?: string;
+      workType?: WorkType;
+      monthlySalary?: number;
+      hourlyRate?: number;
+      startDate: Date;
+      endDate?: Date;
+      displayOrder?: number;
+    },
+  ) {
+    await hrApi.updateEmployee(id, {
+      firstName: employee.firstName,
+      lastName: employee.lastName,
+      departmentId: employee.unitId,
+      employmentType: employee.workType,
+      hireDate: new Date(employee.startDate).toISOString(),
+      terminationDate: employee.endDate ? new Date(employee.endDate).toISOString() : undefined,
+      metadata: {
+        displayOrder: employee.displayOrder,
+        hourRate: employee.workType === 'FULL_TIME' ? undefined : employee.hourlyRate,
+        monthlySalary: employee.workType === 'FULL_TIME' ? employee.monthlySalary : undefined,
+      },
+    });
   },
 };

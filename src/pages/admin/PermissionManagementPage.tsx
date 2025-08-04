@@ -1,4 +1,4 @@
-import {useEffect, useState, useMemo} from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import {
   Container,
   Title,
@@ -12,55 +12,45 @@ import {
   Center,
   Paper,
 } from '@mantine/core';
-import {useDisclosure} from '@mantine/hooks';
-import {notifications} from '@mantine/notifications';
-import {
-  IconPlus,
-  IconCheck,
-  IconTrash,
-  IconSearch,
-  IconShieldCheck,
-} from '@tabler/icons-react';
-import {useIsDarkMode} from '@/hooks/useIsDarkMode';
-import {useTranslation} from '@/hooks/useTranslation';
+import { useDisclosure } from '@mantine/hooks';
+import { IconPlus, IconSearch, IconShieldCheck } from '@tabler/icons-react';
+import { useTranslation } from '@/hooks/useTranslation';
 import {
   usePermissions,
   usePermissionError,
   usePermissionActions,
 } from '@/stores/usePermissionStore';
-import {ErrorAlert, GoBack} from '@/components/common';
+import { ErrorAlert, GoBack } from '@/components/common';
+import {
+  showErrorNotification,
+  showInfoNotification,
+  showSuccessNotification,
+} from '@/utils/notifications';
 import {
   PermissionTable,
   CreatePermissionModal,
   EditPermissionModal,
   DeletePermissionModal,
 } from '@/components/admin/PermissionManagementComponents';
-import type {AdminPermission} from '@/lib/api';
+import type { AdminPermission } from '@/lib/api';
 
 export function PermissionManagementPage() {
-  const [createModalOpened, {open: openCreateModal, close: closeCreateModal}] =
+  const [createModalOpened, { open: openCreateModal, close: closeCreateModal }] =
     useDisclosure(false);
-  const [editModalOpened, {open: openEditModal, close: closeEditModal}] =
+  const [editModalOpened, { open: openEditModal, close: closeEditModal }] = useDisclosure(false);
+  const [deleteModalOpened, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
-  const [deleteModalOpened, {open: openDeleteModal, close: closeDeleteModal}] =
-    useDisclosure(false);
-  const [selectedPermission, setSelectedPermission] = useState<
-    AdminPermission | undefined
-  >(undefined);
+  const [selectedPermission, setSelectedPermission] = useState<AdminPermission | undefined>(
+    undefined,
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const {t} = useTranslation();
-  const isDarkMode = useIsDarkMode();
+  const { t } = useTranslation();
 
   const allPermissions = usePermissions();
   const error = usePermissionError();
-  const {
-    loadPermissions,
-    createPermission,
-    updatePermission,
-    deletePermission,
-    clearError,
-  } = usePermissionActions();
+  const { loadPermissions, createPermission, updatePermission, deletePermission, clearError } =
+    usePermissionActions();
 
   const pageSize = 20;
 
@@ -110,12 +100,10 @@ export function PermissionManagementPage() {
     description: string;
   }) => {
     await createPermission(data);
-    notifications.show({
-      title: t('admin.permissions.permissionCreated'),
-      message: t('admin.permissions.permissionCreatedMessage'),
-      color: isDarkMode ? 'green.7' : 'green.9',
-      icon: <IconCheck size={16} />,
-    });
+    showSuccessNotification(
+      t('admin.permissions.permissionCreated'),
+      t('admin.permissions.permissionCreatedMessage'),
+    );
   };
 
   const handleEditPermission = (permission: AdminPermission) => {
@@ -124,13 +112,11 @@ export function PermissionManagementPage() {
   };
 
   const handleUpdatePermission = async (id: string, description: string) => {
-    await updatePermission(id, {description});
-    notifications.show({
-      title: t('admin.permissions.permissionUpdated'),
-      message: t('admin.permissions.permissionUpdatedMessage'),
-      color: isDarkMode ? 'blue.7' : 'blue.9',
-      icon: <IconCheck size={16} />,
-    });
+    await updatePermission(id, { description });
+    showInfoNotification(
+      t('admin.permissions.permissionUpdated'),
+      t('admin.permissions.permissionUpdatedMessage'),
+    );
   };
 
   const handleDeletePermission = (permission: AdminPermission) => {
@@ -140,12 +126,10 @@ export function PermissionManagementPage() {
 
   const handleConfirmDelete = async (id: string) => {
     await deletePermission(id);
-    notifications.show({
-      title: t('admin.permissions.permissionDeleted'),
-      message: t('admin.permissions.permissionDeletedMessage'),
-      color: 'red',
-      icon: <IconTrash size={16} />,
-    });
+    showErrorNotification(
+      t('admin.permissions.permissionDeleted'),
+      t('admin.permissions.permissionDeletedMessage'),
+    );
   };
 
   const handleSearch = (value: string) => {
@@ -159,10 +143,7 @@ export function PermissionManagementPage() {
         <Stack gap="xl">
           <Group justify="space-between">
             <GoBack />
-            <Button
-              leftSection={<IconPlus size={16} />}
-              onClick={openCreateModal}
-            >
+            <Button leftSection={<IconPlus size={16} />} onClick={openCreateModal}>
               {t('admin.permissions.createNewPermission')}
             </Button>
           </Group>
@@ -189,10 +170,7 @@ export function PermissionManagementPage() {
               {allPermissions.length === 0 ? (
                 <Paper p="xl" ta="center">
                   <Stack gap="md">
-                    <IconShieldCheck
-                      size={48}
-                      color="var(--mantine-color-gray-5)"
-                    />
+                    <IconShieldCheck size={48} color="var(--mantine-color-gray-5)" />
                     <div>
                       <Title order={3} c="dimmed">
                         {searchQuery
@@ -202,9 +180,7 @@ export function PermissionManagementPage() {
                       <Text c="dimmed" mt="xs">
                         {searchQuery
                           ? t('admin.permissions.tryDifferentSearch')
-                          : t(
-                              'admin.permissions.createFirstPermissionDescription',
-                            )}
+                          : t('admin.permissions.createFirstPermissionDescription')}
                       </Text>
                     </div>
                     {searchQuery ? null : (

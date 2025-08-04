@@ -1,5 +1,5 @@
-import {useState, useEffect} from 'react';
-import {useNavigate} from 'react-router';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 import {
   Container,
   Title,
@@ -12,26 +12,25 @@ import {
   Transition,
   Box,
 } from '@mantine/core';
-import {useForm} from '@mantine/form';
-import {notifications} from '@mantine/notifications';
-import {IconAlertCircle, IconCheck} from '@tabler/icons-react';
-import {useIsDarkMode} from '@/hooks/useIsDarkMode';
-import {useTranslation} from '@/hooks/useTranslation';
+import { useForm } from '@mantine/form';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { showErrorNotification, showSuccessNotification } from '@/utils/notifications';
+import { useTranslation } from '@/hooks/useTranslation';
 import {
   useStoreActions,
   useCurrentStore,
   useStoreLoading,
   useStoreError,
 } from '@/stores/useStoreConfigStore';
-import {GoBack} from '@/components/common';
-import {StoreConfigForm} from '@/components/store/StoreConfigForm';
-import type {DaySchedule} from '@/components/store/OperatingHoursInput';
+import { GoBack } from '@/components/common';
+import { StoreConfigForm } from '@/components/store/StoreConfigForm';
+import type { DaySchedule } from '@/components/store/OperatingHoursInput';
 import type {
   CreateStoreRequest,
   UpdateStoreOperatingHoursRequest,
 } from '@/lib/api/schemas/store.schemas';
-import {generateRandomString} from '@/utils/string';
-import {ROUTERS} from '@/config/routeConfig';
+import { generateRandomString } from '@/utils/string';
+import { ROUTERS } from '@/config/routeConfig';
 
 type StoreConfigFormValues = {
   // Required fields
@@ -58,25 +57,24 @@ type StoreConfigFormValues = {
 };
 
 const defaultOperatingHours: StoreConfigFormValues['operatingHours'] = {
-  monday: {open: '09:00', close: '17:00'},
-  tuesday: {open: '09:00', close: '17:00'},
-  wednesday: {open: '09:00', close: '17:00'},
-  thursday: {open: '09:00', close: '17:00'},
-  friday: {open: '09:00', close: '17:00'},
-  saturday: {open: '10:00', close: '16:00'},
-  sunday: {closed: true},
+  monday: { open: '09:00', close: '17:00' },
+  tuesday: { open: '09:00', close: '17:00' },
+  wednesday: { open: '09:00', close: '17:00' },
+  thursday: { open: '09:00', close: '17:00' },
+  friday: { open: '09:00', close: '17:00' },
+  saturday: { open: '10:00', close: '16:00' },
+  sunday: { closed: true },
 };
 
 export function StoreConfigPage() {
   const navigate = useNavigate();
   const [showAlert, setShowAlert] = useState(false);
-  const {t} = useTranslation();
-  const isDarkMode = useIsDarkMode();
+  const { t } = useTranslation();
 
   const currentStore = useCurrentStore();
   const isLoading = useStoreLoading();
   const error = useStoreError();
-  const {createStore, clearError} = useStoreActions();
+  const { createStore, clearError } = useStoreActions();
 
   const form = useForm<StoreConfigFormValues>({
     initialValues: {
@@ -177,12 +175,10 @@ export function StoreConfigPage() {
 
       const newStore = await createStore(storeData);
 
-      notifications.show({
-        title: t('store.storeCreated'),
-        message: t('store.storeCreatedMessage', {name: newStore.name}),
-        color: isDarkMode ? 'green.7' : 'green.9',
-        icon: <IconCheck size={16} />,
-      });
+      showSuccessNotification(
+        t('store.storeCreated'),
+        t('store.storeCreatedMessage', { name: newStore.name }),
+      );
 
       // Reset form for creating another store
       form.reset();
@@ -190,19 +186,11 @@ export function StoreConfigPage() {
       // Navigate to store list or dashboard
       navigate(ROUTERS.STORES);
     } catch (error) {
-      const errorMessage =
-        error instanceof Error
-          ? error.message
-          : t('errors.failedToCreateStore');
+      const errorMessage = error instanceof Error ? error.message : t('errors.failedToCreateStore');
 
       setShowAlert(true);
 
-      notifications.show({
-        title: t('store.storeCreationFailed'),
-        message: errorMessage,
-        color: 'red',
-        icon: <IconAlertCircle size={16} />,
-      });
+      showErrorNotification(t('store.storeCreationFailed'), errorMessage);
     }
   };
 
@@ -228,10 +216,7 @@ export function StoreConfigPage() {
     }));
   };
 
-  const handleLocationChange = (
-    location: {lat: number; lng: number},
-    address: string,
-  ) => {
+  const handleLocationChange = (location: { lat: number; lng: number }, address: string) => {
     form.setFieldValue('location', location);
     if (address && address !== form.values.address) {
       form.setFieldValue('address', address);
@@ -242,9 +227,7 @@ export function StoreConfigPage() {
     form.setFieldValue('address', address);
   };
 
-  const handleOperatingHoursChange = (
-    operatingHours: StoreConfigFormValues['operatingHours'],
-  ) => {
+  const handleOperatingHoursChange = (operatingHours: StoreConfigFormValues['operatingHours']) => {
     form.setFieldValue('operatingHours', operatingHours);
   };
 
@@ -254,11 +237,7 @@ export function StoreConfigPage() {
         <Container fluid w="100%" px="md">
           <Group justify="space-between">
             {currentStore ? (
-              <Button
-                variant="light"
-                size="sm"
-                onClick={() => navigate(ROUTERS.STORES)}
-              >
+              <Button variant="light" size="sm" onClick={() => navigate(ROUTERS.STORES)}>
                 {t('store.viewAllStores')}
               </Button>
             ) : (
@@ -278,25 +257,17 @@ export function StoreConfigPage() {
             width: '100%',
           }}
         >
-          <Box style={{width: '100%'}}>
-            <Transition
-              mounted
-              transition="slide-up"
-              duration={400}
-              timingFunction="ease"
-            >
+          <Box style={{ width: '100%' }}>
+            <Transition mounted transition="slide-up" duration={400} timingFunction="ease">
               {() => (
                 <Card shadow="sm" padding="xl" radius="md">
                   <LoadingOverlay
                     visible={isLoading}
-                    overlayProps={{blur: 2}}
-                    transitionProps={{duration: 300}}
+                    overlayProps={{ blur: 2 }}
+                    transitionProps={{ duration: 300 }}
                   />
                   <Transition
-                    mounted={Boolean(
-                      showAlert &&
-                        (error || Object.keys(form.errors).length > 0),
-                    )}
+                    mounted={Boolean(showAlert && (error || Object.keys(form.errors).length > 0))}
                     transition="fade"
                     duration={300}
                     timingFunction="ease"

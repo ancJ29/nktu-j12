@@ -1,9 +1,9 @@
 import type * as z from 'zod/v4';
-import {addApiError} from '@/stores/error';
-import {authService} from '@/services/auth';
-import {cleanObject} from '@/utils/object';
-import {isDevelopment} from '@/utils/env';
-import {delay} from '@/utils/time';
+import { addApiError } from '@/stores/error';
+import { authService } from '@/services/auth';
+import { cleanObject } from '@/utils/object';
+import { isDevelopment } from '@/utils/env';
+import { delay } from '@/utils/time';
 
 type ApiConfig = {
   baseURL: string;
@@ -68,10 +68,7 @@ export class BaseApiClient {
    * Generates a cache key for a given endpoint and params
    * This is exposed for manual cache management
    */
-  public getCacheKey(
-    endpoint: string,
-    params?: Record<string, string | number | boolean>,
-  ): string {
+  public getCacheKey(endpoint: string, params?: Record<string, string | number | boolean>): string {
     return this.generateCacheKey(endpoint, params);
   }
 
@@ -126,11 +123,11 @@ export class BaseApiClient {
     const cacheKey = this.generateCacheKey(endpoint, cleanParams);
     const cachedData = this.getCachedData<T>(cacheKey);
     if (cachedData !== undefined) {
-      console.ignore?.('get data from cache!!!', {endpoint});
+      console.ignore?.('get data from cache!!!', { endpoint });
       return cachedData;
     }
 
-    console.ignore?.('no cached data!!!', {endpoint});
+    console.ignore?.('no cached data!!!', { endpoint });
 
     if (this.locks.has(cacheKey)) {
       console.ignore?.('race condition!!!');
@@ -151,7 +148,9 @@ export class BaseApiClient {
       this.setCachedData(cacheKey, result);
       return result;
     } catch (error) {
-      console.error(error);
+      if (isDevelopment) {
+        console.error(error);
+      }
       throw error;
     } finally {
       this.locks.delete(cacheKey);
@@ -163,13 +162,20 @@ export class BaseApiClient {
     data?: unknown,
     schema?: z.ZodSchema<T>,
     dataSchema?: z.ZodSchema<R>,
+    options?: { noError: boolean },
   ): Promise<T> {
     data = dataSchema?.parse(data) ?? data;
-    const result = await this.request<T>(endpoint, {
-      method: 'POST',
-      body: data ? JSON.stringify(data) : undefined,
-      schema,
-    });
+    const result = await this.request<T>(
+      endpoint,
+      {
+        method: 'POST',
+        body: data ? JSON.stringify(data) : undefined,
+        schema,
+      },
+      {
+        noError: options?.noError ?? false,
+      },
+    );
 
     // Invalidate related cache entries
     this.invalidateRelatedCache(endpoint);
@@ -287,8 +293,11 @@ export class BaseApiClient {
   private async request<T>(
     endpoint: string,
     config: RequestConfig<T> = {},
+    options?: {
+      noError: boolean;
+    },
   ): Promise<T> {
-    const {params, schema, ...init} = config;
+    const { params, schema, ...init } = config;
     // Add configurable delay in development mode
     if (isDevelopment) {
       const delayMs = Number(import.meta.env.VITE_DEV_API_DELAY) || 0;
@@ -361,13 +370,9 @@ export class BaseApiClient {
       }
 
       if (!response.ok) {
-        const apiError = new ApiError(
-          response.status,
-          response.statusText,
-          data,
-        );
+        const apiError = new ApiError(response.status, response.statusText, data);
         // Log to error store in development
-        if (isDevelopment) {
+        if (!options?.noError && isDevelopment) {
           addApiError(apiError.message, response.status, endpoint, {
             method: init.method ?? 'GET',
             url: url.toString(),
@@ -394,8 +399,7 @@ export class BaseApiClient {
             addApiError(validationError.message, 422, endpoint, {
               method: init.method ?? 'GET',
               url: url.toString(),
-              validationError:
-                error instanceof Error ? error.message : 'Validation failed',
+              validationError: error instanceof Error ? error.message : 'Validation failed',
               receivedData: data,
             });
           }

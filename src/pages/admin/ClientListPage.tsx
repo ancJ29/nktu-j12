@@ -1,63 +1,36 @@
-import {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { Container, Title, Stack, Card, Group, Button, Text, SimpleGrid } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { IconPlus, IconUsers } from '@tabler/icons-react';
+import { useTranslation } from '@/hooks/useTranslation';
+import { useClients, useClientError, useClientActions } from '@/stores/useClientStore';
+import { ErrorAlert, GoBack } from '@/components/common';
 import {
-  Container,
-  Title,
-  Stack,
-  Card,
-  Group,
-  Button,
-  Text,
-  SimpleGrid,
-} from '@mantine/core';
-import {useDisclosure} from '@mantine/hooks';
-import {notifications} from '@mantine/notifications';
-import {
-  IconPlus,
-  IconUsers,
-  IconAlertTriangle,
-  IconCheck,
-  IconBan,
-  IconTrash,
-} from '@tabler/icons-react';
-import {useIsDarkMode} from '@/hooks/useIsDarkMode';
-import {useTranslation} from '@/hooks/useTranslation';
-import {
-  useClients,
-  useClientError,
-  useClientActions,
-} from '@/stores/useClientStore';
-import {ErrorAlert, GoBack} from '@/components/common';
-import {
-  ClientCard,
-  ClientActionModal,
-} from '@/components/admin/ClientManagementComponents';
-import type {Client} from '@/lib/api';
-import {ROUTERS, getAdminClientDetailRoute} from '@/config/routeConfig';
+  showErrorNotification,
+  showInfoNotification,
+  showSuccessNotification,
+} from '@/utils/notifications';
+import { ClientCard, ClientActionModal } from '@/components/admin/ClientManagementComponents';
+import type { Client } from '@/lib/api';
+import { ROUTERS, getAdminClientDetailRoute } from '@/config/routeConfig';
 
 type Action = 'suspend' | 'reactivate' | 'delete';
 
 export function ClientListPage() {
   const navigate = useNavigate();
-  const [modalOpened, {open: openModal, close: closeModal}] =
-    useDisclosure(false);
+  const [modalOpened, { open: openModal, close: closeModal }] = useDisclosure(false);
   const [selectedClient, setSelectedClient] = useState<Client>();
   const [actionType, setActionType] = useState<Action>('suspend');
   const [deleteConfirmCode, setDeleteConfirmCode] = useState('');
   const [deleteReason, setDeleteReason] = useState('');
   const [suspendReason, setSuspendReason] = useState('');
-  const {t} = useTranslation();
-  const isDarkMode = useIsDarkMode();
+  const { t } = useTranslation();
 
   const clients = useClients();
   const error = useClientError();
-  const {
-    loadClients,
-    suspendClient,
-    reactivateClient,
-    hardDeleteClient,
-    clearError,
-  } = useClientActions();
+  const { loadClients, suspendClient, reactivateClient, hardDeleteClient, clearError } =
+    useClientActions();
 
   useEffect(() => {
     const load = async () => {
@@ -93,76 +66,60 @@ export function ClientListPage() {
     switch (actionType) {
       case 'suspend': {
         if (!suspendReason.trim()) {
-          notifications.show({
-            title: t('validation.error'),
-            message: t('admin.clients.validation.suspendReasonRequired'),
-            color: 'red',
-            icon: <IconAlertTriangle size={16} />,
-          });
+          showErrorNotification(
+            t('validation.error'),
+            t('admin.clients.validation.suspendReasonRequired'),
+          );
           return;
         }
 
         await suspendClient(selectedClient.clientCode, suspendReason);
-        notifications.show({
-          title: t('admin.clients.clientSuspended'),
-          message: t('admin.clients.clientSuspendedMessage', {
+        showInfoNotification(
+          t('admin.clients.clientSuspended'),
+          t('admin.clients.clientSuspendedMessage', {
             name: selectedClient.clientName,
           }),
-          color: isDarkMode ? 'yellow.7' : 'yellow.9',
-          icon: <IconBan size={16} />,
-        });
+        );
 
         break;
       }
 
       case 'reactivate': {
         await reactivateClient(selectedClient.clientCode);
-        notifications.show({
-          title: t('admin.clients.clientActivated'),
-          message: t('admin.clients.clientActivatedMessage', {
+        showSuccessNotification(
+          t('admin.clients.clientActivated'),
+          t('admin.clients.clientActivatedMessage', {
             name: selectedClient.clientName,
           }),
-          color: isDarkMode ? 'green.7' : 'green.9',
-          icon: <IconCheck size={16} />,
-        });
+        );
 
         break;
       }
 
       case 'delete': {
         if (deleteConfirmCode !== selectedClient.clientCode) {
-          notifications.show({
-            title: t('validation.error'),
-            message: t('admin.clients.validation.confirmCodeMismatch'),
-            color: 'red',
-            icon: <IconAlertTriangle size={16} />,
-          });
+          showErrorNotification(
+            t('validation.error'),
+            t('admin.clients.validation.confirmCodeMismatch'),
+          );
           return;
         }
 
         if (!deleteReason.trim()) {
-          notifications.show({
-            title: t('validation.error'),
-            message: t('admin.clients.validation.deleteReasonRequired'),
-            color: 'red',
-            icon: <IconAlertTriangle size={16} />,
-          });
+          showErrorNotification(
+            t('validation.error'),
+            t('admin.clients.validation.deleteReasonRequired'),
+          );
           return;
         }
 
-        await hardDeleteClient(
-          selectedClient.clientCode,
-          deleteConfirmCode,
-          deleteReason,
-        );
-        notifications.show({
-          title: t('admin.clients.clientDeleted'),
-          message: t('admin.clients.clientDeletedMessage', {
+        await hardDeleteClient(selectedClient.clientCode, deleteConfirmCode, deleteReason);
+        showErrorNotification(
+          t('admin.clients.clientDeleted'),
+          t('admin.clients.clientDeletedMessage', {
             name: selectedClient.clientName,
           }),
-          color: 'red',
-          icon: <IconTrash size={16} />,
-        });
+        );
 
         break;
       }
@@ -216,7 +173,7 @@ export function ClientListPage() {
               </Stack>
             </Card>
           ) : (
-            <SimpleGrid cols={{base: 1, sm: 2, lg: 3}} spacing="lg">
+            <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="lg">
               {clients.map((client) => (
                 <ClientCard
                   key={client.id}
@@ -224,9 +181,7 @@ export function ClientListPage() {
                   onSuspend={handleSuspendClient}
                   onReactivate={handleReactivateClient}
                   onDelete={handleDeleteClient}
-                  onViewDetails={(clientCode) =>
-                    navigate(getAdminClientDetailRoute(clientCode))
-                  }
+                  onViewDetails={(clientCode) => navigate(getAdminClientDetailRoute(clientCode))}
                 />
               ))}
             </SimpleGrid>

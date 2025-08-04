@@ -1,18 +1,25 @@
-import {BaseApiClient} from '../base';
+import { BaseApiClient } from '../base';
 import {
   GetUsersRequestSchema,
   GetUsersResponseSchema,
+  GetMagicLinkResponseSchema,
   type GetUsersRequest,
   type GetUsersResponse,
+  type GetMagicLinkResponse,
 } from '../schemas/user.schemas';
 
 export class UserApi extends BaseApiClient {
-  async getUsers(params?: GetUsersRequest): Promise<GetUsersResponse> {
-    return this.get(
-      '/users',
-      params,
-      GetUsersResponseSchema,
-      GetUsersRequestSchema,
+  async getMagicLink(id: string): Promise<GetMagicLinkResponse> {
+    return this.post(
+      `/api/users/${id}/magic-link`,
+      {
+        reason: 'request from client',
+      },
+      GetMagicLinkResponseSchema,
     );
+  }
+
+  async getUsers(params?: GetUsersRequest): Promise<GetUsersResponse> {
+    return this.get('/api/users', params, GetUsersResponseSchema, GetUsersRequestSchema);
   }
 }

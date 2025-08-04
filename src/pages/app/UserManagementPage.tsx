@@ -1,5 +1,5 @@
-import {useState, useEffect, useCallback} from 'react';
-import {Navigate, useNavigate} from 'react-router';
+import { useState, useEffect, useCallback } from 'react';
+import { Navigate, useNavigate } from 'react-router';
 import {
   Button,
   Paper,
@@ -20,33 +20,28 @@ import {
   TextInput,
   PasswordInput,
 } from '@mantine/core';
-import {useForm} from '@mantine/form';
-import {useDisclosure} from '@mantine/hooks';
-import {modals} from '@mantine/modals';
-import {notifications} from '@mantine/notifications';
+import { useForm } from '@mantine/form';
+import { useDisclosure } from '@mantine/hooks';
+import { modals } from '@mantine/modals';
 import {
   IconUserPlus,
   IconEye,
   IconEdit,
   IconTrash,
   IconAlertCircle,
-  IconUser,
   IconFileSpreadsheet,
 } from '@tabler/icons-react';
-import {useTranslation} from '@/hooks/useTranslation';
-import {
-  getFormValidators,
-  validateIdentifier,
-  validateEmail,
-} from '@/utils/validation';
-import {FirstNameAndLastNameInForm} from '@/components/form/FirstNameAndLastNameInForm';
-import {useAppStore} from '@/stores/useAppStore';
-import {delay} from '@/utils/time';
+import { showErrorNotification, showSuccessNotification } from '@/utils/notifications';
+import { useTranslation } from '@/hooks/useTranslation';
+import { getFormValidators, validateIdentifier, validateEmail } from '@/utils/validation';
+import { FirstNameAndLastNameInForm } from '@/components/form/FirstNameAndLastNameInForm';
+import { useAppStore } from '@/stores/useAppStore';
+import { delay } from '@/utils/time';
 import i18n from '@/lib/i18n';
-import {getLocaleConfig} from '@/config/localeConfig';
-import {userService, type User} from '@/services/user';
-import {DataTable, GoBack} from '@/components/common';
-import {ROUTERS, getUserDetailRoute} from '@/config/routeConfig';
+import { getLocaleConfig } from '@/config/localeConfig';
+import { userService, type User } from '@/services/user/user';
+import { DataTable, GoBack } from '@/components/common';
+import { ROUTERS, getUserDetailRoute } from '@/config/routeConfig';
 
 type EditUserFormValues = {
   email: string;
@@ -57,8 +52,6 @@ type EditUserFormValues = {
   confirmPassword?: string;
 };
 
-const USERS_PER_PAGE = 10;
-
 const getDisplayName = (firstName: string, lastName: string) => {
   const localeConfig = getLocaleConfig(i18n.language);
   return localeConfig.nameOrder === 'family-first'
@@ -68,13 +61,13 @@ const getDisplayName = (firstName: string, lastName: string) => {
 
 export function UserManagementPage() {
   const navigate = useNavigate();
-  const {t} = useTranslation();
-  const {user} = useAppStore();
+  const { t } = useTranslation();
+  const { user } = useAppStore();
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | undefined>(undefined);
   const [showAlert, setShowAlert] = useState(false);
-  const [editOpened, {open: openEdit, close: closeEdit}] = useDisclosure(false);
+  const [editOpened, { open: openEdit, close: closeEdit }] = useDisclosure(false);
 
   const form = useForm<EditUserFormValues>({
     initialValues: {
@@ -98,12 +91,9 @@ export function UserManagementPage() {
       },
       confirmPassword(value?: string): string | undefined {
         if (form.values.password && form.values.password.length > 0) {
-          return getFormValidators(t, ['confirmPassword']).confirmPassword(
-            value ?? '',
-            {
-              password: form.values.password,
-            },
-          );
+          return getFormValidators(t, ['confirmPassword']).confirmPassword(value ?? '', {
+            password: form.values.password,
+          });
         }
 
         return undefined;
@@ -115,18 +105,11 @@ export function UserManagementPage() {
     try {
       setIsLoading(true);
 
-      const users = await userService.getUsers({
-        limit: USERS_PER_PAGE,
-      });
+      const users = await userService.getUsers();
 
       setUsers(users);
     } catch {
-      notifications.show({
-        title: t('common.error'),
-        message: t('common.loadingFailed'),
-        color: 'red',
-        icon: <IconAlertCircle size={16} />,
-      });
+      showErrorNotification(t('common.error'), t('common.loadingFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -159,8 +142,8 @@ export function UserManagementPage() {
           })}
         </Text>
       ),
-      labels: {confirm: t('common.delete'), cancel: t('common.cancel')},
-      confirmProps: {color: 'red'},
+      labels: { confirm: t('common.delete'), cancel: t('common.cancel') },
+      confirmProps: { color: 'red' },
       async onConfirm() {
         try {
           setIsLoading(true);
@@ -171,19 +154,9 @@ export function UserManagementPage() {
           // Remove user from local state
           setUsers((prev) => prev.filter((u) => u.id !== user.id));
 
-          notifications.show({
-            title: t('common.success'),
-            message: t('common.userDeleted'),
-            color: 'green',
-            icon: <IconTrash size={16} />,
-          });
+          showSuccessNotification(t('common.success'), t('common.userDeleted'));
         } catch {
-          notifications.show({
-            title: t('common.error'),
-            message: t('common.deleteFailed'),
-            color: 'red',
-            icon: <IconAlertCircle size={16} />,
-          });
+          showErrorNotification(t('common.error'), t('common.deleteFailed'));
         } finally {
           setIsLoading(false);
         }
@@ -213,22 +186,12 @@ export function UserManagementPage() {
         ),
       );
 
-      notifications.show({
-        title: t('common.success'),
-        message: t('common.userUpdated'),
-        color: 'green',
-        icon: <IconUser size={16} />,
-      });
+      showSuccessNotification(t('common.success'), t('common.userUpdated'));
       closeEdit();
       form.reset();
     } catch {
       setShowAlert(true);
-      notifications.show({
-        title: t('common.error'),
-        message: t('common.updateFailed'),
-        color: 'red',
-        icon: <IconAlertCircle size={16} />,
-      });
+      showErrorNotification(t('common.error'), t('common.updateFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -274,11 +237,11 @@ export function UserManagementPage() {
 
         <Paper withBorder shadow="md" p="md" radius="md">
           <Stack gap="md">
-            <Box style={{position: 'relative'}}>
+            <Box style={{ position: 'relative' }}>
               <LoadingOverlay
                 visible={isLoading ? !editOpened : false}
-                overlayProps={{blur: 2}}
-                transitionProps={{duration: 300}}
+                overlayProps={{ blur: 2 }}
+                transitionProps={{ duration: 300 }}
               />
 
               {/* Desktop Table View */}
@@ -291,10 +254,7 @@ export function UserManagementPage() {
                         <Group justify="space-between" align="flex-start">
                           <Box>
                             <Text fw={500} size="sm">
-                              {getDisplayName(
-                                user.firstName || '',
-                                user.lastName || '',
-                              )}
+                              {getDisplayName(user.firstName || '', user.lastName || '')}
                             </Text>
                             {user.email ? (
                               <Text size="xs" c="dimmed">
@@ -398,17 +358,9 @@ export function UserManagementPage() {
                       header: t('common.name'),
                       render: (user: User) => (
                         <Text fw={500}>
-                          {getDisplayName(
-                            user.firstName || '',
-                            user.lastName || '',
-                          )}
+                          {getDisplayName(user.firstName || '', user.lastName || '')}
                           {user.isRoot ? (
-                            <Badge
-                              color="blue"
-                              variant="light"
-                              size="xs"
-                              ml="xs"
-                            >
+                            <Badge color="blue" variant="light" size="xs" ml="xs">
                               Root
                             </Badge>
                           ) : null}
@@ -418,16 +370,12 @@ export function UserManagementPage() {
                     {
                       key: 'email',
                       header: t('auth.email'),
-                      render: (user: User) => (
-                        <Text size="sm">{user.email || '-'}</Text>
-                      ),
+                      render: (user: User) => <Text size="sm">{user.email || '-'}</Text>,
                     },
                     {
                       key: 'userName',
                       header: t('auth.userName'),
-                      render: (user: User) => (
-                        <Text size="sm">{user.userName || '-'}</Text>
-                      ),
+                      render: (user: User) => <Text size="sm">{user.userName || '-'}</Text>,
                     },
                   ]}
                 />
@@ -450,11 +398,11 @@ export function UserManagementPage() {
         size="md"
         onClose={closeEdit}
       >
-        <Box style={{position: 'relative'}}>
+        <Box style={{ position: 'relative' }}>
           <LoadingOverlay
             visible={isLoading}
-            overlayProps={{blur: 2}}
-            transitionProps={{duration: 300}}
+            overlayProps={{ blur: 2 }}
+            transitionProps={{ duration: 300 }}
           />
 
           <form onSubmit={form.onSubmit(handleSaveUser)}>
@@ -512,9 +460,7 @@ export function UserManagementPage() {
               />
 
               <Transition
-                mounted={Boolean(
-                  showAlert && Object.keys(form.errors).length > 0,
-                )}
+                mounted={Boolean(showAlert && Object.keys(form.errors).length > 0)}
                 transition="fade"
                 duration={300}
                 timingFunction="ease"
@@ -536,11 +482,7 @@ export function UserManagementPage() {
               </Transition>
 
               <Group justify="flex-end" mt="md">
-                <Button
-                  variant="outline"
-                  disabled={isLoading}
-                  onClick={closeEdit}
-                >
+                <Button variant="outline" disabled={isLoading} onClick={closeEdit}>
                   {t('common.cancel')}
                 </Button>
                 <Button type="submit">{t('common.save')}</Button>

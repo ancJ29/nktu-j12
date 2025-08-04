@@ -1,5 +1,5 @@
-import {useState} from 'react';
-import {Navigate, useNavigate} from 'react-router';
+import { useState } from 'react';
+import { Navigate, useNavigate } from 'react-router';
 import {
   Button,
   Group,
@@ -14,26 +14,17 @@ import {
   Box,
   Card,
 } from '@mantine/core';
-import {useForm} from '@mantine/form';
-import {notifications} from '@mantine/notifications';
-import {
-  IconAlertCircle,
-  IconUserPlus,
-  IconFileSpreadsheet,
-} from '@tabler/icons-react';
-import {useIsDarkMode} from '@/hooks/useIsDarkMode';
-import {useTranslation} from '@/hooks/useTranslation';
-import {
-  getFormValidators,
-  validateIdentifier,
-  validateEmail,
-} from '@/utils/validation';
-import {clientService} from '@/services/client';
-import {FirstNameAndLastNameInForm} from '@/components/form/FirstNameAndLastNameInForm';
-import {useAppStore} from '@/stores/useAppStore';
-import {GoBack} from '@/components/common';
-import {isDevelopment} from '@/utils/env';
-import {ROUTERS} from '@/config/routeConfig';
+import { useForm } from '@mantine/form';
+import { IconAlertCircle, IconFileSpreadsheet } from '@tabler/icons-react';
+import { showErrorNotification, showSuccessNotification } from '@/utils/notifications';
+import { useTranslation } from '@/hooks/useTranslation';
+import { getFormValidators, validateIdentifier, validateEmail } from '@/utils/validation';
+import { clientService } from '@/services/client';
+import { FirstNameAndLastNameInForm } from '@/components/form/FirstNameAndLastNameInForm';
+import { useAppStore } from '@/stores/useAppStore';
+import { GoBack } from '@/components/common';
+import { isDevelopment } from '@/utils/env';
+import { ROUTERS } from '@/config/routeConfig';
 
 type AddUserFormValues = {
   email?: string;
@@ -48,9 +39,8 @@ export function AddUserPage() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
-  const {t} = useTranslation();
-  const {user} = useAppStore();
-  const isDarkMode = useIsDarkMode();
+  const { t } = useTranslation();
+  const { user } = useAppStore();
 
   const form = useForm<AddUserFormValues>({
     initialValues: isDevelopment
@@ -71,12 +61,7 @@ export function AddUserPage() {
           confirmPassword: '',
         },
     validate: {
-      ...getFormValidators(t, [
-        'firstName',
-        'lastName',
-        'password',
-        'confirmPassword',
-      ]),
+      ...getFormValidators(t, ['firstName', 'lastName', 'password', 'confirmPassword']),
       email(value?: string) {
         if (!value) {
           return undefined;
@@ -110,18 +95,12 @@ export function AddUserPage() {
         lastName: values.lastName,
       });
 
-      notifications.show({
-        title: t('auth.userAdded'),
-        message: `User ${values.email} added successfully`,
-        color: isDarkMode ? 'green.7' : 'green.9',
-        icon: <IconUserPlus size={16} />,
-      });
+      showSuccessNotification(t('auth.userAdded'), `User ${values.email} added successfully`);
 
       // Reset form
       form.reset();
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : t('auth.addUserFailed');
+      const errorMessage = error instanceof Error ? error.message : t('auth.addUserFailed');
 
       form.setErrors({
         email: '',
@@ -133,12 +112,7 @@ export function AddUserPage() {
 
       setShowAlert(true);
 
-      notifications.show({
-        title: t('auth.addUserFailed'),
-        message: errorMessage,
-        color: 'red',
-        icon: <IconAlertCircle size={16} />,
-      });
+      showErrorNotification(t('auth.addUserFailed'), errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -181,19 +155,14 @@ export function AddUserPage() {
             padding: '0 16px',
           }}
         >
-          <Box style={{maxWidth: '600px', width: '100%'}}>
-            <Transition
-              mounted
-              transition="slide-up"
-              duration={400}
-              timingFunction="ease"
-            >
+          <Box style={{ maxWidth: '600px', width: '100%' }}>
+            <Transition mounted transition="slide-up" duration={400} timingFunction="ease">
               {() => (
                 <Card shadow="sm" padding="xl" radius="md">
                   <LoadingOverlay
                     visible={isLoading}
-                    overlayProps={{blur: 2}}
-                    transitionProps={{duration: 300}}
+                    overlayProps={{ blur: 2 }}
+                    transitionProps={{ duration: 300 }}
                   />
                   <form onSubmit={form.onSubmit(handleSubmit)}>
                     <Stack gap="lg">
@@ -250,9 +219,7 @@ export function AddUserPage() {
                       />
 
                       <Transition
-                        mounted={Boolean(
-                          showAlert && Object.keys(form.errors).length > 0,
-                        )}
+                        mounted={Boolean(showAlert && Object.keys(form.errors).length > 0)}
                         transition="fade"
                         duration={300}
                         timingFunction="ease"

@@ -1,20 +1,11 @@
-import {useState} from 'react';
-import {useNavigate} from 'react-router';
-import {
-  Stack,
-  Group,
-  Box,
-  SimpleGrid,
-  Select,
-  SegmentedControl,
-  Badge,
-  Button,
-} from '@mantine/core';
-import {IconUser, IconFilter} from '@tabler/icons-react';
-import {useTranslation} from '@/hooks/useTranslation';
-import {useClientSidePagination} from '@/hooks/useClientSidePagination';
-import {useOnce} from '@/hooks/useOnce';
-import type {Employee} from '@/services/hr/employee';
+import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router';
+import { Stack, Group, Box, SimpleGrid, Select, SegmentedControl } from '@mantine/core';
+import { IconUser } from '@tabler/icons-react';
+import { useTranslation } from '@/hooks/useTranslation';
+import { useClientSidePagination } from '@/hooks/useClientSidePagination';
+import { useOnce } from '@/hooks/useOnce';
+import { useEmployeeFilters } from '@/hooks/useEmployeeFilters';
 import {
   useEmployeeList,
   useHrLoading,
@@ -30,54 +21,46 @@ import {
   BlankState,
   AppMobileLayout,
   AppDesktopLayout,
-  Drawer,
 } from '@/components/common';
 import {
   EmployeeCard,
   EmployeeDataTable,
   EmployeeGridCard,
+  EmployeeListSkeleton,
+  EmployeeFilterBar,
+  EmployeeUnitDrawer,
+  EmployeeStatusDrawer,
 } from '@/components/app/employee';
-import useIsDesktop from '@/hooks/useIsDesktop';
-import {ROUTERS} from '@/config/routeConfig';
-import {useMobileDrawer} from '@/hooks/useMobileDrawer';
-
-interface EmployeeFilters {
-  searchQuery: string;
-  unitId: string | undefined;
-  status: 'all' | 'active' | 'inactive';
-}
+import { useIsDesktop } from '@/hooks/useIsDesktop';
+import { ROUTERS } from '@/config/routeConfig';
+import { EMPLOYEE_STATUS, VIEW_MODE, type ViewModeType } from '@/constants/employee';
+import { useDisclosure } from '@mantine/hooks';
 
 export function EmployeeListPage() {
   const navigate = useNavigate();
   const isDesktop = useIsDesktop();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const employees = useEmployeeList();
   const units = useUnitList();
   const isLoading = useHrLoading();
   const error = useHrError();
-  const {refreshEmployees, clearError, loadUnits} = useHrActions();
-  const [filters, setFilters] = useState<EmployeeFilters>({
-    searchQuery: '',
-    unitId: undefined,
-    status: 'all',
-  });
-  const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
-  const {
-    filterDrawerOpened,
-    drawerExpanded,
-    openFilterDrawer,
-    setDrawerExpanded,
-    handleDrawerClose,
-  } = useMobileDrawer();
+  const { refreshEmployees, clearError, loadUnits } = useHrActions();
 
-  // Use client-side pagination hook
-  const [paginatedEmployees, paginationState, paginationHandlers] =
-    useClientSidePagination({
-      data: employees,
-      filterFn: employeeFilterFn,
-      filters,
-      defaultPageSize: isDesktop ? undefined : 1000,
-    });
+  // Use the new employee filters hook
+  const [filteredEmployees, filters, filterHandlers] = useEmployeeFilters(employees);
+
+  const [viewMode, setViewMode] = useState<ViewModeType>(VIEW_MODE.TABLE);
+
+  // Drawer states using Mantine's useDisclosure directly
+  const [unitDrawerOpened, { open: openUnitDrawer, close: closeUnitDrawer }] = useDisclosure(false);
+  const [statusDrawerOpened, { open: openStatusDrawer, close: closeStatusDrawer }] =
+    useDisclosure(false);
+
+  // Use client-side pagination hook with filtered employees
+  const [paginatedEmployees, paginationState, paginationHandlers] = useClientSidePagination({
+    data: filteredEmployees,
+    defaultPageSize: isDesktop ? undefined : 1000,
+  });
 
   useOnce(() => {
     void refreshEmployees();
@@ -85,105 +68,71 @@ export function EmployeeListPage() {
   });
 
   // Prepare department options for select
-  const unitOptions = units.map((unit) => ({
-    value: unit.id,
-    label: unit.name,
-  }));
+  const unitOptions = useMemo(
+    () =>
+      units.map((unit) => ({
+        value: unit.id,
+        label: unit.name,
+      })),
+    [units],
+  );
+
+  // Check if any filters are active
+  const hasActiveFilters = !!(
+    filters.searchQuery ||
+    filters.unitId ||
+    filters.status !== EMPLOYEE_STATUS.ALL
+  );
+
+  // Clear all filters
+  const clearAllFilters = () => {
+    filterHandlers.setSearchQuery('');
+    filterHandlers.setUnitId(undefined);
+    filterHandlers.setStatus(EMPLOYEE_STATUS.ALL);
+  };
 
   if (!isDesktop) {
     return (
       <AppMobileLayout
-        withLogo
+        showLogo
         isLoading={isLoading}
         error={error}
         clearError={clearError}
         header={<AppPageTitle title={t('employee.title')} />}
       >
-        {/* Search & Filter Controls */}
-        <Stack gap="sm" p="sm">
-          <Group justify="space-between" align="center">
-            <Button
-              variant="subtle"
-              leftSection={<IconFilter size={20} />}
-              size="compact-md"
-              onClick={openFilterDrawer}
-            >
-              {t('common.filter')}
-            </Button>
-            <Group gap="xs">
-              {/* Show active filter indicators */}
-              {filters.searchQuery ? (
-                <Badge size="sm" variant="light" color="gray">
-                  {t('common.search')}: {filters.searchQuery}
-                </Badge>
-              ) : null}
-              {filters.unitId ? (
-                <Badge size="sm" variant="light" color="gray">
-                  {units.find((unit) => unit.id === filters.unitId)?.name}
-                </Badge>
-              ) : null}
-              {filters.status !== 'all' && (
-                <Badge size="sm" variant="light" color="gray">
-                  {t(`employee.${filters.status}`)}
-                </Badge>
-              )}
-            </Group>
-          </Group>
-        </Stack>
+        {/* Filter Bar */}
+        <EmployeeFilterBar
+          searchQuery={filters.searchQuery}
+          unitId={filters.unitId}
+          status={filters.status}
+          units={units}
+          hasActiveFilters={hasActiveFilters}
+          onSearchChange={filterHandlers.setSearchQuery}
+          onUnitClick={openUnitDrawer}
+          onStatusClick={openStatusDrawer}
+          onClearFilters={clearAllFilters}
+        />
 
-        {/* Filter Drawer */}
-        <Drawer
-          expandable
-          opened={filterDrawerOpened}
-          size="300px"
-          title={t('employee.filterTitle')}
-          expanded={drawerExpanded}
-          onClose={handleDrawerClose}
-          onExpandedChange={setDrawerExpanded}
-        >
-          <Stack gap="md">
-            {paginationState.totalPages}
-            <SearchBar
-              hidden={paginationState.totalPages < 2}
-              placeholder={t('employee.searchPlaceholder')}
-              searchQuery={filters.searchQuery}
-              setSearchQuery={(query) => {
-                setFilters({...filters, searchQuery: query});
-              }}
-            />
-            <Select
-              clearable
-              searchable
-              placeholder={t('employee.selectUnit')}
-              data={[{value: '', label: t('employee.allUnit')}, ...unitOptions]}
-              value={filters.unitId || ''}
-              onChange={(value) => {
-                setFilters({...filters, unitId: value || undefined});
-              }}
-            />
-            <SegmentedControl
-              value={filters.status}
-              data={[
-                {label: t('employee.all'), value: 'all'},
-                {label: t('employee.active'), value: 'active'},
-                {label: t('employee.inactive'), value: 'inactive'},
-              ]}
-              onChange={(value) => {
-                setFilters({
-                  ...filters,
-                  status: value as 'all' | 'active' | 'inactive',
-                });
-              }}
-            />
-            <Button fullWidth onClick={handleDrawerClose}>
-              {t('common.applyFilter')}
-            </Button>
-          </Stack>
-        </Drawer>
+        {/* Unit Selection Drawer */}
+        <EmployeeUnitDrawer
+          opened={unitDrawerOpened}
+          units={units}
+          selectedUnitId={filters.unitId}
+          onClose={closeUnitDrawer}
+          onUnitSelect={filterHandlers.setUnitId}
+        />
+
+        {/* Status Selection Drawer */}
+        <EmployeeStatusDrawer
+          opened={statusDrawerOpened}
+          selectedStatus={filters.status}
+          onClose={closeStatusDrawer}
+          onStatusSelect={filterHandlers.setStatus}
+        />
 
         <BlankState
           hidden={paginationState.totalItems > 0 || isLoading}
-          icon={<IconUser size={48} color="var(--mantine-color-gray-5)" />}
+          icon={<IconUser size={48} color="var(--mantine-color-gray-5)" aria-hidden="true" />}
           title={
             filters.searchQuery
               ? t('employee.noEmployeesFoundSearch')
@@ -196,22 +145,22 @@ export function EmployeeListPage() {
           }
         />
         <Box mt="md">
-          <Stack gap="sm" px="sm">
-            {paginatedEmployees.map((employee) => (
-              <EmployeeCard key={employee.id} noActions employee={employee} />
-            ))}
-          </Stack>
+          {isLoading && employees.length === 0 ? (
+            <EmployeeListSkeleton count={5} />
+          ) : (
+            <Stack gap="sm" px="sm">
+              {paginatedEmployees.map((employee) => (
+                <EmployeeCard key={employee.id} noActions employee={employee} />
+              ))}
+            </Stack>
+          )}
         </Box>
       </AppMobileLayout>
     );
   }
 
   return (
-    <AppDesktopLayout
-      isLoading={isLoading}
-      error={error}
-      clearError={clearError}
-    >
+    <AppDesktopLayout isLoading={isLoading} error={error} clearError={clearError}>
       <AppPageTitle
         title={t('employee.title')}
         button={{
@@ -228,36 +177,31 @@ export function EmployeeListPage() {
           hidden={paginationState.totalPages < 2}
           placeholder={t('employee.searchPlaceholder')}
           searchQuery={filters.searchQuery}
-          setSearchQuery={(query) => {
-            setFilters({...filters, searchQuery: query});
-          }}
+          setSearchQuery={filterHandlers.setSearchQuery}
         />
         <Select
           clearable
           searchable
           placeholder={t('employee.selectUnit')}
-          data={[{value: '', label: t('employee.allUnit')}, ...unitOptions]}
+          data={[{ value: '', label: t('employee.allUnit') }, ...unitOptions]}
           value={filters.unitId || ''}
-          style={{flex: 1, maxWidth: 300}}
-          onChange={(value) => {
-            setFilters({...filters, unitId: value || undefined});
-          }}
+          style={{ flex: 1, maxWidth: 300 }}
+          onChange={(value) => filterHandlers.setUnitId(value || undefined)}
         />
         {/* Filter Controls */}
         <Group justify="space-between" align="center" gap="xl">
           <SegmentedControl
             value={filters.status}
             data={[
-              {label: t('employee.all'), value: 'all'},
-              {label: t('employee.active'), value: 'active'},
-              {label: t('employee.inactive'), value: 'inactive'},
+              { label: t('employee.all'), value: EMPLOYEE_STATUS.ALL },
+              { label: t('employee.active'), value: EMPLOYEE_STATUS.ACTIVE },
+              { label: t('employee.inactive'), value: EMPLOYEE_STATUS.INACTIVE },
             ]}
-            onChange={(value) => {
-              setFilters({
-                ...filters,
-                status: value as 'all' | 'active' | 'inactive',
-              });
-            }}
+            onChange={(value) =>
+              filterHandlers.setStatus(
+                value as (typeof EMPLOYEE_STATUS)[keyof typeof EMPLOYEE_STATUS],
+              )
+            }
           />
           <SwitchView viewMode={viewMode} setViewMode={setViewMode} />
         </Group>
@@ -266,7 +210,7 @@ export function EmployeeListPage() {
       <div>
         <BlankState
           hidden={paginationState.totalItems > 0 || isLoading}
-          icon={<IconUser size={48} color="var(--mantine-color-gray-5)" />}
+          icon={<IconUser size={48} color="var(--mantine-color-gray-5)" aria-hidden="true" />}
           title={
             filters.searchQuery
               ? t('employee.noEmployeesFoundSearch')
@@ -290,10 +234,12 @@ export function EmployeeListPage() {
         {paginationState.totalItems === 0 && !isLoading ? null : (
           <>
             {/* Desktop View - Table or Grid based on selection */}
-            {viewMode === 'table' ? (
+            {isLoading && employees.length === 0 ? (
+              <EmployeeListSkeleton viewMode={viewMode} count={10} />
+            ) : viewMode === VIEW_MODE.TABLE ? (
               <EmployeeDataTable noAction employees={paginatedEmployees} />
             ) : (
-              <SimpleGrid cols={{base: 1, md: 2, lg: 3}} spacing="lg">
+              <SimpleGrid cols={{ base: 1, md: 2, lg: 3 }} spacing="lg">
                 {paginatedEmployees.map((employee) => (
                   <EmployeeGridCard key={employee.id} employee={employee} />
                 ))}
@@ -313,37 +259,4 @@ export function EmployeeListPage() {
       />
     </AppDesktopLayout>
   );
-}
-
-// Employee filter function
-function employeeFilterFn(employee: Employee, filters: EmployeeFilters) {
-  const {searchQuery, unitId, status} = filters;
-
-  // Status filter
-  if (status !== 'all') {
-    const isActive = status === 'active';
-    if (employee.isActive !== isActive) {
-      return false;
-    }
-  }
-
-  // Department filter
-  if (unitId && employee.unitId !== unitId) {
-    return false;
-  }
-
-  // Search query filter
-  if (searchQuery.trim()) {
-    const lowerQuery = searchQuery.toLowerCase();
-    const fullName = `${employee.firstName} ${employee.lastName}`.toLowerCase();
-    const matchesSearch =
-      employee.firstName.toLowerCase().includes(lowerQuery) ||
-      employee.lastName.toLowerCase().includes(lowerQuery) ||
-      fullName.includes(lowerQuery);
-    if (!matchesSearch) {
-      return false;
-    }
-  }
-
-  return true;
 }

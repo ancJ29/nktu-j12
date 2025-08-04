@@ -1,23 +1,14 @@
-import {Group, Title} from '@mantine/core';
-import {useEffect, useState} from 'react';
-import {useAppStore} from '@/stores/useAppStore';
+import { Group, Title } from '@mantine/core';
+import { useLogoAndTitle } from '@/hooks/useLogoAndTitle';
 
 type AuthHeaderProps = {
   readonly title?: string;
 };
 
-export function AuthHeader({title: pageTitle = 'Credo'}: AuthHeaderProps) {
-  const {publicClientConfig} = useAppStore();
-  const [title, setTitle] = useState(pageTitle);
-  const [logoUrl, setLogoUrl] = useState('/logo.svg');
-
-  useEffect(() => {
-    setTitle(publicClientConfig?.clientName ?? title);
-    if (publicClientConfig?.logoUrl) {
-      setLogoUrl(publicClientConfig?.logoUrl);
-    }
-  }, [publicClientConfig, title]);
-
+export function AuthHeader({ title: pageTitle }: AuthHeaderProps) {
+  const { logoUrl, title } = useLogoAndTitle({ color: true });
+  // Use environment variable as default fallback
+  const defaultAppName = import.meta.env.VITE_APP_NAME || 'Credo';
   return (
     <Group justify="center" gap="md" mb="lg">
       <img
@@ -35,7 +26,7 @@ export function AuthHeader({title: pageTitle = 'Credo'}: AuthHeaderProps) {
         }}
         size="h2"
       >
-        {title}
+        {pageTitle || title || defaultAppName}
       </Title>
     </Group>
   );

@@ -4,6 +4,7 @@ export const ROUTERS = {
 
   // Auth routes
   LOGIN: '/login',
+  MAGIC_LINK: '/magic-link',
   CLIENT_LOGIN: '/:clientCode/login',
   FORGOT_PASSWORD: '/forgot-password',
   RESET_PASSWORD: '/reset-password',
@@ -78,14 +79,22 @@ export const ROUTERS = {
 export type RouteConfig = Partial<Record<keyof typeof ROUTERS, boolean>>;
 
 // Helper functions for parameterized routes
-export const getClientLoginRoute = (clientCode: string) =>
-  `/${clientCode}/login`;
 export const getEmployeeDetailRoute = (employeeId: string) =>
-  `/employees/${employeeId}`;
+  ROUTERS.EMPLOYEE_DETAIL.replace(':employeeId', employeeId);
 export const getEmployeeEditRoute = (employeeId: string) =>
-  `/employees/edit/${employeeId}`;
+  ROUTERS.EMPLOYEE_EDIT.replace(':employeeId', employeeId);
+export const getClientLoginRoute = (clientCode: string) => `/${clientCode}/login`;
 export const getStoreEditRoute = (storeId: string) => `/stores/edit/${storeId}`;
 export const getStaffEditRoute = (staffId: string) => `/staff/edit/${staffId}`;
 export const getUserDetailRoute = (userId: string) => `/user/${userId}`;
-export const getAdminClientDetailRoute = (clientCode: string) =>
-  `/admin/clients/${clientCode}`;
+export const getAdminClientDetailRoute = (clientCode: string) => `/admin/clients/${clientCode}`;
+
+// Customer management helper functions
+export const getCustomerDetailRoute = (customerId: string) =>
+  ROUTERS.CUSTOMER_DETAIL.replace(':customerId', customerId);
+export const getCustomerEditRoute = (customerId: string) =>
+  ROUTERS.CUSTOMER_EDIT.replace(':customerId', customerId);
+
+// PO management helper functions
+export const getPODetailRoute = (poId: string) => ROUTERS.PO_DETAIL.replace(':poId', poId);
+export const getPOEditRoute = (poId: string) => ROUTERS.PO_EDIT.replace(':poId', poId);

@@ -1,4 +1,4 @@
-import {getLocaleConfig} from '@/config/localeConfig';
+import { getLocaleConfig } from '@/config/localeConfig';
 import i18n from '@/lib/i18n';
 
 export function generateRandomString(length: number): string {
@@ -7,18 +7,23 @@ export function generateRandomString(length: number): string {
     .slice(2, 2 + length);
 }
 
+export function salaryFormat(salary: number) {
+  return salary.toLocaleString('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+  });
+}
+
 export function formatPhoneNumber(phoneNumber: string) {
-  return phoneNumber
-    .replace('+84', '0')
-    .replace(/(\d{4})(\d{3})(\d+)/, '$1-$2-$3');
+  return phoneNumber.replace('+84', '0').replace(/(\d{4})(\d{3})(\d+)/, '$1-$2-$3');
 }
 
 export function formatDate(date: string | Date) {
   if (date instanceof Date) {
-    return date.toLocaleDateString();
+    return date.toLocaleDateString('vi-VN');
   }
 
-  return new Date(date).toLocaleDateString();
+  return new Date(date).toLocaleDateString('vi-VN');
 }
 
 export function convertCamelCaseToText(text: string) {
@@ -187,12 +192,8 @@ export function renderFullName({
   const isVietnameseLocale = i18n.language === 'vi';
 
   // Normalize Vietnamese characters if displaying in English
-  const normalizedFirstName = isVietnameseLocale
-    ? firstName
-    : normalizeVietnameseChars(firstName);
-  const normalizedLastName = isVietnameseLocale
-    ? lastName
-    : normalizeVietnameseChars(lastName);
+  const normalizedFirstName = isVietnameseLocale ? firstName : normalizeVietnameseChars(firstName);
+  const normalizedLastName = isVietnameseLocale ? lastName : normalizeVietnameseChars(lastName);
 
   if (localeConfig.nameOrder === 'family-first') {
     return `${normalizedLastName} ${normalizedFirstName}`;

@@ -1,7 +1,6 @@
-import {useState} from 'react';
-import {notifications} from '@mantine/notifications';
-import {IconAlertCircle, IconCheck} from '@tabler/icons-react';
-import type {UseFormReturnType} from '@mantine/form';
+import { useState } from 'react';
+import type { UseFormReturnType } from '@mantine/form';
+import { showErrorNotification, showSuccessNotification } from '@/utils/notifications';
 
 type UseAuthFormOptions = {
   readonly onSuccess?: () => void;
@@ -23,51 +22,37 @@ export function useAuthForm<T extends Record<string, unknown>>(
     successTitle = 'Success',
     successMessage = 'Operation completed successfully',
     errorTitle = 'Error',
-    showSuccessNotification = true,
+    showSuccessNotification: shouldShowSuccessNotification = true,
   } = options;
 
   const clearErrors = () => {
     setShowAlert(false);
   };
 
-  const handleSubmit =
-    (submitFn: (values: T) => Promise<void>) => async (values: T) => {
-      try {
-        setIsLoading(true);
-        await submitFn(values);
+  const handleSubmit = (submitFn: (values: T) => Promise<void>) => async (values: T) => {
+    try {
+      setIsLoading(true);
+      await submitFn(values);
 
-        if (showSuccessNotification) {
-          notifications.show({
-            title: successTitle,
-            message: successMessage,
-            color: 'green',
-            icon: <IconCheck size={16} />,
-          });
-        }
-
-        onSuccess?.();
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'An error occurred';
-
-        const formFields = Object.keys(form.values);
-        const errors = Object.fromEntries(
-          formFields.map((field) => [field, ' ']),
-        );
-        form.setErrors(errors);
-
-        setShowAlert(true);
-
-        notifications.show({
-          title: errorTitle,
-          message: errorMessage,
-          color: 'red',
-          icon: <IconAlertCircle size={16} />,
-        });
-      } finally {
-        setIsLoading(false);
+      if (shouldShowSuccessNotification) {
+        showSuccessNotification(successTitle, successMessage);
       }
-    };
+
+      onSuccess?.();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+
+      const formFields = Object.keys(form.values);
+      const errors = Object.fromEntries(formFields.map((field) => [field, ' ']));
+      form.setErrors(errors);
+
+      setShowAlert(true);
+
+      showErrorNotification(errorTitle, errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return {
     isLoading,

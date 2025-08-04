@@ -1,4 +1,5 @@
-import {BaseApiClient} from '../base';
+import { isDevelopment } from '@/utils/env';
+import { BaseApiClient } from '../base';
 import {
   LoginRequestSchema,
   LoginResponseSchema,
@@ -20,6 +21,10 @@ import {
   type RenewTokenRequest,
   type RenewTokenResponse,
   type GetMeResponse,
+  type VerifyMagicLinkRequest,
+  type VerifyMagicLinkResponse,
+  VerifyMagicLinkResponseSchema,
+  VerifyMagicLinkRequestSchema,
 } from '../schemas/auth.schemas';
 
 export class AuthApi extends BaseApiClient {
@@ -33,9 +38,17 @@ export class AuthApi extends BaseApiClient {
     );
   }
 
-  async forgotPassword(
-    data: ForgotPasswordRequest,
-  ): Promise<ForgotPasswordResponse> {
+  async verifyMagicLink(data: VerifyMagicLinkRequest): Promise<VerifyMagicLinkResponse> {
+    return this.post<VerifyMagicLinkResponse, VerifyMagicLinkRequest>(
+      '/auth/magic-link/verify',
+      data,
+      VerifyMagicLinkResponseSchema,
+      VerifyMagicLinkRequestSchema,
+      { noError: true },
+    );
+  }
+
+  async forgotPassword(data: ForgotPasswordRequest): Promise<ForgotPasswordResponse> {
     return this.post<ForgotPasswordResponse, ForgotPasswordRequest>(
       '/auth/forgot-password',
       data,
@@ -43,9 +56,7 @@ export class AuthApi extends BaseApiClient {
     );
   }
 
-  async resetPassword(
-    data: ResetPasswordRequest,
-  ): Promise<ResetPasswordResponse> {
+  async resetPassword(data: ResetPasswordRequest): Promise<ResetPasswordResponse> {
     return this.post<ResetPasswordResponse, ResetPasswordRequest>(
       '/auth/reset-password',
       data,
@@ -69,9 +80,11 @@ export class AuthApi extends BaseApiClient {
       RenewTokenResponseSchema,
       RenewTokenRequestSchema,
     ).catch((error: unknown) => {
-      console.error(error);
+      if (isDevelopment) {
+        console.error(error);
+      }
       // If the request fails, it means the token is expired, just reload the page
-      return {refreshToken: '', accessToken: ''};
+      return { refreshToken: '', accessToken: '' };
     });
   }
 

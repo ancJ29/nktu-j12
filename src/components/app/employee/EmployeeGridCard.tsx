@@ -1,17 +1,21 @@
-import {Stack, Group, Text, Badge} from '@mantine/core';
-import {useNavigate} from 'react-router';
-import {useTranslation} from 'react-i18next';
-import type {Employee} from '@/services/hr/employee';
-import {SelectableCard} from '@/components/common';
-import {getEmployeeDetailRoute} from '@/config/routeConfig';
+import { Stack, Group, Text } from '@mantine/core';
+import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import type { Employee } from '@/services/hr/employee';
+import { SelectableCard } from '@/components/common';
+import { getEmployeeDetailRoute } from '@/config/routeConfig';
+import { StatusBadge } from './StatusBadge';
+import { getEndDateHighlightStyles } from '@/utils/time';
 
 type EmployeeGridCardProps = {
   readonly employee: Employee;
 };
 
-export function EmployeeGridCard({employee}: EmployeeGridCardProps) {
-  const {t} = useTranslation();
+export function EmployeeGridCard({ employee }: EmployeeGridCardProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
+
+  const highlightStyles = getEndDateHighlightStyles(employee.endDate, employee.isActive);
 
   return (
     <SelectableCard
@@ -19,20 +23,30 @@ export function EmployeeGridCard({employee}: EmployeeGridCardProps) {
       shadow="sm"
       padding="lg"
       radius="md"
-      style={{cursor: 'pointer'}}
+      style={{
+        cursor: 'pointer',
+        ...highlightStyles,
+      }}
       aria-label={t('employee.employeeCard', {
         name: `${employee.firstName} ${employee.lastName}`,
       })}
       onClick={() => navigate(getEmployeeDetailRoute(employee.id))}
     >
-      <Stack gap="sm">
+      <Stack
+        gap="sm"
+        style={{
+          position: 'relative',
+        }}
+      >
         <Group justify="space-between" align="flex-start">
           <div>
             <Group gap="sm" justify="start">
-              {/* @todo: custom this */}
               <Text fw={400}>{employee.fullName}</Text>
               {employee?.position ? (
-                <Text c="dimmed"> ({employee?.position})</Text>
+                <Text c="dimmed" size="sm">
+                  {' '}
+                  ({employee?.position})
+                </Text>
               ) : null}
             </Group>
             {employee.unitId ? (
@@ -40,10 +54,26 @@ export function EmployeeGridCard({employee}: EmployeeGridCardProps) {
                 {t('employee.unit')}: {employee.unit ?? '-'}
               </Text>
             ) : null}
+            {employee.email ? (
+              <Text size="sm" c="dimmed">
+                {t('employee.email')}: {employee.email}
+              </Text>
+            ) : null}
+            {employee.phone ? (
+              <Text size="sm" c="dimmed">
+                {t('employee.phone')}: {employee.phone}
+              </Text>
+            ) : null}
           </div>
-          <Badge color={employee.isActive ? 'green' : 'gray'} variant="light">
-            {employee.isActive ? t('employee.active') : t('employee.inactive')}
-          </Badge>
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+            }}
+          >
+            <StatusBadge isActive={employee.isActive} />
+          </div>
         </Group>
       </Stack>
     </SelectableCard>

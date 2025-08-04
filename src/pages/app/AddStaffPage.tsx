@@ -1,5 +1,5 @@
-import {useState} from 'react';
-import {useNavigate} from 'react-router';
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import {
   Container,
   Title,
@@ -11,8 +11,7 @@ import {
   Stepper,
   Paper,
 } from '@mantine/core';
-import {useForm} from '@mantine/form';
-import {notifications} from '@mantine/notifications';
+import { useForm } from '@mantine/form';
 import {
   IconCheck,
   IconAlertTriangle,
@@ -21,30 +20,29 @@ import {
   IconCalendar,
   IconShield,
 } from '@tabler/icons-react';
-import {useTranslation} from '@/hooks/useTranslation';
-import {useIsDarkMode} from '@/hooks/useIsDarkMode';
-import {useStaffActions} from '@/stores/useStaffStore';
-import {useCurrentStore} from '@/stores/useStoreConfigStore';
-import {GoBack} from '@/components/common';
+import { useTranslation } from '@/hooks/useTranslation';
+import { showErrorNotification, showSuccessNotification } from '@/utils/notifications';
+import { useStaffActions } from '@/stores/useStaffStore';
+import { useCurrentStore } from '@/stores/useStoreConfigStore';
+import { GoBack } from '@/components/common';
 import {
   BasicInfoSection,
   WorkingPatternSection,
   LeaveManagementSection,
   AccessPermissionSection,
 } from '@/components/staff/form';
-import {VALIDATION_RULES} from '@/services/staff';
-import {ROUTERS} from '@/config/routeConfig';
-import type {StaffFormData} from '@/lib/api/schemas/staff.schemas';
+import { VALIDATION_RULES } from '@/services/staff';
+import { ROUTERS } from '@/config/routeConfig';
+import type { StaffFormData } from '@/lib/api/schemas/staff.schemas';
 
 export function AddStaffPage() {
   const navigate = useNavigate();
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const [activeStep, setActiveStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const isDarkMode = useIsDarkMode();
 
   const currentStore = useCurrentStore();
-  const {createStaff} = useStaffActions();
+  const { createStaff } = useStaffActions();
 
   const form = useForm<StaffFormData>({
     initialValues: {
@@ -111,10 +109,7 @@ export function AddStaffPage() {
           ? VALIDATION_RULES.workingHours.fulltime.max
           : VALIDATION_RULES.workingHours.shift.max;
 
-      if (
-        values.weeklyContractedHours < 0 ||
-        values.weeklyContractedHours > maxHours
-      ) {
+      if (values.weeklyContractedHours < 0 || values.weeklyContractedHours > maxHours) {
         errors.weeklyContractedHours = t('validation.weeklyHoursRange', {
           min: 0,
           max: maxHours,
@@ -124,10 +119,8 @@ export function AddStaffPage() {
       if (
         values.workingPattern === 'fulltime' &&
         values.defaultWeeklyHours &&
-        (values.defaultWeeklyHours <
-          VALIDATION_RULES.workingHours.fulltime.min ||
-          values.defaultWeeklyHours >
-            VALIDATION_RULES.workingHours.fulltime.max)
+        (values.defaultWeeklyHours < VALIDATION_RULES.workingHours.fulltime.min ||
+          values.defaultWeeklyHours > VALIDATION_RULES.workingHours.fulltime.max)
       ) {
         errors.defaultWeeklyHours = t('validation.defaultWeeklyHoursRange', {
           min: VALIDATION_RULES.workingHours.fulltime.min,
@@ -188,9 +181,7 @@ export function AddStaffPage() {
   const validateCurrentStep = () => {
     const errors = form.validate();
     const stepFields = getStepFields(activeStep);
-    const stepErrors = Object.keys(errors.errors).filter((field) =>
-      stepFields.includes(field),
-    );
+    const stepErrors = Object.keys(errors.errors).filter((field) => stepFields.includes(field));
     return stepErrors.length === 0;
   };
 
@@ -201,12 +192,7 @@ export function AddStaffPage() {
       }
 
       case 1: {
-        return [
-          'workingPattern',
-          'weeklyContractedHours',
-          'defaultWeeklyHours',
-          'hourlyRate',
-        ];
+        return ['workingPattern', 'weeklyContractedHours', 'defaultWeeklyHours', 'hourlyRate'];
       }
 
       case 2: {
@@ -235,12 +221,7 @@ export function AddStaffPage() {
 
   const handleSubmit = async (values: StaffFormData) => {
     if (!currentStore) {
-      notifications.show({
-        title: t('common.error'),
-        message: t('staff.noStoreSelectedError'),
-        color: 'red',
-        icon: <IconAlertTriangle size={16} />,
-      });
+      showErrorNotification(t('common.error'), t('staff.noStoreSelectedError'));
       return;
     }
 
@@ -256,24 +237,16 @@ export function AddStaffPage() {
 
       const newStaff = await createStaff(currentStore.id, finalValues);
 
-      notifications.show({
-        title: t('staff.createSuccess'),
-        message: t('staff.createSuccessMessage', {name: newStaff.fullName}),
-        color: isDarkMode ? 'green.7' : 'green.9',
-        icon: <IconCheck size={16} />,
-      });
+      showSuccessNotification(
+        t('staff.createSuccess'),
+        t('staff.createSuccessMessage', { name: newStaff.fullName }),
+      );
 
       navigate(ROUTERS.STAFF);
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : t('staff.createFailedDefault');
+      const errorMessage = error instanceof Error ? error.message : t('staff.createFailedDefault');
 
-      notifications.show({
-        title: t('staff.createFailed'),
-        message: errorMessage,
-        color: 'red',
-        icon: <IconAlertTriangle size={16} />,
-      });
+      showErrorNotification(t('staff.createFailed'), errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -288,11 +261,7 @@ export function AddStaffPage() {
             {t('staff.addTitle')}
           </Title>
 
-          <Alert
-            icon={<IconAlertTriangle size={16} />}
-            color="orange"
-            variant="light"
-          >
+          <Alert icon={<IconAlertTriangle size={16} />} color="orange" variant="light">
             {t('staff.noStoreSelectedAddError')}
           </Alert>
         </Stack>
@@ -308,7 +277,7 @@ export function AddStaffPage() {
         </Group>
 
         <Title order={1} ta="center">
-          {t('staff.addTitleWithStore', {storeName: currentStore.name})}
+          {t('staff.addTitleWithStore', { storeName: currentStore.name })}
         </Title>
 
         <Paper shadow="sm" p="xl" radius="md">
@@ -325,11 +294,11 @@ export function AddStaffPage() {
                 ))}
               </Stepper>
 
-              <div style={{position: 'relative', minHeight: '400px'}}>
+              <div style={{ position: 'relative', minHeight: '400px' }}>
                 <LoadingOverlay
                   visible={isSubmitting}
-                  overlayProps={{blur: 2}}
-                  transitionProps={{duration: 300}}
+                  overlayProps={{ blur: 2 }}
+                  transitionProps={{ duration: 300 }}
                 />
 
                 {activeStep === 0 && <BasicInfoSection form={form} />}
@@ -342,11 +311,7 @@ export function AddStaffPage() {
               </div>
 
               <Group justify="space-between" pt="md">
-                <Button
-                  variant="default"
-                  disabled={activeStep === 0}
-                  onClick={handleBack}
-                >
+                <Button variant="default" disabled={activeStep === 0} onClick={handleBack}>
                   {t('common.back')}
                 </Button>
 
