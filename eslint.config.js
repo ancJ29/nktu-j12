@@ -10,7 +10,7 @@ import customPlugin from './eslint-rules/index.js';
 
 export default tseslint.config(
   {
-    ignores: ['dist', 'node_modules', 'coverage', 'scripts', 'eslint.config.js'],
+    ignores: ['dist', 'node_modules', 'coverage', 'eslint.config.js', '*.local'],
   },
   {
     files: ['**/*.{ts,tsx,js,jsx}'],
@@ -57,10 +57,7 @@ export default tseslint.config(
       'react-hooks/exhaustive-deps': 'warn',
 
       // React refresh
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
 
       'no-unused-vars': 'off',
 
@@ -93,18 +90,18 @@ export default tseslint.config(
       'no-await-in-loop': 'off',
       'no-control-regex': 'off',
       'no-new': 'off',
-      'complexity': 'off',
+      complexity: 'off',
       'max-depth': 'off',
 
       // Prettier integration
       'prettier/prettier': 'error',
-      
+
       // Disable conflicting rules
       ...prettierConfig.rules,
     },
   },
   {
-    files: ['vite.config.ts'],
+    files: ['vite.config.ts', 'vite-plugins/**/*.ts'],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
@@ -125,6 +122,43 @@ export default tseslint.config(
           ignoreRestSiblings: true,
         },
       ],
+    },
+  },
+  {
+    files: ['scripts/**/*.{ts,tsx}'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: {
+        ...globals.node,
+        ...globals.browser,
+      },
+      parser: tseslint.parser,
+      parserOptions: {
+        project: './tsconfig.node.json',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tseslint.plugin,
+      prettier: prettier,
+    },
+    rules: {
+      ...js.configs.recommended.rules,
+      ...tseslint.configs.recommended.rules,
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
+      ],
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      'prettier/prettier': 'error',
+      ...prettierConfig.rules,
     },
   },
 );

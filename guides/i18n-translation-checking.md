@@ -39,12 +39,12 @@ The system supports a "safe keys" configuration file (`i18n-safe-keys.json`) tha
 {
   "description": "Translation keys that should never be marked as unused",
   "safeKeys": [
-    "common.storeManagement",
-    "common.salaryManagement",
-    "common.customerManagement",
-    "common.poManagement",
-    "common.configuration",
-    "common.staffManagement"
+    "common.pages.storeManagement",
+    "common.pages.salaryManagement",
+    "common.pages.customerManagement",
+    "common.pages.poManagement",
+    "common.pages.configuration",
+    "common.pages.staffManagement"
   ],
   "patterns": [
     "pcOnly.__check__",
@@ -117,8 +117,8 @@ Keys configured to be preserved regardless of usage. These are specified in `i18
 
 Example:
 ```
-common.storeManagement
-common.customerManagement
+common.pages.storeManagement
+common.pages.customerManagement
 ```
 
 ### Dynamic Patterns

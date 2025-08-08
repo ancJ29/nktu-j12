@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { authService } from '@/services/auth';
 import { adminService } from '@/services/admin';
-import { delay } from '@/utils/time';
 import {
   storeAdminSession,
   clearAdminSession,
@@ -12,6 +11,7 @@ import {
 import { authApi, clientApi, type ClientPublicConfigResponse } from '@/lib/api';
 import { updateClientTranslations, clearClientTranslations } from '@/lib/i18n';
 import type { GetMeResponse } from '@/lib/api/schemas/auth.schemas';
+import { cacheNavigationConfig, clearNavigationCache } from '@/utils/navigationCache';
 
 type User = {
   id: string;
@@ -28,6 +28,7 @@ type AppState = {
   user: User | undefined;
   userProfile: UserProfile | undefined;
   isAuthenticated: boolean;
+  authInitialized: boolean;
   adminAuthenticated: boolean;
   isLoading: boolean;
   adminApiLoading: boolean;
@@ -81,6 +82,7 @@ export const useAppStore = create<AppState>()(
         user: authService.getCurrentUser() ?? undefined,
         userProfile: undefined,
         isAuthenticated: Boolean(authService.getCurrentUser()),
+        authInitialized: false,
         adminAuthenticated: isAdminAuthenticated(),
         isLoading: false,
         adminApiLoading: false,
@@ -109,6 +111,11 @@ export const useAppStore = create<AppState>()(
           try {
             const profile = await authApi.getMe();
             set({ userProfile: profile });
+
+            // Cache navigation config if available
+            if (profile.clientConfig?.navigation?.length) {
+              cacheNavigationConfig(profile?.clientConfig?.navigation);
+            }
 
             // Apply client-specific translations if available
             if (profile.clientConfig?.translations) {
@@ -167,6 +174,7 @@ export const useAppStore = create<AppState>()(
         },
         logout() {
           authService.logout();
+          clearNavigationCache(); // Clear cached navigation on logout
           set({
             user: undefined,
             userProfile: undefined,
@@ -178,9 +186,9 @@ export const useAppStore = create<AppState>()(
           // clearClientTranslations();
         },
         async checkAuth() {
+          set({ authInitialized: false });
           const isAuthenticated = await authService.isAuthenticated();
           if (isAuthenticated) {
-            await delay(100);
             const user = authService.getCurrentUser();
             set({ isAuthenticated, user: user ?? undefined });
             // Fetch user profile when checking auth
@@ -192,7 +200,7 @@ export const useAppStore = create<AppState>()(
               isAuthenticated: false,
             });
           }
-
+          set({ authInitialized: true });
           return isAuthenticated;
         },
         async adminLogin(accessKey: string) {

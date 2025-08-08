@@ -7,6 +7,8 @@ import {
   paginationSchema,
   stringSchema,
   timestampSchema,
+  backendPhoneNumberSchema,
+  phoneNumberSchema,
 } from './common.schemas';
 
 // Department schema
@@ -30,6 +32,7 @@ export const EmployeeSchema = z.object({
   firstName: stringSchema,
   lastName: stringSchema,
   employeeCode: stringSchema,
+  phoneNumber: phoneNumberSchema,
   employmentType: z
     .enum(['FULL_TIME', 'PART_TIME'])
     .optional()
@@ -55,6 +58,7 @@ export const CreateEmployeeSchema = z.object({
   firstName: stringSchema,
   lastName: stringSchema,
   email: emailSchema.optional(),
+  phoneNumber: backendPhoneNumberSchema,
   employeeCode: optionalStringSchema,
   employmentType: z
     .enum(['FULL_TIME', 'PART_TIME'])
@@ -80,6 +84,8 @@ export const UpdateEmployeeRequestSchema = z.object({
   lastName: stringSchema,
   departmentId: z.string().optional(),
   employmentType: z.enum(['FULL_TIME', 'PART_TIME']).optional(),
+  email: emailSchema.optional(),
+  phoneNumber: backendPhoneNumberSchema,
   hireDate: stringSchema.optional(),
   terminationDate: stringSchema.optional(),
   metadata: z
