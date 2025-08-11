@@ -10,6 +10,11 @@ export const RootUserLayout = lazy(async () => {
   return { default: module.RootUserLayout };
 });
 
+export const MobileOnlyLayout = lazy(async () => {
+  const module = await import('@/components/layouts/MobileOnlyLayout');
+  return { default: module.MobileOnlyLayout };
+});
+
 export const PCOnlyLayout = lazy(async () => {
   const module = await import('@/components/layouts/PCOnlyLayout');
   return { default: module.PCOnlyLayout };
@@ -192,6 +197,11 @@ export const AdminLoginPage = lazy(async () => {
 export const AdminDashboardPage = lazy(async () => {
   const module = await import('@/pages/admin/AdminDashboardPage');
   return { default: module.AdminDashboardPage };
+});
+
+export const TimekeeperDashboardPage = lazy(async () => {
+  const module = await import('@/pages/timeKeeper/TimekeeperDashboardPage');
+  return { default: module.TimekeeperDashboardPage };
 });
 
 export const ClientListPage = lazy(async () => {

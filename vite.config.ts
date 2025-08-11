@@ -1,12 +1,12 @@
-import {resolve} from 'node:path';
+import { resolve } from 'node:path';
 import process from 'node:process';
-import {defineConfig} from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import {VitePWA} from 'vite-plugin-pwa';
-import {htmlTransformPlugin} from './vite-plugins/html-transform';
+import { VitePWA } from 'vite-plugin-pwa';
+import { htmlTransformPlugin } from './vite-plugins/html-transform';
 
 process.env.VITE_APP_VERSION = process.env.npm_package_version;
-const tzOffset = 7 * 36e5
+const tzOffset = 7 * 36e5;
 process.env.VITE_APP_BUILD = new Date(Date.now() + tzOffset)
   .toISOString()
   .replaceAll(/[-:]/g, '')
@@ -22,7 +22,7 @@ const THEME_COLOR = process.env.VITE_THEME_COLOR || '#324e71';
 // https://vite.dev/config/
 export default defineConfig({
   server: {
-    allowedHosts: ['b1a271709375.ngrok-free.app'],
+    allowedHosts: ['864531080d99.ngrok-free.app'],
   },
   resolve: {
     alias: {
@@ -32,41 +32,23 @@ export default defineConfig({
   },
   build: {
     target: ['es2020', 'edge88', 'firefox78', 'chrome87', 'safari14'],
+    chunkSizeWarningLimit: 800,
     rollupOptions: {
       output: {
         manualChunks: {
-          // Core React libraries
+          // Only split the largest, most independent libraries
+          // React ecosystem
           react: ['react', 'react-dom'],
-          // Router
           router: ['react-router'],
-          // Mantine Core (most commonly used)
-          'mantine-core': ['@mantine/core'],
-          // Mantine Hooks (lightweight, commonly used)
-          'mantine-hooks': ['@mantine/hooks'],
-          // Mantine Form (auth-specific)
-          'mantine-form': ['@mantine/form'],
-          // Mantine Notifications (smaller, auth-specific)
-          'mantine-notifications': ['@mantine/notifications'],
-          // Mantine Modals (less commonly used)
-          'mantine-modals': ['@mantine/modals'],
-          // Mantine Dates (heavy, less commonly used)
+          // Mantine UI - keep core together for stability
+          'mantine-core': ['@mantine/core', '@mantine/hooks'],
+          'mantine-extras': ['@mantine/form', '@mantine/notifications', '@mantine/modals'],
           'mantine-dates': ['@mantine/dates'],
-          // Icons (large dependency)
+          // Large independent libraries
           icons: ['@tabler/icons-react'],
-          // I18n
-          i18n: [
-            'i18next',
-            'react-i18next',
-            'i18next-browser-languagedetector',
-          ],
-          // State management
-          zustand: ['zustand'],
-          // Validation
-          zod: ['zod'],
-          // Date utilities
-          dayjs: ['dayjs'],
-          // Large utilities
           xlsx: ['xlsx'],
+          // i18n
+          i18n: ['i18next', 'react-i18next', 'i18next-browser-languagedetector'],
         },
       },
     },
@@ -165,7 +147,7 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: ({request}) => request.mode === 'navigate',
+            urlPattern: ({ request }) => request.mode === 'navigate',
             handler: 'NetworkFirst',
             options: {
               cacheName: 'pages',

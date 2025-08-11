@@ -1,5 +1,5 @@
 import { Stack, TextInput, Switch, Group, Button, LoadingOverlay, Box } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '@/hooks/useTranslation';
 import { ModalOrDrawer } from '@/components/common';
 import type { UseFormReturnType } from '@mantine/form';
 
@@ -9,6 +9,7 @@ type CustomerFormValues = {
   contactEmail?: string;
   contactPhone?: string;
   address?: string;
+  taxCode?: string;
   creditLimit?: number;
   isActive?: boolean;
 };
@@ -80,6 +81,13 @@ export function CustomerFormModal({
               error={form.errors.address}
               disabled={isLoading}
               {...form.getInputProps('address')}
+            />
+            <TextInput
+              label={t('customer.taxCode')}
+              placeholder={t('customer.taxCodePlaceholder')}
+              error={form.errors.taxCode}
+              disabled={isLoading}
+              {...form.getInputProps('taxCode')}
             />
             {mode === 'edit' && (
               <Switch

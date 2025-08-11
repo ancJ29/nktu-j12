@@ -15,6 +15,7 @@
       "customerConfig": "Customer Config",
       "poManagement": "PO Management",
       "poManagementMobile": "PO",
+      "masterData": "Master Data",
       "configuration": "Configuration",
       "staffManagement": "Staff Management",
       "dashboard": "Dashboard",
@@ -146,6 +147,10 @@
   "pcOnly": {
     "title": "Desktop Feature",
     "description": "This feature requires a desktop or laptop computer to work properly. File management and advanced features work best on larger screens."
+  },
+  "mobileOnly": {
+    "title": "Mobile Feature",
+    "description": "This feature is optimized for mobile devices. Please access it from your smartphone or tablet for the best experience."
   },
   "pwa": {
     "installTitle": "Install Credo App",
@@ -521,14 +526,7 @@
     "clientCode": "Client Code",
     "rootUser": "Root User",
     "roles": "Roles",
-    "level": "Level",
-    "features": {
-      "role-management.customRoles": "Custom Roles",
-      "role-management.roleHierarchy": "Role Hierarchy",
-      "user-management.bulkImport": "Bulk Import",
-      "user-management.userInvitations": "User Invitations",
-      "user-management.createUserWithDepartment": "Create User with Department"
-    }
+    "level": "Level"
   },
   "staff": {
     "title": "Staff Management",
@@ -739,12 +737,14 @@
     "contact": "Contact",
     "company": "Company",
     "address": "Address",
+    "taxCode": "Tax Code",
     "searchPlaceholder": "Search customers by name, company, email, or phone...",
     "namePlaceholder": "Customer Name",
     "companyPlaceholder": "Company Name",
     "emailPlaceholder": "customer@example.com",
     "phonePlaceholder": "+84901234567",
     "addressPlaceholder": "Address",
+    "taxCodePlaceholder": "Tax Code (Optional)",
     "created": "Customer Created",
     "createdMessage": "Customer '{{name}}' has been successfully created",
     "updated": "Customer Updated",
@@ -769,6 +769,8 @@
     "stockLevel": "Stock Level",
     "stockLevelPlaceholder": "0",
     "stock": "Stock",
+    "colorPlaceholder": "Enter product color",
+    "color": "Color",
     "unit": "Unit",
     "unitPlaceholder": "pcs, kg, etc.",
     "minStock": "Min Stock",
@@ -786,8 +788,7 @@
       "inactive": "Inactive",
       "discontinued": "Discontinued",
       "outOfStock": "Out of Stock",
-      "lowStock": "Low Stock",
-      "inStock": "In Stock"
+      "lowStock": "Low Stock"
     },
     "priceCannotBeNegative": "Price cannot be negative",
     "stockCannotBeNegative": "Stock cannot be negative",
@@ -1150,5 +1151,117 @@
     "printInitiated": "Print dialog opened",
     "exportPDFComingSoon": "PDF export feature coming soon",
     "exportExcelComingSoon": "Excel export feature coming soon"
+  },
+  "timekeeper": {
+    "checkIn": "Check In",
+    "checkOut": "Check Out",
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "clockedInAt": "Clocked in at {{time}}",
+    "clockedInMinuteAgo": "{{minutes}} minutes ago",
+    "clockedInHourAgo": "{{hours}} hour",
+    "youHaveWorked": "You have worked",
+    "today": "today",
+    "weeklyHours": "This Week",
+    "remaining": "Remaining",
+    "upcomingShifts": "Upcoming Shifts",
+    "pendingRequests": "Pending Requests",
+    "noUpcomingShifts": "No upcoming shifts",
+    "noPendingRequests": "No pending requests",
+    "quickLinks": "Quick Links",
+    "resourcesTitle": "Resources",
+    "resources": {
+      "handbook": "Employee Handbook",
+      "handbookDesc": "Company policies and guidelines",
+      "policies": "Policies",
+      "policiesDesc": "HR and workplace policies",
+      "directory": "Directory",
+      "directoryDesc": "Contact information for team members",
+      "support": "Support",
+      "supportDesc": "Get help from HR or IT"
+    },
+    "breakTime": "Break Time",
+    "overtime": "Overtime",
+    "totalWorked": "Total Worked",
+    "worked": "Worked",
+    "break": "Break",
+    "noEntry": "No timesheet entry",
+    "thisWeek": "This Week",
+    "daysWorked": "days worked",
+    "summary": {
+      "total": "Total",
+      "regular": "Regular",
+      "overtime": "Overtime"
+    },
+    "leaveTypes": {},
+    "statuses": {},
+    "myTimesheet": {
+      "title": "My Timesheet",
+      "description": "Check how many hours you've worked this week"
+    },
+    "myShifts": {
+      "title": "My Shifts",
+      "description": "Check your upcoming shifts"
+    },
+    "myJobSchedule": {
+      "title": "My Job Schedule",
+      "description": "View your upcoming scheduled jobs"
+    },
+    "myLeave": {
+      "title": "My Leave",
+      "description": "View your leave and leave requests"
+    },
+    "requestLeave": {
+      "title": "Request Leave",
+      "description": "Make a request for time off"
+    },
+    "documents": {
+      "title": "Documents",
+      "description": "View your personal and company documents"
+    },
+    "nav": {
+      "home": "Home",
+      "clock": "Clock",
+      "jobs": "Jobs",
+      "services": "Services"
+    },
+    "clock": {
+      "title": "Clock Management",
+      "clockIn": "Clock In",
+      "clockOut": "Clock Out",
+      "startBreak": "Start Break",
+      "endBreak": "End Break",
+      "photoRequired": "Photo Required",
+      "noEntriesYet": "No clock entries yet today",
+      "todayTimeline": "Today's Timeline",
+      "clockedOutAt": "Clocked out",
+      "breakAt": "Break",
+      "duration": "Duration",
+      "status": {
+        "clocked_in": "Clocked In",
+        "clocked_out": "Clocked Out",
+        "on_break": "On Break"
+      },
+      "location": {
+        "error": "Unable to get your location",
+        "notSupported": "Location services not supported"
+      },
+      "camera": {
+        "title": "Take Photo",
+        "capture": "Capture Photo",
+        "retake": "Retake",
+        "confirm": "Use This Photo",
+        "useThisPhoto": "Use this photo?",
+        "getReady": "Get Ready!",
+        "error": "Camera Error",
+        "permissionDenied": "Camera permission denied. Please enable camera access in your device settings.",
+        "permissionRequired": "Camera access is required for photo verification",
+        "requestPermission": "Request Camera Access",
+        "autoConfirm": "Auto-confirming in {{seconds}}s"
+      }
+    }
   }
 }

@@ -1,6 +1,7 @@
 import React from 'react';
-import { AppShell, Group, LoadingOverlay } from '@mantine/core';
-import { CommonMobileHeader, CommonMobileFooter } from '../ui';
+import { AppShell, Container, Group, LoadingOverlay } from '@mantine/core';
+import { CommonMobileHeader } from '../ui/CommonMobileHeader';
+import { CommonMobileFooter } from '../ui';
 import { AppLogo, GoBack } from '../navigation';
 import { ErrorAlert } from '../feedback';
 import classes from './AppLayoutMobile.module.css';
@@ -12,9 +13,11 @@ type AppMobileLayoutProps = {
   readonly footer?: React.ReactNode;
   readonly showLogo?: boolean;
   readonly withGoBack?: boolean;
+  readonly goBackRoute?: string;
   readonly noFooter?: boolean;
   readonly noHeader?: boolean;
   readonly error?: string;
+  readonly scrollable?: boolean;
   readonly clearError?: () => void;
 };
 export function AppMobileLayout({
@@ -22,28 +25,30 @@ export function AppMobileLayout({
   header,
   footer,
   error,
-  clearError,
+  goBackRoute,
   withGoBack = false,
   isLoading = false,
   showLogo = false,
   noHeader = false,
   noFooter = false,
+  scrollable = true,
+  clearError,
 }: AppMobileLayoutProps) {
   const isDefaultHeader = !header && !noHeader;
   return (
     <AppShell
-      header={{ height: 60 }}
-      footer={{ height: 60 }}
+      header={noHeader ? undefined : { height: 60, offset: false }}
+      footer={noFooter ? undefined : { height: 60, offset: false }}
       padding={0}
       className={classes.mobileLayout}
     >
-      {noHeader ? null : (
+      {!noHeader && (
         <AppShell.Header className={classes.header}>
           {isDefaultHeader ? (
             <CommonMobileHeader />
           ) : (
-            <Group my="auto" h="100%" px="sm">
-              {withGoBack ? <GoBack variant="mobile-header" /> : null}
+            <Group my="auto" h="100%" px="xs">
+              {withGoBack ? <GoBack variant="mobile-header" route={goBackRoute} /> : null}
               {showLogo ? <AppLogo noTitle /> : null}
               {header}
             </Group>
@@ -51,16 +56,25 @@ export function AppMobileLayout({
         </AppShell.Header>
       )}
 
-      <AppShell.Main className={classes.main} my="sm">
+      <AppShell.Main className={classes.main}>
         <LoadingOverlay
           visible={isLoading}
           overlayProps={{ blur: 2 }}
           transitionProps={{ duration: 300 }}
         />
         <ErrorAlert error={error} clearError={clearError} />
-        {children}
+        <Container
+          fluid
+          w="100%"
+          p={0}
+          className={scrollable ? classes.content : classes.contentNoScroll}
+          mt={noHeader ? undefined : 60}
+          mb={noFooter ? undefined : 60}
+        >
+          {children}
+        </Container>
       </AppShell.Main>
-      {noFooter ? null : (
+      {!noFooter && (
         <AppShell.Footer className={classes.footer}>
           {footer ?? <CommonMobileFooter />}
         </AppShell.Footer>

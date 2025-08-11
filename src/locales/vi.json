@@ -1,7 +1,7 @@
 {
   "common": {
     "pages": {
-      "blank": "Trang này là đang được phát triên, nếu bạn thấy trang này, có nghĩa là nó đang được xây dựng, vui lòng bỏ qua",
+      "blank": "Trang này là đang được phát triển, nếu bạn thấy trang này, có nghĩa là nó đang được xây dựng, vui lòng bỏ qua",
       "home": "Trang chủ",
       "storeManagement": "Quản Lý Cửa Hàng",
       "salaryManagement": "Quản Lý Lương",
@@ -15,6 +15,7 @@
       "productConfig": "Cấu Hình Sản Phẩm",
       "roleConfig": "Cấu Hình Phân Quyền",
       "customerConfig": "Cấu Hình Khách Hàng",
+      "masterData": "Danh Mục",
       "configuration": "Thiết lập hệ thống",
       "staffManagement": "Quản Lý Nhân Viên",
       "dashboard": "Bảng điều khiển",
@@ -146,6 +147,10 @@
   "pcOnly": {
     "title": "Tính Năng Máy Tính",
     "description": "Tính năng này yêu cầu máy tính để bàn hoặc laptop để hoạt động tốt. Quản lý file và các tính năng nâng cao hoạt động tốt nhất trên màn hình lớn."
+  },
+  "mobileOnly": {
+    "title": "Tính Năng Di Động",
+    "description": "Tính năng này được tối ưu cho thiết bị di động. Vui lòng truy cập từ điện thoại thông minh hoặc máy tính bảng để có trải nghiệm tốt nhất."
   },
   "pwa": {
     "installTitle": "Cài đặt Credo App",
@@ -521,14 +526,7 @@
     "clientCode": "Mã Khách Hàng",
     "rootUser": "Người Dùng Gốc",
     "roles": "Vai Trò",
-    "level": "Cấp Độ",
-    "features": {
-      "role-management.customRoles": "Vai Trò Tùy Chỉnh",
-      "role-management.roleHierarchy": "Phân Cấp Vai Trò",
-      "user-management.bulkImport": "Nhập Hàng Loạt",
-      "user-management.userInvitations": "Lời Mời Người Dùng",
-      "user-management.createUserWithDepartment": "Tạo Người Dùng Với Phòng Ban"
-    }
+    "level": "Cấp Độ"
   },
   "staff": {
     "actions": "",
@@ -739,12 +737,14 @@
     "contact": "Liên Hệ",
     "company": "Công Ty",
     "address": "Địa Chỉ",
+    "taxCode": "Mã Số Thuế",
     "searchPlaceholder": "Tìm khách hàng theo tên, công ty, email hoặc điện thoại...",
     "namePlaceholder": "Tên khách hàng",
     "companyPlaceholder": "Tên công ty",
     "emailPlaceholder": "khachhang@example.com",
     "phonePlaceholder": "+84901234567",
     "addressPlaceholder": "Địa chỉ",
+    "taxCodePlaceholder": "Mã Số Thuế (Tùy Chọn)",
     "created": "Đã Tạo Khách Hàng",
     "createdMessage": "Khách hàng '{{name}}' đã được tạo thành công",
     "updated": "Đã Cập Nhật Khách Hàng",
@@ -769,6 +769,8 @@
     "stockLevel": "Số Lượng Tồn",
     "stockLevelPlaceholder": "0",
     "stock": "Tồn Kho",
+    "colorPlaceholder": "Nhập màu sắc sản phẩm",
+    "color": "Màu Sắc",
     "unit": "Đơn Vị",
     "unitPlaceholder": "cái, kg, v.v.",
     "minStock": "Tồn Tối Thiểu",
@@ -786,8 +788,7 @@
       "inactive": "Ngừng Kinh Doanh",
       "discontinued": "Đã Ngừng Sản Xuất",
       "outOfStock": "Hết Hàng",
-      "lowStock": "Sắp Hết Hàng",
-      "inStock": "Còn Hàng"
+      "lowStock": "Sắp Hết Hàng"
     },
     "priceCannotBeNegative": "Giá không thể âm",
     "stockCannotBeNegative": "Số lượng tồn kho không thể âm",
@@ -1150,5 +1151,117 @@
     "selectEndDate": "Chọn ngày kết thúc",
     "selectStartDate": "Chọn ngày bắt đầu",
     "dateRange": "Khoảng thời gian"
+  },
+  "timekeeper": {
+    "checkIn": "Vào ca",
+    "checkOut": "Tan ca",
+    "greeting": {
+      "morning": "Chào buổi sáng",
+      "afternoon": "Chào buổi chiều",
+      "evening": "Chào buổi tối"
+    },
+    "clockedInAt": "Đã chấm công lúc {{time}}",
+    "clockedInMinuteAgo": "{{minutes}} phút trước",
+    "clockedInHourAgo": "{{hours}} giờ",
+    "youHaveWorked": "Bạn đã làm việc",
+    "today": "hôm nay",
+    "weeklyHours": "Tuần này",
+    "remaining": "Còn lại",
+    "upcomingShifts": "Ca làm sắp tới",
+    "pendingRequests": "Yêu cầu đang chờ",
+    "noUpcomingShifts": "Không có ca làm sắp tới",
+    "noPendingRequests": "Không có yêu cầu đang chờ",
+    "quickLinks": "Liên kết nhanh",
+    "resourcesTitle": "Tài nguyên",
+    "resources": {
+      "handbook": "Sổ tay nhân viên",
+      "handbookDesc": "Chính sách và hướng dẫn của công ty",
+      "policies": "Chính sách",
+      "policiesDesc": "Chính sách nhân sự và nơi làm việc",
+      "directory": "Danh bạ",
+      "directoryDesc": "Thông tin liên hệ của các thành viên",
+      "support": "Hỗ trợ",
+      "supportDesc": "Nhận trợ giúp từ HR hoặc IT"
+    },
+    "breakTime": "Thời gian nghỉ",
+    "overtime": "Làm thêm giờ",
+    "totalWorked": "Tổng giờ làm",
+    "worked": "Đã làm",
+    "break": "Nghỉ",
+    "noEntry": "Không có dữ liệu",
+    "thisWeek": "Tuần này",
+    "daysWorked": "ngày làm việc",
+    "summary": {
+      "regular": "Tiêu chuẩn",
+      "overtime": "Làm thêm",
+      "total": "Tổng cộng"
+    },
+    "leaveTypes": {},
+    "statuses": {},
+    "myTimesheet": {
+      "title": "Bảng chấm công của tôi",
+      "description": "Kiểm tra số giờ bạn đã làm việc trong tuần này"
+    },
+    "myShifts": {
+      "title": "Ca làm của tôi",
+      "description": "Kiểm tra ca làm việc sắp tới của bạn"
+    },
+    "myJobSchedule": {
+      "title": "Lịch công việc của tôi",
+      "description": "Xem lịch công việc sắp tới của bạn"
+    },
+    "myLeave": {
+      "title": "Nghỉ phép của tôi",
+      "description": "Xem nghỉ phép và yêu cầu nghỉ phép của bạn"
+    },
+    "requestLeave": {
+      "title": "Yêu cầu nghỉ phép",
+      "description": "Tạo yêu cầu nghỉ phép"
+    },
+    "documents": {
+      "title": "Tài liệu",
+      "description": "Xem tài liệu cá nhân và công ty của bạn"
+    },
+    "nav": {
+      "home": "Trang chủ",
+      "clock": "Chấm công",
+      "jobs": "Công việc",
+      "services": "Dịch vụ"
+    },
+    "clock": {
+      "title": "Quản lý chấm công",
+      "clockIn": "Vào ca",
+      "clockOut": "Tan ca",
+      "startBreak": "Bắt đầu nghỉ",
+      "endBreak": "Kết thúc nghỉ",
+      "photoRequired": "Yêu cầu chụp ảnh",
+      "noEntriesYet": "Chưa có lịch sử chấm công hôm nay",
+      "todayTimeline": "Lịch sử hôm nay",
+      "clockedOutAt": "Đã tan ca",
+      "breakAt": "Nghỉ giải lao",
+      "duration": "Thời gian",
+      "status": {
+        "clocked_in": "Đã vào ca",
+        "clocked_out": "Đã tan ca",
+        "on_break": "Đang nghỉ"
+      },
+      "location": {
+        "error": "Không thể lấy vị trí của bạn",
+        "notSupported": "Dịch vụ định vị không được hỗ trợ"
+      },
+      "camera": {
+        "title": "Chụp ảnh",
+        "capture": "Chụp ảnh",
+        "retake": "Chụp lại",
+        "confirm": "Sử dụng",
+        "useThisPhoto": "Sử dụng ảnh này?",
+        "getReady": "Chuẩn bị!",
+        "error": "Lỗi camera",
+        "permissionDenied": "Quyền truy cập camera bị từ chối. Vui lòng cho phép truy cập camera trong cài đặt thiết bị.",
+        "permissionRequired": "Cần quyền truy cập camera để xác thực bằng ảnh",
+        "requestPermission": "Yêu cầu quyền truy cập camera",
+        "autoConfirm": "Tự động xác nhận sau {{seconds}}s"
+      }
+    }
   }
 }

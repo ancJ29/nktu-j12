@@ -1,0 +1,15 @@
+.actionCard {
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.actionCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}

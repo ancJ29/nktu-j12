@@ -1,0 +1,31 @@
+/* Dashboard Header */
+.dashboardHeader {
+  color: white;
+  padding: 12px 0 60px;
+  position: relative;
+  height: 260px;
+  background: linear-gradient(
+    135deg,
+    var(--mantine-color-brand-7) 0%,
+    var(--mantine-color-brand-8) 100%
+  );
+}
+
+.headerContent {
+  position: relative;
+  padding: 2px 8px;
+}
+
+/* Mobile Specific Header Styles */
+.mobileTimeStatsBox {
+  display: flex;
+  flex-direction: column;
+  padding: 0px 12px;
+  border: 2px dotted rgba(255, 255, 255, 0.4);
+  border-radius: 9999px;
+  backdrop-filter: blur(10px);
+  justify-content: center;
+  width: 40vw;
+  aspect-ratio: 1;
+  margin: auto;
+}

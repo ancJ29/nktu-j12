@@ -1,11 +1,11 @@
-import { Title, Text, Container, Card, Box, Stack } from '@mantine/core';
-import { useIsDesktop } from '@/hooks/useIsDesktop';
-import { AppMobileLayout } from '@/components/common';
+import { Title, Text, Card, Box, Stack } from '@mantine/core';
+import { useDeviceType } from '@/hooks/useDeviceType';
+import { AppDesktopLayout, AppMobileLayout } from '@/components/common';
 
 export function HomePage() {
-  const isDesktop = useIsDesktop();
+  const { isMobile } = useDeviceType();
 
-  if (!isDesktop) {
+  if (isMobile) {
     return (
       <AppMobileLayout>
         <Stack gap="xl">
@@ -31,8 +31,9 @@ export function HomePage() {
       </AppMobileLayout>
     );
   }
+
   return (
-    <Container fluid mt="xl">
+    <AppDesktopLayout>
       <Stack gap="xl">
         <Box
           style={{
@@ -52,6 +53,6 @@ export function HomePage() {
           </Box>
         </Box>
       </Stack>
-    </Container>
+    </AppDesktopLayout>
   );
 }
