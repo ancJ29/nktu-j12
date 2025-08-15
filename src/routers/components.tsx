@@ -50,18 +50,14 @@ export const EmployeeListPage = lazy(async () => {
   return { default: module.EmployeeListPage };
 });
 
-export const EmployeeCreatePage = lazy(async () => {
-  const module = await import('@/pages/app/employee/EmployeeCreatePage');
-  return { default: module.EmployeeCreatePage };
+export const EmployeeFormPage = lazy(async () => {
+  const module = await import('@/pages/app/employee/EmployeeFormPage');
+  return { default: module.EmployeeFormPage };
 });
 
 export const EmployeeDetailPage = lazy(async () => {
   const module = await import('@/pages/app/employee/EmployeeDetailPage');
   return { default: module.EmployeeDetailPage };
-});
-export const EditEmployeePage = lazy(async () => {
-  const module = await import('@/pages/app/employee/EditEmployeePage');
-  return { default: module.EditEmployeePage };
 });
 
 export const HomePage = lazy(async () => {
@@ -150,8 +146,8 @@ export const POListPage = lazy(async () => {
 });
 
 export const POCreatePage = lazy(async () => {
-  const module = await import('@/pages/app/po/POCreatePage');
-  return { default: module.POCreatePage };
+  const module = await import('@/pages/app/po/POFormPage');
+  return { default: () => module.POFormPage({ mode: 'create' }) };
 });
 
 export const PODetailPage = lazy(async () => {
@@ -160,8 +156,8 @@ export const PODetailPage = lazy(async () => {
 });
 
 export const EditPOPage = lazy(async () => {
-  const module = await import('@/pages/app/po/EditPOPage');
-  return { default: module.EditPOPage };
+  const module = await import('@/pages/app/po/POFormPage');
+  return { default: () => module.POFormPage({ mode: 'edit' }) };
 });
 
 export const LoginPage = lazy(async () => {
@@ -197,6 +193,16 @@ export const AdminLoginPage = lazy(async () => {
 export const AdminDashboardPage = lazy(async () => {
   const module = await import('@/pages/admin/AdminDashboardPage');
   return { default: module.AdminDashboardPage };
+});
+
+export const MyTimesheetPage = lazy(async () => {
+  const module = await import('@/pages/timeKeeper/MyTimesheetPage');
+  return { default: module.MyTimesheetPage };
+});
+
+export const ClockManagementPage = lazy(async () => {
+  const module = await import('@/pages/timeKeeper/ClockManagementPage');
+  return { default: module.ClockManagementPage };
 });
 
 export const TimekeeperDashboardPage = lazy(async () => {

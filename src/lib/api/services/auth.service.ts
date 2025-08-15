@@ -1,5 +1,5 @@
-import { isDevelopment } from '@/utils/env';
 import { BaseApiClient } from '../base';
+import { logError } from '@/utils/logger';
 import {
   LoginRequestSchema,
   LoginResponseSchema,
@@ -80,9 +80,10 @@ export class AuthApi extends BaseApiClient {
       RenewTokenResponseSchema,
       RenewTokenRequestSchema,
     ).catch((error: unknown) => {
-      if (isDevelopment) {
-        console.error(error);
-      }
+      logError('Token renewal failed', error, {
+        module: 'AuthService',
+        action: 'renewToken',
+      });
       // If the request fails, it means the token is expired, just reload the page
       return { refreshToken: '', accessToken: '' };
     });
@@ -95,7 +96,6 @@ export class AuthApi extends BaseApiClient {
     // const isCached = this.hasCachedData(cacheKey);
     // const ttlRemaining = this.getCacheTTL(cacheKey);
     // this.clearCacheEntry(cacheKey); // To clear specific cache
-
     return this.get<GetMeResponse>('/auth/me', undefined, GetMeResponseSchema);
   }
 }

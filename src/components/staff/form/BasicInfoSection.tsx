@@ -28,6 +28,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useCurrentStore } from '@/stores/useStoreConfigStore';
 import type { StaffFormData } from '@/lib/api/schemas/staff.schemas';
 import { useIsDarkMode } from '@/hooks/useIsDarkMode';
+import { logError } from '@/utils/logger';
 
 export interface BasicInfoSectionProps {
   readonly form: UseFormReturnType<StaffFormData>;
@@ -70,7 +71,10 @@ export function BasicInfoSection({ form }: BasicInfoSectionProps) {
         },
       });
     } catch (error) {
-      console.error('Error generating QR code:', error);
+      logError('Error generating QR code:', error, {
+        module: 'BasicInfoSection',
+        action: 'staffHash',
+      });
       return '';
     } finally {
       setIsGeneratingQr(false);

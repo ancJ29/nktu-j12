@@ -21,6 +21,7 @@ import type { PurchaseOrder } from '@/services/sales/purchaseOrder';
 
 type PODetailTabsProps = {
   readonly purchaseOrder: PurchaseOrder;
+  readonly isLoading?: boolean;
   readonly onEdit: () => void;
   readonly onConfirm: () => void;
   readonly onProcess: () => void;
@@ -32,6 +33,7 @@ type PODetailTabsProps = {
 
 export function PODetailTabs({
   purchaseOrder,
+  isLoading = false,
   onEdit,
   onConfirm,
   onProcess,
@@ -99,13 +101,14 @@ export function PODetailTabs({
             width: '100%',
           }}
         >
-          <Box style={{ maxWidth: '800px', width: '100%' }}>
+          <Box w="100%">
             <Stack gap="xl">
               <POErrorBoundary componentName="POBasicInfoCard">
                 <POBasicInfoCard purchaseOrder={purchaseOrder} onEdit={onEdit} />
               </POErrorBoundary>
               <POActionZone
                 purchaseOrder={purchaseOrder}
+                isLoading={isLoading}
                 onConfirm={onConfirm}
                 onProcess={onProcess}
                 onShip={onShip}
@@ -126,7 +129,7 @@ export function PODetailTabs({
             width: '100%',
           }}
         >
-          <Box style={{ maxWidth: '800px', width: '100%' }}>
+          <Box w="100%">
             <POItemsList purchaseOrder={purchaseOrder} />
           </Box>
         </Box>
@@ -140,7 +143,7 @@ export function PODetailTabs({
             width: '100%',
           }}
         >
-          <Box style={{ maxWidth: '800px', width: '100%' }}>
+          <Box w="100%">
             <POTimeline purchaseOrder={purchaseOrder} />
           </Box>
         </Box>
@@ -154,7 +157,7 @@ export function PODetailTabs({
             width: '100%',
           }}
         >
-          <Box style={{ maxWidth: '800px', width: '100%' }}>
+          <Box w="100%">
             <Stack gap="lg">
               <Group justify="space-between">
                 <div>

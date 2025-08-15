@@ -4,6 +4,7 @@ import {
   type CreateCustomerRequest,
   type UpdateCustomerRequest,
 } from '@/lib/api/schemas/sales.schemas';
+import { logError } from '@/utils/logger';
 
 // Re-export Customer type for compatibility
 export type {
@@ -31,7 +32,11 @@ export const customerService = {
       const customer = await salesApi.getCustomerById(id);
       return customer;
     } catch (error) {
-      console.error('Failed to get customer by ID:', error);
+      logError('Failed to get customer by ID', error, {
+        module: 'CustomerService',
+        action: 'getCustomer',
+        metadata: { id },
+      });
       return undefined;
     }
   },

@@ -59,6 +59,7 @@
         "autoUpdate": {}
       }
     },
+    "contact": "Liên Hệ",
     "firstName": "Tên",
     "lastName": "Họ",
     "logout": "Đăng xuất",
@@ -77,6 +78,11 @@
     "tableView": "Xem Dạng Bảng",
     "gridView": "Xem Dạng Lưới",
     "refresh": "Làm Mới",
+    "previousWeek": "Tuần trước",
+    "nextWeek": "Tuần sau",
+    "thisWeek": "Tuần này",
+    "toggleColorScheme": "Chuyển đổi chế độ màu",
+    "loadingNavigation": "Đang tải điều hướng",
     "noUsersFound": "Không tìm thấy người dùng",
     "noDataFound": "Không tìm thấy dữ liệu",
     "search": "Tìm kiếm",
@@ -99,6 +105,7 @@
     "addRole": "Thêm Quyền",
     "searchRoles": "Tìm kiếm quyền...",
     "noRolesFound": "Không tìm thấy quyền",
+    "rolesTableAriaLabel": "Bảng vai trò",
     "displayName": "Tên Hiển Thị",
     "description": "Mô Tả",
     "level": "Cấp Độ",
@@ -147,6 +154,11 @@
   "pcOnly": {
     "title": "Tính Năng Máy Tính",
     "description": "Tính năng này yêu cầu máy tính để bàn hoặc laptop để hoạt động tốt. Quản lý file và các tính năng nâng cao hoạt động tốt nhất trên màn hình lớn."
+  },
+  "noPermission": {
+    "title": "Truy Cập Bị Từ Chối",
+    "description": "Bạn không có quyền truy cập trang này. Vui lòng liên hệ quản trị viên nếu bạn cho rằng đây là lỗi.",
+    "goBack": "Quay Lại"
   },
   "mobileOnly": {
     "title": "Tính Năng Di Động",
@@ -508,6 +520,7 @@
     "scope": "Phạm Vi",
     "description": "Mô Tả",
     "noPermissionsFound": "Không tìm thấy quyền",
+    "tableAriaLabel": "Bảng quyền",
     "addSuccess": "Thêm quyền thành công",
     "updateSuccess": "Cập nhật quyền thành công",
     "revokeSuccess": "Thu hồi quyền thành công",
@@ -530,6 +543,7 @@
   },
   "staff": {
     "actions": "",
+    "tableAriaLabel": "Bảng nhân viên",
     "activateSuccess": "Đã Kích Hoạt Nhân Viên",
     "activateSuccessMessage": "{{name}} đã được kích hoạt",
     "addFirstStaff": "Thêm nhân viên đầu tiên để bắt đầu",
@@ -541,7 +555,6 @@
     "clockIn": "Chấm công",
     "clockInUrl": "URL chấm công:",
     "clockInUrlLabel": "URL chấm công",
-    "contact": "Liên Hệ",
     "copied": "Đã sao chép!",
     "copyClockInUrl": "Sao chép URL chấm công",
     "copyUrl": "Sao chép URL",
@@ -734,7 +747,6 @@
     }
   },
   "customer": {
-    "contact": "Liên Hệ",
     "company": "Công Ty",
     "address": "Địa Chỉ",
     "taxCode": "Mã Số Thuế",
@@ -984,6 +996,8 @@
     "actionDescription": "Bạn có thể {{status}} đơn hàng này. Chọn hành động bên dưới để tiếp tục.",
     "addPO": "Thêm Đơn Hàng",
     "additionalInformation": "Thông Tin Bổ Sung",
+    "address": "Địa chỉ",
+    "addressPlaceholder": "Nhập địa chỉ đầy đủ",
     "allCustomers": "Tất Cả Khách Hàng",
     "allStatus": "Tất Cả Trạng Thái",
     "availableActions": "Hành Động Khả Dụng",
@@ -1026,6 +1040,7 @@
     "customerNotFound": "Không tìm thấy khách hàng",
     "customerRequired": "Khách hàng là bắt buộc",
     "deliverFailed": "Không thể đánh dấu đã giao hàng",
+    "markAsDelivered": "Đánh Dấu Đã Giao",
     "deliverOrderDescription": "Đánh dấu đơn hàng này đã giao. Bạn có thể thêm ghi chú giao hàng nếu cần.",
     "delivered": "Đã đánh dấu đơn hàng đã giao",
     "deliveryDate": "Ngày Giao Hàng",
@@ -1034,6 +1049,7 @@
     "discount": "Giảm Giá %",
     "documents": "Tài Liệu",
     "dueOnReceipt": "Thanh Toán Khi Nhận",
+    "dueonreceipt": "Thanh Toán Khi Nhận",
     "editPO": "Sửa Đơn Hàng",
     "endDate": "Ngày Kết Thúc",
     "enterCancellationReason": "Nhập lý do hủy",
@@ -1053,6 +1069,9 @@
     "markDelivered": "Đánh Dấu Đã Giao",
     "markShipped": "Đánh Dấu Đã Gửi",
     "maxRefundAmount": "Số tiền hoàn trả tối đa",
+    "due_on_receipt": "Thanh Toán Khi Nhận",
+    "2_10_net30": "2/10 Net 30",
+    "210net30": "2/10 Net 30",
     "net30": "Thanh Toán Sau 30 Ngày",
     "net60": "Thanh Toán Sau 60 Ngày",
     "noActionsAvailable": "Không có hành động nào cho trạng thái đơn hàng này",
@@ -1080,6 +1099,7 @@
     "postalCodePlaceholder": "Nhập mã bưu chính",
     "process": "Xử Lý",
     "processFailed": "Không thể bắt đầu xử lý",
+    "processOrder": "Xử Lý đơn hàng",
     "processOrderDescription": "Bắt đầu xử lý đơn hàng này. Trạng thái sẽ được cập nhật thành Đang Xử Lý.",
     "processRefund": "Hoàn Tiền",
     "processedBy": "Được xử lý bởi",
@@ -1125,6 +1145,7 @@
     "streetRequired": "Địa chỉ là bắt buộc",
     "subtotal": "Tạm Tính",
     "tableAriaLabel": "Bảng đơn hàng",
+    "itemsTableAriaLabel": "Bảng mặt hàng đơn hàng",
     "title": "Đơn Hàng",
     "total": "Tổng",
     "totalAmount": "Tổng Tiền",
@@ -1150,7 +1171,15 @@
     "selectDateRange": "Chọn khoảng thời gian",
     "selectEndDate": "Chọn ngày kết thúc",
     "selectStartDate": "Chọn ngày bắt đầu",
-    "dateRange": "Khoảng thời gian"
+    "dateRange": "Khoảng thời gian",
+    "unsavedItem": "Mục chưa lưu",
+    "unsavedItemMessage": "Bạn có một mục chưa lưu trong biểu mẫu. Bạn có muốn thêm nó trước khi lưu không?",
+    "pendingItemDetails": "Chi tiết mục đang chờ",
+    "addAndContinue": "Thêm mục và lưu",
+    "continueWithoutAdding": "Lưu mà không thêm",
+    "invalidQuantityOrPrice": "Số lượng hoặc giá không hợp lệ",
+    "productAlreadyAdded": "Sản phẩm {{productCode}} đã được thêm",
+    "autoFilledFromCustomerAddress": "Tự động điền từ địa chỉ khách hàng"
   },
   "timekeeper": {
     "checkIn": "Vào ca",

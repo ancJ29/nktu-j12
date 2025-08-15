@@ -3,16 +3,140 @@ import {
   type PurchaseOrder,
   type CreatePurchaseOrderRequest,
   type UpdatePurchaseOrderRequest,
+  type UpdatePOStatusRequest,
 } from '@/lib/api/schemas/sales.schemas';
-import { customerService } from './customer';
+import { customerService, type Customer } from './customer';
+import { logError, logInfo } from '@/utils/logger';
+import { RETRY_DELAY_MS } from '@/constants/po.constants';
 
 // Re-export types for compatibility
-export type { POStatus, POItem, Address, PurchaseOrder } from '@/lib/api/schemas/sales.schemas';
+export type {
+  POStatus,
+  POItem,
+  Address,
+  PurchaseOrder,
+  UpdatePOStatusRequest,
+} from '@/lib/api/schemas/sales.schemas';
 
 export type { Customer } from './customer';
 
+/**
+ * Simple retry helper for critical operations only
+ * Only retries on 5xx server errors with a single retry attempt
+ */
+async function retryOnServerError<T>(
+  operation: () => Promise<T>,
+  enableRetry: boolean = false,
+): Promise<T> {
+  if (!enableRetry) {
+    return operation();
+  }
+
+  try {
+    return await operation();
+  } catch (error: any) {
+    // Only retry on 5xx server errors
+    const isServerError =
+      (error?.status >= 500 && error?.status < 600) ||
+      (error?.response?.status >= 500 && error?.response?.status < 600);
+
+    if (isServerError) {
+      logInfo('Retrying after server error', {
+        module: 'PurchaseOrderService',
+        action: 'retryOnServerError',
+        metadata: { error },
+      });
+      // Wait before retry
+      await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+      return operation(); // Single retry attempt
+    }
+
+    throw error;
+  }
+}
+
 export const purchaseOrderService = {
   purchaseOrders: [] as PurchaseOrder[],
+  // Customer cache to prevent N+1 queries
+  customerCache: new Map<string, Customer>(),
+  cacheLastUpdated: 0,
+  // Cache TTL: 10 minutes
+  CACHE_TTL: 10 * 60 * 1000,
+
+  /**
+   * Get customer data from cache or API
+   * Checks cache first, falls back to API if not found
+   */
+  async getCustomerWithCache(customerId: string): Promise<Customer | undefined> {
+    // Check if we have cached data for this customer
+    if (this.customerCache.has(customerId)) {
+      const customer = this.customerCache.get(customerId);
+      if (customer) {
+        logInfo('Customer found in cache', {
+          module: 'PurchaseOrderService',
+          action: 'getCustomerWithCache',
+          metadata: { customerId, cacheSize: this.customerCache.size },
+        });
+        return customer;
+      }
+    }
+
+    // Cache miss - fetch from API
+    logInfo('Customer not in cache, fetching from API', {
+      module: 'PurchaseOrderService',
+      action: 'getCustomerWithCache',
+      metadata: { customerId, cacheSize: this.customerCache.size },
+    });
+
+    const customer = await customerService.getCustomer(customerId);
+    // Add to cache for future use only if customer exists
+    if (customer) {
+      this.customerCache.set(customerId, customer);
+    }
+    return customer;
+  },
+
+  /**
+   * Update customer cache with batch-loaded customers
+   * Called when getAllPOs() loads all customers at once
+   */
+  updateCustomerCache(customers: Customer[]): void {
+    // Clear existing cache and rebuild
+    this.customerCache.clear();
+    customers.forEach((customer) => {
+      this.customerCache.set(customer.id, customer);
+    });
+    this.cacheLastUpdated = Date.now();
+
+    logInfo('Customer cache updated', {
+      module: 'PurchaseOrderService',
+      action: 'updateCustomerCache',
+      metadata: {
+        customerCount: customers.length,
+        cacheSize: this.customerCache.size,
+        timestamp: this.cacheLastUpdated,
+      },
+    });
+  },
+
+  /**
+   * Check if cache is still valid based on TTL
+   */
+  isCacheValid(): boolean {
+    return Date.now() - this.cacheLastUpdated < this.CACHE_TTL;
+  },
+
+  /**
+   * Clear customer cache manually if needed
+   */
+  clearCustomerCache(): void {
+    this.customerCache.clear();
+    this.cacheLastUpdated = 0;
+    logInfo('Customer cache cleared', {
+      module: 'PurchaseOrderService',
+      action: 'clearCustomerCache',
+    });
+  },
 
   async getAllPOs(): Promise<PurchaseOrder[]> {
     const response = await salesApi.getPurchaseOrders();
@@ -21,6 +145,9 @@ export const purchaseOrderService = {
     // Fetch customers and attach to POs
     const customers = await customerService.getAllCustomers();
     const customerMap = new Map(customers.map((c) => [c.id, c]));
+
+    // Update the customer cache for future use
+    this.updateCustomerCache(customers);
 
     return purchaseOrders.map((po) => ({
       ...po,
@@ -32,8 +159,8 @@ export const purchaseOrderService = {
     try {
       const po = await salesApi.getPurchaseOrderById(id);
       if (po) {
-        // Attach customer data
-        const customer = await customerService.getCustomer(po.customerId);
+        // Attach customer data using cache
+        const customer = await this.getCustomerWithCache(po.customerId);
         return {
           ...po,
           customer,
@@ -41,13 +168,18 @@ export const purchaseOrderService = {
       }
       return undefined;
     } catch (error) {
-      console.error('Failed to get PO by ID:', error);
+      logError('Failed to get PO by ID', error, {
+        module: 'PurchaseOrderService',
+        action: 'getPOById',
+        metadata: { id },
+      });
       return undefined;
     }
   },
 
   async createPO(
     data: Omit<PurchaseOrder, 'id' | 'createdAt' | 'updatedAt'>,
+    enableRetry: boolean = false,
   ): Promise<PurchaseOrder> {
     const createRequest: CreatePurchaseOrderRequest = {
       customerId: data.customerId,
@@ -70,20 +202,28 @@ export const purchaseOrderService = {
       metadata: data.metadata,
     };
 
-    const newPO = await salesApi.createPurchaseOrder(createRequest);
+    // Only critical operations get retry capability
+    const newPO = await retryOnServerError(
+      () => salesApi.createPurchaseOrder(createRequest),
+      enableRetry,
+    );
 
-    // Attach customer data
-    const customer = await customerService.getCustomer(newPO.customerId);
+    // Attach customer data using cache
+    const customer = await this.getCustomerWithCache(newPO.customerId);
     return {
       ...newPO,
       customer,
     };
   },
 
-  async updatePO(id: string, data: Partial<PurchaseOrder>): Promise<PurchaseOrder> {
+  async updatePO(
+    id: string,
+    data: Partial<PurchaseOrder>,
+    enableRetry: boolean = false,
+  ): Promise<PurchaseOrder> {
     const updateRequest: UpdatePurchaseOrderRequest = {
-      customerId: data.customerId,
       status: data.status,
+      items: data.items,
       orderDate:
         data.orderDate instanceof Date
           ? data.orderDate.toISOString()
@@ -109,10 +249,14 @@ export const purchaseOrderService = {
       metadata: data.metadata,
     };
 
-    const updatedPO = await salesApi.updatePurchaseOrder(id, updateRequest);
+    // Only critical operations get retry capability
+    const updatedPO = await retryOnServerError(
+      () => salesApi.updatePurchaseOrder(id, updateRequest),
+      enableRetry,
+    );
 
-    // Attach customer data
-    const customer = await customerService.getCustomer(updatedPO.customerId);
+    // Attach customer data using cache
+    const customer = await this.getCustomerWithCache(updatedPO.customerId);
     return {
       ...updatedPO,
       customer,
@@ -121,7 +265,7 @@ export const purchaseOrderService = {
 
   async confirmPO(id: string): Promise<PurchaseOrder> {
     const updatedPO = await salesApi.confirmPurchaseOrder(id);
-    const customer = await customerService.getCustomer(updatedPO.customerId);
+    const customer = await this.getCustomerWithCache(updatedPO.customerId);
     return {
       ...updatedPO,
       customer,
@@ -130,16 +274,16 @@ export const purchaseOrderService = {
 
   async processPO(id: string): Promise<PurchaseOrder> {
     const updatedPO = await salesApi.processPurchaseOrder(id);
-    const customer = await customerService.getCustomer(updatedPO.customerId);
+    const customer = await this.getCustomerWithCache(updatedPO.customerId);
     return {
       ...updatedPO,
       customer,
     };
   },
 
-  async shipPO(id: string): Promise<PurchaseOrder> {
-    const updatedPO = await salesApi.shipPurchaseOrder(id);
-    const customer = await customerService.getCustomer(updatedPO.customerId);
+  async shipPO(id: string, data?: UpdatePOStatusRequest): Promise<PurchaseOrder> {
+    const updatedPO = await salesApi.shipPurchaseOrder(id, data);
+    const customer = await this.getCustomerWithCache(updatedPO.customerId);
     return {
       ...updatedPO,
       customer,
@@ -148,25 +292,28 @@ export const purchaseOrderService = {
 
   async deliverPO(id: string): Promise<PurchaseOrder> {
     const updatedPO = await salesApi.deliverPurchaseOrder(id);
-    const customer = await customerService.getCustomer(updatedPO.customerId);
+    const customer = await this.getCustomerWithCache(updatedPO.customerId);
     return {
       ...updatedPO,
       customer,
     };
   },
 
-  async cancelPO(id: string): Promise<PurchaseOrder> {
-    const updatedPO = await salesApi.cancelPurchaseOrder(id);
-    const customer = await customerService.getCustomer(updatedPO.customerId);
+  async cancelPO(id: string, data?: UpdatePOStatusRequest): Promise<PurchaseOrder> {
+    const updatedPO = await salesApi.cancelPurchaseOrder(id, data);
+    const customer = await this.getCustomerWithCache(updatedPO.customerId);
     return {
       ...updatedPO,
       customer,
     };
   },
 
-  async refundPO(id: string): Promise<PurchaseOrder> {
-    const updatedPO = await salesApi.refundPurchaseOrder(id);
-    const customer = await customerService.getCustomer(updatedPO.customerId);
+  async refundPO(
+    id: string,
+    data?: { refundReason?: string; refundAmount?: number },
+  ): Promise<PurchaseOrder> {
+    const updatedPO = await salesApi.refundPurchaseOrder(id, data);
+    const customer = await this.getCustomerWithCache(updatedPO.customerId);
     return {
       ...updatedPO,
       customer,

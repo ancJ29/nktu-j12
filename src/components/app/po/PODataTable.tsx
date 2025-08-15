@@ -1,3 +1,4 @@
+import React, { memo, useCallback } from 'react';
 import { Table, Text, ScrollArea, Group } from '@mantine/core';
 import { useNavigate } from 'react-router';
 import { POActions } from './POActions';
@@ -11,6 +12,7 @@ import { formatCurrency } from '@/utils/number';
 type PODataTableProps = {
   readonly purchaseOrders: readonly PurchaseOrder[];
   readonly noAction?: boolean;
+  readonly isLoading?: boolean;
   readonly onConfirmPO?: (po: PurchaseOrder) => void;
   readonly onProcessPO?: (po: PurchaseOrder) => void;
   readonly onShipPO?: (po: PurchaseOrder) => void;
@@ -19,9 +21,10 @@ type PODataTableProps = {
   readonly onRefundPO?: (po: PurchaseOrder) => void;
 };
 
-export function PODataTable({
+function PODataTableComponent({
   purchaseOrders,
   noAction = false,
+  isLoading = false,
   onConfirmPO,
   onProcessPO,
   onShipPO,
@@ -31,6 +34,27 @@ export function PODataTable({
 }: PODataTableProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  // Memoized navigation handler
+  const handleRowClick = useCallback(
+    (poId: string) => () => {
+      navigate(getPODetailRoute(poId));
+    },
+    [navigate],
+  );
+
+  // Memoized stop propagation handler
+  const handleStopPropagation = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+  }, []);
+
+  // Memoized action handlers
+  const createActionHandler = useCallback(
+    (actionFn: ((po: PurchaseOrder) => void) | undefined, po: PurchaseOrder) => {
+      return actionFn ? () => actionFn(po) : undefined;
+    },
+    [],
+  );
 
   return (
     <ScrollArea>
@@ -56,7 +80,7 @@ export function PODataTable({
                 style={{
                   cursor: 'pointer',
                 }}
-                onClick={() => navigate(getPODetailRoute(po.id))}
+                onClick={handleRowClick(po.id)}
               >
                 <Table.Td>
                   <Text fw={500}>{po.poNumber}</Text>
@@ -81,52 +105,17 @@ export function PODataTable({
                   <POStatusBadge status={po.status} />
                 </Table.Td>
                 {noAction ? null : (
-                  <Table.Td onClick={(e) => e.stopPropagation()}>
+                  <Table.Td onClick={handleStopPropagation}>
                     <POActions
                       purchaseOrderId={po.id}
                       status={po.status}
-                      onConfirm={
-                        onConfirmPO
-                          ? () => {
-                              onConfirmPO(po);
-                            }
-                          : undefined
-                      }
-                      onProcess={
-                        onProcessPO
-                          ? () => {
-                              onProcessPO(po);
-                            }
-                          : undefined
-                      }
-                      onShip={
-                        onShipPO
-                          ? () => {
-                              onShipPO(po);
-                            }
-                          : undefined
-                      }
-                      onDeliver={
-                        onDeliverPO
-                          ? () => {
-                              onDeliverPO(po);
-                            }
-                          : undefined
-                      }
-                      onCancel={
-                        onCancelPO
-                          ? () => {
-                              onCancelPO(po);
-                            }
-                          : undefined
-                      }
-                      onRefund={
-                        onRefundPO
-                          ? () => {
-                              onRefundPO(po);
-                            }
-                          : undefined
-                      }
+                      isLoading={isLoading}
+                      onConfirm={createActionHandler(onConfirmPO, po)}
+                      onProcess={createActionHandler(onProcessPO, po)}
+                      onShip={createActionHandler(onShipPO, po)}
+                      onDeliver={createActionHandler(onDeliverPO, po)}
+                      onCancel={createActionHandler(onCancelPO, po)}
+                      onRefund={createActionHandler(onRefundPO, po)}
                     />
                   </Table.Td>
                 )}
@@ -138,3 +127,5 @@ export function PODataTable({
     </ScrollArea>
   );
 }
+
+export const PODataTable = memo(PODataTableComponent);

@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { useDisclosure } from '@mantine/hooks';
 import { LoadingOverlay, Stack } from '@mantine/core';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useDeviceType } from '@/hooks/useDeviceType';
@@ -10,16 +9,15 @@ import { DetailPageLayout } from '@/components/common/layouts/DetailPageLayout';
 import { AppPageTitle } from '@/components/common';
 import { AppMobileLayout } from '@/components/common';
 import {
-  EmployeeDeactivateModal,
-  EmployeeActivateModal,
+  EmployeeStatusModal,
   EmployeeDetailTabs,
   EmployeeDetailAccordion,
   EmployeeDetailAlert,
 } from '@/components/app/employee';
-import type { Employee } from '@/services/hr/employee';
 import { getEmployeeEditRoute } from '@/config/routeConfig';
 import { useOnce } from '@/hooks/useOnce';
 import { useAction } from '@/hooks/useAction';
+import { useEmployeeModal } from '@/hooks/useEmployeeModal';
 
 export function EmployeeDetailPage() {
   const { employeeId } = useParams<{ employeeId: string }>();
@@ -29,16 +27,13 @@ export function EmployeeDetailPage() {
   const employees = useEmployeeList();
   const isLoading = useHrLoading();
   const { loadEmployees, deactivateEmployee, activateEmployee } = useHrActions();
+  const { targetEmployee, deactivateModal, activateModal } = useEmployeeModal();
 
-  const employee = employees.find((emp) => emp.id === employeeId);
-
-  const [employeeToDeactivate, setEmployeeToDeactivate] = useState<Employee | undefined>(undefined);
-  const [employeeToActivate, setEmployeeToActivate] = useState<Employee | undefined>(undefined);
-
-  const [deactivateModalOpened, { open: openDeactivateModal, close: closeDeactivateModal }] =
-    useDisclosure(false);
-  const [activateModalOpened, { open: openActivateModal, close: closeActivateModal }] =
-    useDisclosure(false);
+  // Memoize employee lookup for better performance
+  const employee = useMemo(
+    () => employees.find((emp) => emp.id === employeeId),
+    [employees, employeeId],
+  );
 
   const handleEdit = () => {
     if (employee) {
@@ -48,15 +43,13 @@ export function EmployeeDetailPage() {
 
   const handleDeactivate = () => {
     if (employee) {
-      setEmployeeToDeactivate(employee);
-      openDeactivateModal();
+      deactivateModal.open(employee);
     }
   };
 
   const handleActivate = () => {
     if (employee) {
-      setEmployeeToActivate(employee);
-      openActivateModal();
+      activateModal.open(employee);
     }
   };
 
@@ -68,15 +61,12 @@ export function EmployeeDetailPage() {
       errorMessage: t('employee.deactivateEmployeeFailed'),
     },
     async actionHandler() {
-      if (!employeeToDeactivate) {
+      if (!targetEmployee) {
         throw new Error(t('employee.deactivateEmployeeFailed'));
       }
 
-      await deactivateEmployee(employeeToDeactivate.id);
-      closeDeactivateModal();
-    },
-    cleanupHandler() {
-      setEmployeeToDeactivate(undefined);
+      await deactivateEmployee(targetEmployee.id);
+      deactivateModal.close();
     },
   });
 
@@ -88,15 +78,12 @@ export function EmployeeDetailPage() {
       errorMessage: t('employee.activateEmployeeFailed'),
     },
     async actionHandler() {
-      if (!employeeToActivate) {
+      if (!targetEmployee) {
         throw new Error(t('employee.activateEmployeeFailed'));
       }
 
-      await activateEmployee(employeeToActivate.id);
-      closeActivateModal();
-    },
-    cleanupHandler() {
-      setEmployeeToActivate(undefined);
+      await activateEmployee(targetEmployee.id);
+      activateModal.close();
     },
   });
 
@@ -104,22 +91,26 @@ export function EmployeeDetailPage() {
     void loadEmployees();
   });
 
-  const deactivateComponent = (
-    <EmployeeDeactivateModal
-      opened={deactivateModalOpened}
-      employee={employeeToDeactivate}
-      onClose={closeDeactivateModal}
-      onConfirm={confirmDeactivateEmployee}
-    />
+  // Modal components
+  const modals = (
+    <>
+      <EmployeeStatusModal
+        mode="deactivate"
+        opened={deactivateModal.opened}
+        employee={targetEmployee}
+        onClose={deactivateModal.close}
+        onConfirm={confirmDeactivateEmployee}
+      />
+      <EmployeeStatusModal
+        mode="activate"
+        opened={activateModal.opened}
+        employee={targetEmployee}
+        onClose={activateModal.close}
+        onConfirm={confirmActivateEmployee}
+      />
+    </>
   );
-  const activateComponent = (
-    <EmployeeActivateModal
-      opened={activateModalOpened}
-      employee={employeeToActivate}
-      onClose={closeActivateModal}
-      onConfirm={confirmActivateEmployee}
-    />
-  );
+
   const title = employee ? employee.fullName : t('employee.employeeDetails');
 
   if (isMobile) {
@@ -131,7 +122,6 @@ export function EmployeeDetailPage() {
           ) : (
             <ResourceNotFound withGoBack message={t('employee.notFound')} />
           )}
-          ;
         </AppMobileLayout>
       );
     }
@@ -152,8 +142,7 @@ export function EmployeeDetailPage() {
             onEdit={handleEdit}
           />
         </Stack>
-        {deactivateComponent}
-        {activateComponent}
+        {modals}
       </AppMobileLayout>
     );
   }
@@ -173,8 +162,7 @@ export function EmployeeDetailPage() {
       ) : (
         <ResourceNotFound message={t('employee.notFound')} />
       )}
-      {deactivateComponent}
-      {activateComponent}
+      {modals}
     </DetailPageLayout>
   );
 }

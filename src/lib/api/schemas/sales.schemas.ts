@@ -70,11 +70,12 @@ export const GetCustomerResponseSchema = CustomerSchema;
 
 // Address schema
 export const AddressSchema = z.object({
-  street: stringSchema,
-  city: stringSchema,
+  oneLineAddress: optionalStringSchema,
+  street: optionalStringSchema,
+  city: optionalStringSchema,
   state: optionalStringSchema,
   postalCode: optionalStringSchema,
-  country: stringSchema,
+  country: optionalStringSchema,
 });
 
 // PO Item schemas
@@ -175,8 +176,12 @@ export const UpdatePurchaseOrderRequestSchema = z.object({
 });
 
 export const UpdatePOStatusRequestSchema = z.object({
-  reason: optionalStringSchema,
+  cancelReason: optionalStringSchema,
+  refundReason: optionalStringSchema,
   refundAmount: numberSchema.optional(),
+  trackingNumber: optionalStringSchema,
+  carrier: optionalStringSchema,
+  deliveryNotes: optionalStringSchema,
 });
 
 // Purchase Order response schemas

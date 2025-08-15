@@ -9,6 +9,7 @@ import type {
   UpdateStoreOperatingHoursRequest,
 } from '@/lib/api/schemas/store.schemas';
 import { getErrorMessage } from '@/utils/errorUtils';
+import { logError } from '@/utils/logger';
 
 type StoreConfigState = {
   // Store data
@@ -90,7 +91,10 @@ export const useStoreConfigStore = create<StoreConfigState>()(
             get()
               .loadStores()
               .catch((error) => {
-                console.error('Background refresh failed:', error);
+                logError('Background refresh failed:', error, {
+                  module: 'ConfigStoreStore',
+                  action: 'currentStores',
+                });
               });
 
             return newStore;
@@ -173,7 +177,10 @@ export const useStoreConfigStore = create<StoreConfigState>()(
             get()
               .loadStores()
               .catch((error) => {
-                console.error('Background refresh failed:', error);
+                logError('Background refresh failed:', error, {
+                  module: 'ConfigStoreStore',
+                  action: 'operation',
+                });
               });
           } catch (error) {
             // Rollback on error
@@ -237,11 +244,17 @@ export const useStoreConfigStore = create<StoreConfigState>()(
               return !existsOnServer;
             } catch (apiError) {
               // If API check fails, fall back to local check only
-              console.error('API check failed, using local validation only:', apiError);
+              logError('API check failed, using local validation only:', apiError, {
+                module: 'ConfigStoreStore',
+                action: 'response',
+              });
               return true; // Assume it's unique if we can't verify
             }
           } catch (error) {
-            console.error('Error checking store code uniqueness:', error);
+            logError('Error checking store code uniqueness:', error, {
+              module: 'ConfigStoreStore',
+              action: 'catch',
+            });
             return false;
           }
         },

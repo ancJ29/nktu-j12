@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Paper, Text, Stack, Group } from '@mantine/core';
+import { Paper, Text, Group } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
@@ -13,6 +13,7 @@ import {
   SearchBar,
   Pagination,
   ActiveBadge,
+  ContactInfo,
 } from '@/components/common';
 import { CustomerFormModal } from '@/components/app/config';
 import {
@@ -26,6 +27,7 @@ import { validateEmail } from '@/utils/validation';
 import { isDevelopment } from '@/utils/env';
 import { useClientSidePagination } from '@/hooks/useClientSidePagination';
 import { useOnce } from '@/hooks/useOnce';
+import { logError } from '@/utils/logger';
 
 export type CustomerFormValues = {
   name: string;
@@ -35,29 +37,6 @@ export type CustomerFormValues = {
   address?: string;
   taxCode?: string;
   isActive?: boolean;
-};
-
-// Helper function to render contact information
-const renderContactInfo = (customer: Customer) => {
-  const hasEmail = customer.contactEmail && customer.contactEmail.length > 0;
-  const hasPhone = customer.contactPhone && customer.contactPhone.length > 0;
-
-  if (!hasEmail && !hasPhone) {
-    return '-';
-  }
-
-  if (hasEmail && hasPhone) {
-    return (
-      <Stack gap={4}>
-        <Text size="sm">{customer.contactEmail}</Text>
-        <Text size="sm" c="dimmed">
-          {customer.contactPhone}
-        </Text>
-      </Stack>
-    );
-  }
-
-  return hasEmail ? customer.contactEmail : customer.contactPhone;
 };
 
 export function CustomerConfigPage() {
@@ -135,9 +114,10 @@ export function CustomerConfigPage() {
       setCustomers(data);
     },
     errorHandler(err) {
-      if (isDevelopment) {
-        console.error('Failed to load customers:', err);
-      }
+      logError('Failed to load customers:', err, {
+        module: 'CustomerConfigPagePage',
+        action: 'actionHandler',
+      });
       setError(t('common.loadingFailed'));
     },
     cleanupHandler() {
@@ -177,9 +157,10 @@ export function CustomerConfigPage() {
       await loadCustomers();
     },
     errorHandler(error) {
-      if (isDevelopment) {
-        console.error('Failed to create customer:', error);
-      }
+      logError('Failed to create customer:', error, {
+        module: 'CustomerConfigPagePage',
+        action: 'errorHandler',
+      });
     },
     cleanupHandler() {
       setIsLoading(false);
@@ -214,9 +195,10 @@ export function CustomerConfigPage() {
       await loadCustomers();
     },
     errorHandler(error) {
-      if (isDevelopment) {
-        console.error('Failed to update customer:', error);
-      }
+      logError('Failed to update customer:', error, {
+        module: 'CustomerConfigPagePage',
+        action: 'errorHandler',
+      });
     },
     cleanupHandler() {
       setIsLoading(false);
@@ -243,9 +225,10 @@ export function CustomerConfigPage() {
       await loadCustomers();
     },
     errorHandler(error) {
-      if (isDevelopment) {
-        console.error('Failed to delete customer:', error);
-      }
+      logError('Failed to delete customer:', error, {
+        module: 'CustomerConfigPagePage',
+        action: 'actionHandler',
+      });
     },
     cleanupHandler() {
       setIsLoading(false);
@@ -350,9 +333,9 @@ export function CustomerConfigPage() {
             },
             {
               key: 'contact',
-              header: t('customer.contact'),
+              header: t('common.contact'),
               width: '200px',
-              render: renderContactInfo,
+              render: (customer: Customer) => <ContactInfo {...customer} />,
             },
             {
               key: 'status',

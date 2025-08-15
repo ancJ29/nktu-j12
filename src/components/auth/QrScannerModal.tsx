@@ -15,7 +15,7 @@ import { useState } from 'react';
 import { Scanner, type IDetectedBarcode } from '@yudiel/react-qr-scanner';
 // Dynamic import for jsQR to reduce bundle size
 import { useTranslation } from '@/hooks/useTranslation';
-
+import { logError } from '@/utils/logger';
 type QrScannerModalProps = {
   readonly opened: boolean;
   readonly onClose: () => void;
@@ -39,7 +39,10 @@ export function QrScannerModal({ opened, onClose, onScan }: QrScannerModalProps)
   };
 
   const handleQrError = (error: unknown) => {
-    console.error('QR Scanner error:', error);
+    logError('QR Scanner error:', error, {
+      module: 'QrScannerModal',
+      action: 'handleQrScan',
+    });
     // Check if it's a permission error
     const errorMessage = error instanceof Error ? error.message : String(error);
     if (errorMessage.includes('Permission') || errorMessage.includes('NotAllowed')) {
@@ -114,7 +117,10 @@ export function QrScannerModal({ opened, onClose, onScan }: QrScannerModalProps)
         setError(t('auth.magicLink.noQrCodeFound'));
       }
     } catch (err) {
-      console.error('Error processing image:', err);
+      logError('Error processing image:', err, {
+        module: 'QrScannerModal',
+        action: 'jsQR',
+      });
       setError(t('auth.magicLink.invalidImageFormat'));
     } finally {
       setIsProcessing(false);
@@ -150,7 +156,10 @@ export function QrScannerModal({ opened, onClose, onScan }: QrScannerModalProps)
         setError(t('auth.magicLink.noQrCodeFound'));
       }
     } catch (err) {
-      console.error('Error reading clipboard:', err);
+      logError('Error reading clipboard:', err, {
+        module: 'QrScannerModal',
+        action: 'blob',
+      });
       setError(t('auth.magicLink.invalidImageFormat'));
     }
   };

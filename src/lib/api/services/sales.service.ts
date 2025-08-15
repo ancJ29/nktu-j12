@@ -50,6 +50,7 @@ import {
   type ProductStatus,
   type Product,
 } from '../schemas/sales.schemas';
+import { logError } from '@/utils/logger';
 
 // ========== Fake Data Generation ==========
 // cspell:words cust
@@ -271,7 +272,10 @@ class MockDataStore {
       // For now, these will be populated by SalesApi
       console.log('Cache needs to be refreshed from API');
     } catch (error) {
-      console.error('Failed to refresh cache:', error);
+      logError('Failed to refresh cache:', error, {
+        module: 'Sales.serviceService',
+        action: 'refreshCache',
+      });
     }
   }
 
@@ -336,7 +340,7 @@ class MockDataStore {
 const mockStore = new MockDataStore();
 
 export class SalesApi extends BaseApiClient {
-  private useMockPOData = true; // Only mock Purchase Orders, not customers/products
+  private useMockPOData = false; // Only mock Purchase Orders, not customers/products
 
   // Initialize mock store with real data from API
   private async initializeMockStore(): Promise<void> {
@@ -360,7 +364,10 @@ export class SalesApi extends BaseApiClient {
       mockStore.setCachedProducts(productsResponse.products);
       await mockStore.initialize();
     } catch (error) {
-      console.error('Failed to initialize mock store with real data:', error);
+      logError('Failed to initialize mock store with real data:', error, {
+        module: 'Sales.serviceService',
+        action: 'catch',
+      });
     }
   }
 
@@ -784,7 +791,7 @@ export class SalesApi extends BaseApiClient {
       const updated = mockStore.updatePurchaseOrder(id, {
         status: 'CANCELLED',
         cancelledBy: randomElement(contactNames),
-        cancelReason: data?.reason,
+        cancelReason: data?.cancelReason,
       });
       if (!updated) {
         throw new Error('Purchase order not found');
@@ -809,7 +816,7 @@ export class SalesApi extends BaseApiClient {
       const updated = mockStore.updatePurchaseOrder(id, {
         status: 'REFUNDED',
         refundedBy: randomElement(contactNames),
-        refundReason: data?.reason,
+        refundReason: data?.refundReason,
         refundAmount: data?.refundAmount,
       });
       if (!updated) {

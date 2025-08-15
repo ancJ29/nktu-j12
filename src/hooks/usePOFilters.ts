@@ -31,55 +31,119 @@ const defaultFilters: POFilters = {
   },
 };
 
-export function usePOFilters(
-  purchaseOrders: readonly PurchaseOrder[],
-): [PurchaseOrder[], POFilters, POFilterHandlers] {
+// Pre-computed searchable text for each PO to avoid repeated toLowerCase() calls
+interface POWithSearchText {
+  po: PurchaseOrder;
+  searchText: string;
+}
+
+export function usePOFilters(purchaseOrders: readonly PurchaseOrder[], searchOverride?: string) {
   const [filters, setFilters] = useState<POFilters>(defaultFilters);
 
-  const handlers: POFilterHandlers = {
-    setSearchQuery: useCallback((query: string) => {
-      setFilters((prev) => ({ ...prev, searchQuery: query }));
-    }, []),
+  const hasActiveFilters = useMemo(() => {
+    if (filters.customerId) {
+      return true;
+    }
+    if (filters.status !== PO_STATUS.ALL) {
+      return true;
+    }
+    if (filters.searchQuery) {
+      return true;
+    }
+    if (filters.dateRange.start || filters.dateRange.end) {
+      return true;
+    }
+    return false;
+  }, [filters]);
 
-    setCustomerId: useCallback((customerId: string | undefined) => {
-      setFilters((prev) => ({ ...prev, customerId }));
-    }, []),
+  const setSearchQuery = useCallback((query: string) => {
+    setFilters((prev) => ({ ...prev, searchQuery: query }));
+  }, []);
 
-    setStatus: useCallback((status: POStatusType) => {
-      setFilters((prev) => ({ ...prev, status }));
-    }, []),
+  const setCustomerId = useCallback((customerId: string | undefined) => {
+    setFilters((prev) => ({ ...prev, customerId }));
+  }, []);
 
-    setDateRange: useCallback((start: Date | undefined, end: Date | undefined) => {
-      setFilters((prev) => ({
-        ...prev,
-        dateRange: { start, end },
-      }));
-    }, []),
+  const setStatus = useCallback((status: POStatusType) => {
+    setFilters((prev) => ({ ...prev, status }));
+  }, []);
 
-    updateFilters: useCallback((updates: Partial<POFilters>) => {
-      setFilters((prev) => ({ ...prev, ...updates }));
-    }, []),
+  const setDateRange = useCallback((start: Date | undefined, end: Date | undefined) => {
+    setFilters((prev) => ({
+      ...prev,
+      dateRange: { start, end },
+    }));
+  }, []);
 
-    resetFilters: useCallback(() => {
-      setFilters(defaultFilters);
-    }, []),
-  };
+  const updateFilters = useCallback((updates: Partial<POFilters>) => {
+    setFilters((prev) => ({ ...prev, ...updates }));
+  }, []);
+
+  const resetFilters = useCallback(() => {
+    setFilters(defaultFilters);
+  }, []);
+
+  const filterHandlers: POFilterHandlers = useMemo(() => {
+    return {
+      setSearchQuery,
+      setCustomerId,
+      setStatus,
+      setDateRange,
+      updateFilters,
+      resetFilters,
+    };
+  }, [setSearchQuery, setCustomerId, setStatus, setDateRange, updateFilters, resetFilters]);
+
+  // Pre-compute searchable text for all POs once when data changes
+  // This avoids repeated toLowerCase() calls during filtering
+  const posWithSearchText = useMemo<readonly POWithSearchText[]>(() => {
+    return purchaseOrders.map((po) => {
+      // Combine all searchable fields into a single lowercase string
+      const searchParts: string[] = [
+        po.poNumber,
+        po.customer?.name ?? '',
+        po.customer?.companyName ?? '',
+        po.notes ?? '',
+      ];
+
+      const searchText = searchParts
+        .filter(Boolean) // Remove empty strings
+        .join(' ')
+        .toLowerCase();
+
+      return { po, searchText };
+    });
+  }, [purchaseOrders]);
+
+  // Memoize the normalized search query to avoid repeated toLowerCase() calls
+  const normalizedSearchQuery = useMemo(() => {
+    const query = searchOverride !== undefined ? searchOverride : filters.searchQuery;
+    return query.trim().toLowerCase();
+  }, [filters.searchQuery, searchOverride]);
 
   const filteredPOs = useMemo(() => {
-    return purchaseOrders.filter((po) => {
-      const { searchQuery, customerId, status, dateRange } = filters;
+    const { customerId, status, dateRange } = filters;
 
-      // Status filter
+    // Early exit if no filters are applied
+    if (!hasActiveFilters && !normalizedSearchQuery) {
+      return purchaseOrders;
+    }
+
+    // Filter the pre-computed POs with optimized checks
+    const filtered = posWithSearchText.filter(({ po, searchText }) => {
+      // Perform cheapest checks first for early exits
+
+      // Status filter (simple enum comparison - very fast)
       if (status !== PO_STATUS.ALL && po.status !== status) {
         return false;
       }
 
-      // Customer filter
+      // Customer filter (simple ID comparison - very fast)
       if (customerId && po.customerId !== customerId) {
         return false;
       }
 
-      // Date range filter
+      // Date range filter (date comparison - fast)
       if (dateRange.start && po.orderDate < dateRange.start) {
         return false;
       }
@@ -87,22 +151,24 @@ export function usePOFilters(
         return false;
       }
 
-      // Search query filter
-      if (searchQuery.trim()) {
-        const lowerQuery = searchQuery.toLowerCase();
-        const matchesSearch =
-          po.poNumber.toLowerCase().includes(lowerQuery) ||
-          (po.customer?.name.toLowerCase().includes(lowerQuery) ?? false) ||
-          (po.customer?.companyName?.toLowerCase().includes(lowerQuery) ?? false) ||
-          (po.notes?.toLowerCase().includes(lowerQuery) ?? false);
-        if (!matchesSearch) {
-          return false;
-        }
+      // Search query filter (string search - most expensive, do last)
+      if (normalizedSearchQuery && !searchText.includes(normalizedSearchQuery)) {
+        return false;
       }
 
       return true;
     });
-  }, [purchaseOrders, filters]);
 
-  return [filteredPOs, filters, handlers];
+    // Extract just the PO objects from the filtered results
+    return filtered.map(({ po }) => po);
+  }, [filters, hasActiveFilters, normalizedSearchQuery, posWithSearchText, purchaseOrders]);
+
+  const clearAllFilters = useCallback(() => {
+    setSearchQuery('');
+    setCustomerId(undefined);
+    setStatus(PO_STATUS.ALL);
+    setDateRange(undefined, undefined);
+  }, [setSearchQuery, setCustomerId, setStatus, setDateRange]);
+
+  return { filteredPOs, filters, filterHandlers, hasActiveFilters, clearAllFilters };
 }

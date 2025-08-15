@@ -12,6 +12,7 @@ import { authApi, clientApi, type ClientPublicConfigResponse } from '@/lib/api';
 import { updateClientTranslations, clearClientTranslations } from '@/lib/i18n';
 import type { GetMeResponse } from '@/lib/api/schemas/auth.schemas';
 import { cacheNavigationConfig, clearNavigationCache } from '@/utils/navigationCache';
+import { logError } from '@/utils/logger';
 
 type User = {
   id: string;
@@ -33,6 +34,7 @@ type AppState = {
   isLoading: boolean;
   adminApiLoading: boolean;
   adminApiLoadingMessage: string;
+  permissionError: boolean;
   theme: 'light' | 'dark';
   config: {
     pagination: {
@@ -52,6 +54,7 @@ type AppState = {
   setTheme: (theme: 'light' | 'dark') => void;
   setAdminAuth: (authenticated: boolean) => void;
   setAdminApiLoading: (loading: boolean, message?: string) => void;
+  setPermissionError: (hasError: boolean) => void;
   fetchPublicClientConfig: (clientCode: string) => Promise<void>;
   login: (params: { identifier: string; password: string; clientCode: string }) => Promise<void>;
   logout: () => void;
@@ -74,7 +77,10 @@ export const useAppStore = create<AppState>()(
           set({ publicClientConfig: config });
         })
         .catch((error) => {
-          console.error('Failed to fetch initial public client config:', error);
+          logError('Failed to fetch initial public client config:', error, {
+            module: 'AppStore',
+            action: 'useAppStore',
+          });
         });
 
       return {
@@ -87,6 +93,7 @@ export const useAppStore = create<AppState>()(
         isLoading: false,
         adminApiLoading: false,
         adminApiLoadingMessage: '',
+        permissionError: false,
         theme: 'light',
         config: {
           pagination: {
@@ -110,7 +117,7 @@ export const useAppStore = create<AppState>()(
         async fetchUserProfile() {
           try {
             const profile = await authApi.getMe();
-            set({ userProfile: profile });
+            set({ userProfile: profile, permissionError: false });
 
             // Cache navigation config if available
             if (profile.clientConfig?.navigation?.length) {
@@ -123,10 +130,16 @@ export const useAppStore = create<AppState>()(
               clearClientTranslations();
               updateClientTranslations(profile.clientConfig.translations);
             }
-          } catch (error) {
-            console.error('Failed to fetch user profile:', error);
-            // Only logout if we're not in the middle of a login process
-            if (!get().isLoading) {
+          } catch (error: unknown) {
+            logError('Failed to fetch user profile:', error, {
+              module: 'AppStore',
+              action: 'if',
+            });
+
+            // Check if it's a 401
+            const isApiError = error && typeof error === 'object' && 'status' in error;
+            const errorStatus = isApiError ? (error as { status: number }).status : 0;
+            if (errorStatus === 401) {
               get().logout();
             }
           }
@@ -135,12 +148,16 @@ export const useAppStore = create<AppState>()(
         setAdminAuth: (authenticated) => set({ adminAuthenticated: authenticated }),
         setAdminApiLoading: (loading, message = '') =>
           set({ adminApiLoading: loading, adminApiLoadingMessage: message }),
+        setPermissionError: (hasError) => set({ permissionError: hasError }),
         async fetchPublicClientConfig(clientCode: string) {
           try {
             const config = await clientApi.getPubicClientConfig(clientCode);
             set({ publicClientConfig: config });
           } catch (error) {
-            console.error('Failed to fetch public client config:', error);
+            logError('Failed to fetch public client config:', error, {
+              module: 'AppStore',
+              action: 'fetchPublicClientConfig',
+            });
             // Don't throw the error, just log it
             // The UI can handle the undefined publicClientConfig state
           }
@@ -181,6 +198,7 @@ export const useAppStore = create<AppState>()(
             // Don't clear client-specific public config on logout
             // publicClientConfig: undefined,
             isAuthenticated: false,
+            permissionError: false,
           });
           // Don't clear client-specific translations on logout
           // clearClientTranslations();
@@ -198,6 +216,7 @@ export const useAppStore = create<AppState>()(
               user: undefined,
               userProfile: undefined,
               isAuthenticated: false,
+              permissionError: false,
             });
           }
           set({ authInitialized: true });

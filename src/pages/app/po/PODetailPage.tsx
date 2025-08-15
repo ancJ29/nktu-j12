@@ -1,27 +1,20 @@
-import { useState } from 'react';
+import { useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { useDisclosure } from '@mantine/hooks';
 import { LoadingOverlay, Stack } from '@mantine/core';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useDeviceType } from '@/hooks/useDeviceType';
-import { usePurchaseOrderList, usePOActions, usePOLoading } from '@/stores/usePOStore';
+import { usePurchaseOrderList, usePOActions, usePOLoading, usePOError } from '@/stores/usePOStore';
+import { usePOModals } from '@/hooks/usePOModals';
 import { ResourceNotFound } from '@/components/common/layouts/ResourceNotFound';
-import { DetailPageLayout } from '@/components/common/layouts/DetailPageLayout';
 import { AppPageTitle } from '@/components/common';
-import { AppMobileLayout } from '@/components/common';
+import { AppMobileLayout, AppDesktopLayout } from '@/components/common';
 import {
   PODetailTabs,
   PODetailAccordion,
-  POConfirmModal,
-  POProcessModal,
-  POShipModal,
-  PODeliverModal,
-  POCancelModal,
-  PORefundModal,
+  POStatusModal,
   POErrorBoundary,
   PODetailTabsSkeleton,
 } from '@/components/app/po';
-import type { PurchaseOrder } from '@/services/sales/purchaseOrder';
 import { getPOEditRoute } from '@/config/routeConfig';
 import { useOnce } from '@/hooks/useOnce';
 import { useAction } from '@/hooks/useAction';
@@ -33,6 +26,7 @@ export function PODetailPage() {
   const { isMobile } = useDeviceType();
   const purchaseOrders = usePurchaseOrderList();
   const isLoading = usePOLoading();
+  const error = usePOError();
   const {
     refreshPurchaseOrders,
     confirmPurchaseOrder,
@@ -41,28 +35,21 @@ export function PODetailPage() {
     deliverPurchaseOrder,
     cancelPurchaseOrder,
     refundPurchaseOrder,
+    clearError,
   } = usePOActions();
 
   const purchaseOrder = purchaseOrders.find((po) => po.id === poId);
 
-  const [poToConfirm, setPOToConfirm] = useState<PurchaseOrder | undefined>(undefined);
-  const [poToProcess, setPOToProcess] = useState<PurchaseOrder | undefined>(undefined);
-  const [poToShip, setPOToShip] = useState<PurchaseOrder | undefined>(undefined);
-  const [poToDeliver, setPOToDeliver] = useState<PurchaseOrder | undefined>(undefined);
-  const [poToCancel, setPOToCancel] = useState<PurchaseOrder | undefined>(undefined);
-  const [poToRefund, setPOToRefund] = useState<PurchaseOrder | undefined>(undefined);
+  // Use the centralized modal hook
+  const { modals, selectedPO, closeModal, handlers } = usePOModals();
 
-  const [confirmModalOpened, { open: openConfirmModal, close: closeConfirmModal }] =
-    useDisclosure(false);
-  const [processModalOpened, { open: openProcessModal, close: closeProcessModal }] =
-    useDisclosure(false);
-  const [shipModalOpened, { open: openShipModal, close: closeShipModal }] = useDisclosure(false);
-  const [deliverModalOpened, { open: openDeliverModal, close: closeDeliverModal }] =
-    useDisclosure(false);
-  const [cancelModalOpened, { open: openCancelModal, close: closeCancelModal }] =
-    useDisclosure(false);
-  const [refundModalOpened, { open: openRefundModal, close: closeRefundModal }] =
-    useDisclosure(false);
+  // Memoized modal close handlers
+  const handleCloseConfirmModal = useCallback(() => closeModal('confirm'), [closeModal]);
+  const handleCloseProcessModal = useCallback(() => closeModal('process'), [closeModal]);
+  const handleCloseShipModal = useCallback(() => closeModal('ship'), [closeModal]);
+  const handleCloseDeliverModal = useCallback(() => closeModal('deliver'), [closeModal]);
+  const handleCloseCancelModal = useCallback(() => closeModal('cancel'), [closeModal]);
+  const handleCloseRefundModal = useCallback(() => closeModal('refund'), [closeModal]);
 
   const handleEdit = () => {
     if (purchaseOrder && purchaseOrder.status === 'NEW') {
@@ -72,43 +59,37 @@ export function PODetailPage() {
 
   const handleConfirm = () => {
     if (purchaseOrder) {
-      setPOToConfirm(purchaseOrder);
-      openConfirmModal();
+      handlers.handleConfirm(purchaseOrder);
     }
   };
 
   const handleProcess = () => {
     if (purchaseOrder) {
-      setPOToProcess(purchaseOrder);
-      openProcessModal();
+      handlers.handleProcess(purchaseOrder);
     }
   };
 
   const handleShip = () => {
     if (purchaseOrder) {
-      setPOToShip(purchaseOrder);
-      openShipModal();
+      handlers.handleShip(purchaseOrder);
     }
   };
 
   const handleDeliver = () => {
     if (purchaseOrder) {
-      setPOToDeliver(purchaseOrder);
-      openDeliverModal();
+      handlers.handleDeliver(purchaseOrder);
     }
   };
 
   const handleCancel = () => {
     if (purchaseOrder) {
-      setPOToCancel(purchaseOrder);
-      openCancelModal();
+      handlers.handleCancel(purchaseOrder);
     }
   };
 
   const handleRefund = () => {
     if (purchaseOrder) {
-      setPOToRefund(purchaseOrder);
-      openRefundModal();
+      handlers.handleRefund(purchaseOrder);
     }
   };
 
@@ -120,14 +101,11 @@ export function PODetailPage() {
       errorMessage: t('po.confirmFailed'),
     },
     async actionHandler() {
-      if (!poToConfirm) {
+      if (!selectedPO) {
         throw new Error(t('po.confirmFailed'));
       }
-      await confirmPurchaseOrder(poToConfirm.id);
-      closeConfirmModal();
-    },
-    cleanupHandler() {
-      setPOToConfirm(undefined);
+      await confirmPurchaseOrder(selectedPO.id);
+      closeModal('confirm');
     },
   });
 
@@ -139,14 +117,11 @@ export function PODetailPage() {
       errorMessage: t('po.processFailed'),
     },
     async actionHandler() {
-      if (!poToProcess) {
+      if (!selectedPO) {
         throw new Error(t('po.processFailed'));
       }
-      await processPurchaseOrder(poToProcess.id);
-      closeProcessModal();
-    },
-    cleanupHandler() {
-      setPOToProcess(undefined);
+      await processPurchaseOrder(selectedPO.id);
+      closeModal('process');
     },
   });
 
@@ -157,15 +132,12 @@ export function PODetailPage() {
       errorTitle: t('common.error'),
       errorMessage: t('po.shipFailed'),
     },
-    async actionHandler() {
-      if (!poToShip) {
+    async actionHandler(data?: any) {
+      if (!selectedPO) {
         throw new Error(t('po.shipFailed'));
       }
-      await shipPurchaseOrder(poToShip.id);
-      closeShipModal();
-    },
-    cleanupHandler() {
-      setPOToShip(undefined);
+      await shipPurchaseOrder(selectedPO.id, data);
+      closeModal('ship');
     },
   });
 
@@ -177,14 +149,11 @@ export function PODetailPage() {
       errorMessage: t('po.deliverFailed'),
     },
     async actionHandler() {
-      if (!poToDeliver) {
+      if (!selectedPO) {
         throw new Error(t('po.deliverFailed'));
       }
-      await deliverPurchaseOrder(poToDeliver.id);
-      closeDeliverModal();
-    },
-    cleanupHandler() {
-      setPOToDeliver(undefined);
+      await deliverPurchaseOrder(selectedPO.id);
+      closeModal('deliver');
     },
   });
 
@@ -195,15 +164,12 @@ export function PODetailPage() {
       errorTitle: t('common.error'),
       errorMessage: t('po.cancelFailed'),
     },
-    async actionHandler() {
-      if (!poToCancel) {
+    async actionHandler(data) {
+      if (!selectedPO) {
         throw new Error(t('po.cancelFailed'));
       }
-      await cancelPurchaseOrder(poToCancel.id);
-      closeCancelModal();
-    },
-    cleanupHandler() {
-      setPOToCancel(undefined);
+      await cancelPurchaseOrder(selectedPO.id, data);
+      closeModal('cancel');
     },
   });
 
@@ -214,15 +180,12 @@ export function PODetailPage() {
       errorTitle: t('common.error'),
       errorMessage: t('po.refundFailed'),
     },
-    async actionHandler() {
-      if (!poToRefund) {
+    async actionHandler(data?: { reason?: string; refundAmount?: number }) {
+      if (!selectedPO) {
         throw new Error(t('po.refundFailed'));
       }
-      await refundPurchaseOrder(poToRefund.id);
-      closeRefundModal();
-    },
-    cleanupHandler() {
-      setPOToRefund(undefined);
+      await refundPurchaseOrder(selectedPO.id, data);
+      closeModal('refund');
     },
   });
 
@@ -230,59 +193,52 @@ export function PODetailPage() {
     void refreshPurchaseOrders();
   });
 
-  // Modal components
-  const confirmComponent = (
-    <POConfirmModal
-      opened={confirmModalOpened}
-      purchaseOrder={poToConfirm}
-      onClose={closeConfirmModal}
-      onConfirm={confirmPOAction}
-    />
-  );
-
-  const processComponent = (
-    <POProcessModal
-      opened={processModalOpened}
-      purchaseOrder={poToProcess}
-      onClose={closeProcessModal}
-      onConfirm={processPOAction}
-    />
-  );
-
-  const shipComponent = (
-    <POShipModal
-      opened={shipModalOpened}
-      purchaseOrder={poToShip}
-      onClose={closeShipModal}
-      onConfirm={shipPOAction}
-    />
-  );
-
-  const deliverComponent = (
-    <PODeliverModal
-      opened={deliverModalOpened}
-      purchaseOrder={poToDeliver}
-      onClose={closeDeliverModal}
-      onConfirm={deliverPOAction}
-    />
-  );
-
-  const cancelComponent = (
-    <POCancelModal
-      opened={cancelModalOpened}
-      purchaseOrder={poToCancel}
-      onClose={closeCancelModal}
-      onConfirm={cancelPOAction}
-    />
-  );
-
-  const refundComponent = (
-    <PORefundModal
-      opened={refundModalOpened}
-      purchaseOrder={poToRefund}
-      onClose={closeRefundModal}
-      onConfirm={refundPOAction}
-    />
+  // Modal components using the enhanced POStatusModal
+  const modalComponents = (
+    <>
+      <POStatusModal
+        opened={modals.confirmModalOpened}
+        purchaseOrder={selectedPO}
+        mode="confirm"
+        onClose={handleCloseConfirmModal}
+        onConfirm={confirmPOAction}
+      />
+      <POStatusModal
+        opened={modals.processModalOpened}
+        purchaseOrder={selectedPO}
+        mode="process"
+        onClose={handleCloseProcessModal}
+        onConfirm={processPOAction}
+      />
+      <POStatusModal
+        opened={modals.shipModalOpened}
+        purchaseOrder={selectedPO}
+        mode="ship"
+        onClose={handleCloseShipModal}
+        onConfirm={shipPOAction}
+      />
+      <POStatusModal
+        opened={modals.deliverModalOpened}
+        purchaseOrder={selectedPO}
+        mode="deliver"
+        onClose={handleCloseDeliverModal}
+        onConfirm={deliverPOAction}
+      />
+      <POStatusModal
+        opened={modals.cancelModalOpened}
+        purchaseOrder={selectedPO}
+        mode="cancel"
+        onClose={handleCloseCancelModal}
+        onConfirm={cancelPOAction}
+      />
+      <POStatusModal
+        opened={modals.refundModalOpened}
+        purchaseOrder={selectedPO}
+        mode="refund"
+        onClose={handleCloseRefundModal}
+        onConfirm={refundPOAction}
+      />
+    </>
   );
 
   const title = purchaseOrder ? purchaseOrder.poNumber : t('po.poDetails');
@@ -290,7 +246,13 @@ export function PODetailPage() {
   if (isMobile) {
     if (isLoading || !purchaseOrder) {
       return (
-        <AppMobileLayout showLogo isLoading={isLoading} header={<AppPageTitle title={title} />}>
+        <AppMobileLayout
+          showLogo
+          isLoading={isLoading}
+          error={error}
+          clearError={clearError}
+          header={<AppPageTitle title={title} />}
+        >
           {isLoading ? (
             <LoadingOverlay visible />
           ) : (
@@ -305,11 +267,14 @@ export function PODetailPage() {
         withGoBack
         noFooter
         isLoading={isLoading}
+        error={error}
+        clearError={clearError}
         header={<AppPageTitle title={title} />}
       >
         <Stack gap="md">
           <PODetailAccordion
             purchaseOrder={purchaseOrder}
+            isLoading={isLoading}
             onEdit={handleEdit}
             onConfirm={handleConfirm}
             onProcess={handleProcess}
@@ -319,18 +284,14 @@ export function PODetailPage() {
             onRefund={handleRefund}
           />
         </Stack>
-        {confirmComponent}
-        {processComponent}
-        {shipComponent}
-        {deliverComponent}
-        {cancelComponent}
-        {refundComponent}
+        {modalComponents}
       </AppMobileLayout>
     );
   }
 
   return (
-    <DetailPageLayout titleAlign="center" title={title} isLoading={false}>
+    <AppDesktopLayout isLoading={isLoading} error={error} clearError={clearError}>
+      <AppPageTitle title={title} />
       {isLoading ? (
         <Stack gap="md">
           <PODetailTabsSkeleton />
@@ -340,6 +301,7 @@ export function PODetailPage() {
           <POErrorBoundary componentName="PODetailTabs">
             <PODetailTabs
               purchaseOrder={purchaseOrder}
+              isLoading={isLoading}
               onEdit={handleEdit}
               onConfirm={handleConfirm}
               onProcess={handleProcess}
@@ -353,12 +315,7 @@ export function PODetailPage() {
       ) : (
         <ResourceNotFound message={t('po.notFound')} />
       )}
-      {confirmComponent}
-      {processComponent}
-      {shipComponent}
-      {deliverComponent}
-      {cancelComponent}
-      {refundComponent}
-    </DetailPageLayout>
+      {modalComponents}
+    </AppDesktopLayout>
   );
 }

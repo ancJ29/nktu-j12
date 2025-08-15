@@ -10,13 +10,14 @@ import { FormContainer } from '@/components/form/FormContainer';
 import { AuthHeader, QrScannerModal } from '@/components/auth';
 import { ROUTERS } from '@/config/routeConfig';
 import { authService } from '@/services/auth';
+import { logError } from '@/utils/logger';
 
 const MAGIC_LINK_STORAGE_KEY = 'magicLinkParams';
 
 export function MagicLinkLoginPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { setUser } = useAppStore();
+  const { setUser, fetchUserProfile } = useAppStore();
   const [mounted, setMounted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | undefined>(undefined);
@@ -82,10 +83,15 @@ export function MagicLinkLoginPage() {
       const { user } = await authService.loginWithMagicToken(clientCode, token);
 
       setUser(user);
+      // Fetch user profile after successful magic link login
+      await fetchUserProfile();
       setError(undefined);
     },
     errorHandler(error) {
-      console.error('Magic link verification failed:', error);
+      logError('Magic link verification failed:', error, {
+        module: 'MagicLinkLoginPagePage',
+        action: 'if',
+      });
       setError(t('auth.magicLink.verificationFailed'));
     },
     cleanupHandler() {
@@ -152,7 +158,10 @@ export function MagicLinkLoginPage() {
         void verifyMagicLink();
       }
     } catch (err) {
-      console.error('Invalid QR code:', err);
+      logError('Invalid QR code:', err, {
+        module: 'MagicLinkLoginPagePage',
+        action: 'clientCode',
+      });
       setError(t('auth.magicLink.invalidQrCode'));
     }
   };
@@ -175,7 +184,10 @@ export function MagicLinkLoginPage() {
         void verifyMagicLink();
       }
     } catch (err) {
-      console.error('Invalid manual code:', err);
+      logError('Invalid manual code:', err, {
+        module: 'MagicLinkLoginPagePage',
+        action: 'clientCode',
+      });
       setError(t('auth.magicLink.invalidLink'));
     }
   };
