@@ -142,7 +142,7 @@ const mockStaff: Staff[] = [
     email: 'nguyen.van.anh@example.com',
     phoneNumber: '+84901234567',
     clockInUrl:
-      'https://app.credo.com/clock-in/5d41402abc4b2a76b9719d911017c592/e4da3b7fbbce2345d7772b0674a318d5',
+      'https://app.c-mngt.com/clock-in/5d41402abc4b2a76b9719d911017c592/e4da3b7fbbce2345d7772b0674a318d5',
     clockInQrCode: '',
     workingPattern: 'shift',
     weeklyContractedHours: 32,
@@ -170,7 +170,7 @@ const mockStaff: Staff[] = [
     email: 'tran.thi.mai@example.com',
     phoneNumber: '+84909876543',
     clockInUrl:
-      'https://app.credo.com/clock-in/5d41402abc4b2a76b9719d911017c592/f5ca38f748a1d6eaf726b8a42fb575c3',
+      'https://app.c-mngt.com/clock-in/5d41402abc4b2a76b9719d911017c592/f5ca38f748a1d6eaf726b8a42fb575c3',
     clockInQrCode: '',
     workingPattern: 'fulltime',
     weeklyContractedHours: 40,
@@ -198,7 +198,7 @@ const mockStaff: Staff[] = [
     email: 'le.minh.khoi@example.com',
     phoneNumber: '+84912345678',
     clockInUrl:
-      'https://app.credo.com/clock-in/c1f4b5fb265066db8e9c028e7dc4e3a5/a8c5f1e8a1b1dc3d3e63a8b47fd2c872',
+      'https://app.c-mngt.com/clock-in/c1f4b5fb265066db8e9c028e7dc4e3a5/a8c5f1e8a1b1dc3d3e63a8b47fd2c872',
     clockInQrCode: '',
     workingPattern: 'shift',
     weeklyContractedHours: 24,
@@ -226,7 +226,7 @@ const mockStaff: Staff[] = [
     email: 'pham.thi.huong@example.com',
     phoneNumber: '+84938765432',
     clockInUrl:
-      'https://app.credo.com/clock-in/c1f4b5fb265066db8e9c028e7dc4e3a5/b6d767d2f8ed5d21a44b0e5886680cb9',
+      'https://app.c-mngt.com/clock-in/c1f4b5fb265066db8e9c028e7dc4e3a5/b6d767d2f8ed5d21a44b0e5886680cb9',
     clockInQrCode: '',
     workingPattern: 'fulltime',
     weeklyContractedHours: 40,
@@ -254,7 +254,7 @@ const mockStaff: Staff[] = [
     email: 'hoang.duc.minh@example.com',
     phoneNumber: '+84978123456',
     clockInUrl:
-      'https://app.credo.com/clock-in/d2a84f4b8b650937ec8f73cd8be2c4a4/c74d97b01eae257e44aa9d5bade97baf',
+      'https://app.c-mngt.com/clock-in/d2a84f4b8b650937ec8f73cd8be2c4a4/c74d97b01eae257e44aa9d5bade97baf',
     clockInQrCode: '',
     workingPattern: 'shift',
     weeklyContractedHours: 36,
@@ -282,7 +282,7 @@ const mockStaff: Staff[] = [
     email: 'vu.thi.lan@example.com',
     phoneNumber: '+84965432198',
     clockInUrl:
-      'https://app.credo.com/clock-in/d2a84f4b8b650937ec8f73cd8be2c4a4/16790e0e170c3fcec02df1d6cb0bde6e',
+      'https://app.c-mngt.com/clock-in/d2a84f4b8b650937ec8f73cd8be2c4a4/16790e0e170c3fcec02df1d6cb0bde6e',
     clockInQrCode: '',
     workingPattern: 'fulltime',
     weeklyContractedHours: 40,
@@ -310,7 +310,7 @@ const mockStaff: Staff[] = [
     email: 'dang.van.hai@example.com',
     phoneNumber: '+84919876543',
     clockInUrl:
-      'https://app.credo.com/clock-in/e358efa489f58062f10dd7316b65649e/e96ed478dab8595a7dbda4cbcbfb82ed',
+      'https://app.c-mngt.com/clock-in/e358efa489f58062f10dd7316b65649e/e96ed478dab8595a7dbda4cbcbfb82ed',
     clockInQrCode: '',
     workingPattern: 'shift',
     weeklyContractedHours: 28,
@@ -338,7 +338,7 @@ const mockStaff: Staff[] = [
     email: 'bui.thi.thanh@example.com',
     phoneNumber: '+84987654321',
     clockInUrl:
-      'https://app.credo.com/clock-in/1385974ed5904a438616ff7bdb3f7439/f0b9ec9d9a84ea7cc6cac11c3ba39cea',
+      'https://app.c-mngt.com/clock-in/1385974ed5904a438616ff7bdb3f7439/f0b9ec9d9a84ea7cc6cac11c3ba39cea',
     clockInQrCode: '',
     workingPattern: 'fulltime',
     weeklyContractedHours: 40,
@@ -377,7 +377,7 @@ const generateMD5 = (text: string): string => CryptoJS.MD5(text).toString();
 const generateClockInUrl = (storeId: string, staffId: string): string => {
   const storeHash = generateMD5(storeId);
   const staffHash = generateMD5(staffId);
-  return `https://app.credo.com/clock-in/${storeHash}/${staffHash}`;
+  return `https://app.c-mngt.com/clock-in/${storeHash}/${staffHash}`;
 };
 
 // Generate QR code

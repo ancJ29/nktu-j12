@@ -99,7 +99,7 @@ export const StoreStaffSchema = z
       ...val,
       email: `${generateRandomString(4)}.${Date.now()}@example.com`,
       phoneNumber: '+84938765432',
-      clockInUrl: 'https://app.credo.com/clock-in/',
+      clockInUrl: 'https://app.c-mngt.com/clock-in/',
       clockInQrCode: '',
       workingPattern: 'fulltime',
       weeklyContractedHours: 40,

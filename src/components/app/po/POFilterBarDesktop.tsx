@@ -26,8 +26,6 @@ interface POFilterBarDesktopProps {
   readonly onClearFilters: () => void;
 }
 
-const debug = true;
-
 export function POFilterBarDesktop({
   searchQuery,
   customerId,
@@ -105,6 +103,60 @@ export function POFilterBarDesktop({
             label={t('po.poStatus')}
             maxDropdownHeight={280}
           />
+        </Group>
+
+        {/* Second Row: Date Filters and Clear */}
+        <Group justify="start" align="flex-end" gap="md">
+          <DateInput
+            clearable
+            label={t('po.orderDateFrom')}
+            placeholder={t('po.selectStartDate')}
+            value={orderDateStart}
+            valueFormat={valueFormat}
+            style={{ minWidth: 150 }}
+            onChange={(date) => onOrderDateChange(date ? new Date(date) : undefined, orderDateEnd)}
+            maxDate={orderDateEnd || undefined}
+          />
+
+          <DateInput
+            clearable
+            label={t('po.orderDateTo')}
+            placeholder={t('po.selectEndDate')}
+            value={orderDateEnd}
+            valueFormat={valueFormat}
+            style={{ minWidth: 150 }}
+            onChange={(date) =>
+              onOrderDateChange(orderDateStart, date ? new Date(date) : undefined)
+            }
+            minDate={orderDateStart || undefined}
+          />
+
+          <DateInput
+            clearable
+            label={t('po.deliveryDateFrom')}
+            placeholder={t('po.selectStartDate')}
+            value={deliveryDateStart}
+            valueFormat={valueFormat}
+            style={{ minWidth: 150 }}
+            onChange={(date) =>
+              onDeliveryDateChange(date ? new Date(date) : undefined, deliveryDateEnd)
+            }
+            maxDate={deliveryDateEnd || undefined}
+          />
+
+          <DateInput
+            clearable
+            label={t('po.deliveryDateTo')}
+            placeholder={t('po.selectEndDate')}
+            value={deliveryDateEnd}
+            valueFormat={valueFormat}
+            style={{ minWidth: 150 }}
+            onChange={(date) =>
+              onDeliveryDateChange(deliveryDateStart, date ? new Date(date) : undefined)
+            }
+            minDate={deliveryDateStart || undefined}
+          />
+
           <Button
             disabled={!hasActiveFilters}
             variant="subtle"
@@ -114,72 +166,6 @@ export function POFilterBarDesktop({
             {t('common.clear')}
           </Button>
         </Group>
-
-        {/* Second Row: Date Filters and Clear */}
-        {debug ? null : (
-          <Group justify="start" align="flex-end" gap="md">
-            <DateInput
-              clearable
-              label={t('po.orderDateFrom')}
-              placeholder={t('po.selectStartDate')}
-              value={orderDateStart}
-              valueFormat={valueFormat}
-              style={{ minWidth: 150 }}
-              onChange={(date) =>
-                onOrderDateChange(date ? new Date(date) : undefined, orderDateEnd)
-              }
-              maxDate={orderDateEnd || undefined}
-            />
-
-            <DateInput
-              clearable
-              label={t('po.orderDateTo')}
-              placeholder={t('po.selectEndDate')}
-              value={orderDateEnd}
-              valueFormat={valueFormat}
-              style={{ minWidth: 150 }}
-              onChange={(date) =>
-                onOrderDateChange(orderDateStart, date ? new Date(date) : undefined)
-              }
-              minDate={orderDateStart || undefined}
-            />
-
-            <DateInput
-              clearable
-              label={t('po.deliveryDateFrom')}
-              placeholder={t('po.selectStartDate')}
-              value={deliveryDateStart}
-              valueFormat={valueFormat}
-              style={{ minWidth: 150 }}
-              onChange={(date) =>
-                onDeliveryDateChange(date ? new Date(date) : undefined, deliveryDateEnd)
-              }
-              maxDate={deliveryDateEnd || undefined}
-            />
-
-            <DateInput
-              clearable
-              label={t('po.deliveryDateTo')}
-              placeholder={t('po.selectEndDate')}
-              value={deliveryDateEnd}
-              valueFormat={valueFormat}
-              style={{ minWidth: 150 }}
-              onChange={(date) =>
-                onDeliveryDateChange(deliveryDateStart, date ? new Date(date) : undefined)
-              }
-              minDate={deliveryDateStart || undefined}
-            />
-
-            <Button
-              disabled={!hasActiveFilters}
-              variant="subtle"
-              leftSection={<IconClearAll size={16} />}
-              onClick={onClearFilters}
-            >
-              {t('common.clear')}
-            </Button>
-          </Group>
-        )}
       </Stack>
     </DatesProvider>
   );

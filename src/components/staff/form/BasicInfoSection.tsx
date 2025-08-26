@@ -53,7 +53,7 @@ export function BasicInfoSection({ form }: BasicInfoSectionProps) {
     const storeHash = generateMD5(currentStore.id);
     const staffHash = generateMD5(tempStaffId);
 
-    return `https://app.credo.com/clock-in/${storeHash}/${staffHash}`;
+    return `https://app.c-mngt.com/clock-in/${storeHash}/${staffHash}`;
   };
 
   // Generate QR code for preview
