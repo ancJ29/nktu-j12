@@ -2,12 +2,11 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import {
   purchaseOrderService,
-  customerService,
-  productService,
   type PurchaseOrder,
   type Customer,
   type Product,
   type UpdatePOStatusRequest,
+  type POFilterParams,
 } from '@/services/sales';
 import { getErrorMessage } from '@/utils/errorUtils';
 
@@ -19,7 +18,17 @@ type POState = {
   products: Product[];
   currentPO: PurchaseOrder | undefined;
   isLoading: boolean;
+  isLoadingMore: boolean;
   error: string | undefined;
+
+  // Pagination state
+  currentCursor: string | undefined;
+  previousCursors: string[]; // Stack of previous cursors for page navigation
+  hasMorePOs: boolean;
+  hasPreviousPage: boolean;
+  activeFilters: POFilterParams;
+  currentPage: number;
+
   // Request tracking for race condition prevention
   pendingRequests: Map<string, { requestId: string; timestamp: number; action: string }>;
   requestCounter: number;
@@ -33,19 +42,39 @@ type POState = {
 
   // Actions
   setCurrentPO: (po: PurchaseOrder | undefined) => void;
-  loadPOs: (force?: boolean) => Promise<void>;
-  loadCustomers: () => Promise<void>;
-  loadProducts: () => Promise<void>;
+  loadPOsWithFilter: (filters?: POFilterParams, reset?: boolean) => Promise<void>;
+  loadMorePOs: () => Promise<void>;
+  loadNextPage: () => Promise<void>;
+  loadPreviousPage: () => Promise<void>;
   refreshPOs: () => Promise<void>;
+  resetPagination: () => void;
   loadPO: (id: string) => Promise<void>;
-  createPO: (po: Omit<PurchaseOrder, 'id' | 'createdAt' | 'updatedAt'>) => Promise<void>;
+  createPO: (
+    po: Omit<
+      PurchaseOrder,
+      | 'id'
+      | 'createdAt'
+      | 'updatedAt'
+      | 'createdBy'
+      | 'clientId'
+      | 'poNumber'
+      | 'processedBy'
+      | 'shippedBy'
+      | 'deliveredBy'
+      | 'cancelledBy'
+      | 'cancelReason'
+      | 'refundedBy'
+      | 'refundReason'
+      | 'completedDate'
+    >,
+  ) => Promise<void>;
   updatePO: (id: string, data: Partial<PurchaseOrder>) => Promise<void>;
   confirmPO: (id: string) => Promise<void>;
   processPO: (id: string) => Promise<void>;
   shipPO: (id: string, data?: UpdatePOStatusRequest) => Promise<void>;
-  deliverPO: (id: string) => Promise<void>;
+  deliverPO: (id: string, data?: { deliveryNotes?: string }) => Promise<void>;
   cancelPO: (id: string, data?: { cancelReason?: string }) => Promise<void>;
-  refundPO: (id: string, data?: { refundReason?: string; refundAmount?: number }) => Promise<void>;
+  refundPO: (id: string, data?: { refundReason?: string }) => Promise<void>;
   clearError: () => void;
 
   // Selectors
@@ -64,7 +93,14 @@ export const usePOStore = create<POState>()(
       products: [],
       currentPO: undefined,
       isLoading: false,
+      isLoadingMore: false,
       error: undefined,
+      currentCursor: undefined,
+      previousCursors: [],
+      hasMorePOs: true,
+      hasPreviousPage: false,
+      activeFilters: {},
+      currentPage: 1,
       pendingRequests: new Map(),
       requestCounter: 0,
 
@@ -126,69 +162,158 @@ export const usePOStore = create<POState>()(
           set({ pendingRequests: newPendingRequests });
         }
       },
-
       // Actions
       setCurrentPO(po) {
         set({ currentPO: po, error: undefined });
       },
 
-      async loadCustomers() {
-        set({ error: undefined });
-        try {
-          const customers = await customerService.getAllCustomers();
-          set({
-            customers,
-            customerMap: new Map(customers.map((customer: Customer) => [customer.id, customer])),
-          });
-        } catch (error) {
-          set({
-            error: getErrorMessage(error, 'Failed to load customers'),
-          });
-        }
-      },
+      async loadPOsWithFilter(filters?: POFilterParams, reset = true) {
+        const state = get();
 
-      async loadProducts() {
-        set({ error: undefined });
-        try {
-          const products = await productService.getActiveProducts();
-          set({ products });
-        } catch (error) {
+        // If resetting, clear existing data and cursor
+        if (reset) {
           set({
-            error: getErrorMessage(error, 'Failed to load products'),
+            purchaseOrders: [],
+            currentCursor: undefined,
+            previousCursors: [],
+            hasMorePOs: true,
+            hasPreviousPage: false,
+            currentPage: 1,
+            activeFilters: filters || {},
+            isLoading: true,
+            error: undefined,
           });
-        }
-      },
-
-      async loadPOs(force = false) {
-        if (get().purchaseOrders.length > 0 && !force) {
-          return;
+        } else {
+          set({ isLoadingMore: true, error: undefined });
         }
 
-        set({ isLoading: true, error: undefined });
         try {
-          // Load POs, customers and products in parallel
-          const [purchaseOrders, customers, products] = await Promise.all([
-            purchaseOrderService.getAllPOs(),
-            customerService.getAllCustomers(),
-            productService.getActiveProducts(),
-          ]);
+          const params = {
+            ...filters,
+            cursor: reset ? undefined : state.currentCursor,
+            limit: 20, // Default page size
+          };
+
+          const response = await purchaseOrderService.getPOsWithFilter(params);
+
           set({
             isLoading: false,
-            purchaseOrders,
-            customers,
-            customerMap: new Map(customers.map((customer: Customer) => [customer.id, customer])),
-            products,
+            isLoadingMore: false,
+            purchaseOrders: reset
+              ? response.purchaseOrders
+              : [...state.purchaseOrders, ...response.purchaseOrders],
+            currentCursor: response.pagination.nextCursor,
+            hasMorePOs: response.pagination.hasNext,
           });
         } catch (error) {
           set({
             isLoading: false,
+            isLoadingMore: false,
             error: getErrorMessage(error, 'Failed to load purchase orders'),
           });
         }
       },
 
+      async loadMorePOs() {
+        const state = get();
+        if (!state.hasMorePOs || state.isLoadingMore) {
+          return;
+        }
+
+        await get().loadPOsWithFilter(state.activeFilters, false);
+      },
+
+      async loadNextPage() {
+        const state = get();
+        if (!state.hasMorePOs || state.isLoading) {
+          return;
+        }
+
+        // Save current cursor to previous cursors stack before loading next page
+        if (state.currentCursor) {
+          set({
+            previousCursors: [...state.previousCursors, state.currentCursor],
+            hasPreviousPage: true,
+          });
+        }
+
+        set({ isLoading: true, error: undefined });
+
+        try {
+          const params = {
+            ...state.activeFilters,
+            cursor: state.currentCursor,
+            limit: 20,
+          };
+
+          const response = await purchaseOrderService.getPOsWithFilter(params);
+
+          set({
+            isLoading: false,
+            purchaseOrders: response.purchaseOrders,
+            currentCursor: response.pagination.nextCursor,
+            hasMorePOs: response.pagination.hasNext,
+            currentPage: state.currentPage + 1,
+          });
+        } catch (error) {
+          set({
+            isLoading: false,
+            error: getErrorMessage(error, 'Failed to load next page'),
+          });
+        }
+      },
+
+      async loadPreviousPage() {
+        const state = get();
+        if (!state.hasPreviousPage || state.isLoading) {
+          return;
+        }
+
+        set({ isLoading: true, error: undefined });
+
+        const previousCursors = [...state.previousCursors];
+        const previousCursor = previousCursors.pop(); // Get the last cursor
+
+        try {
+          const params = {
+            ...state.activeFilters,
+            cursor: previousCursor || undefined,
+            limit: 20,
+          };
+
+          const response = await purchaseOrderService.getPOsWithFilter(params);
+
+          set({
+            isLoading: false,
+            purchaseOrders: response.purchaseOrders,
+            currentCursor: response.pagination.nextCursor,
+            previousCursors,
+            hasPreviousPage: previousCursors.length > 0,
+            hasMorePOs: response.pagination.hasNext,
+            currentPage: Math.max(1, state.currentPage - 1),
+          });
+        } catch (error) {
+          set({
+            isLoading: false,
+            error: getErrorMessage(error, 'Failed to load previous page'),
+          });
+        }
+      },
+
       async refreshPOs() {
-        await get().loadPOs(true);
+        const state = get();
+        await get().loadPOsWithFilter(state.activeFilters, true);
+      },
+
+      resetPagination() {
+        set({
+          currentCursor: undefined,
+          previousCursors: [],
+          hasMorePOs: true,
+          hasPreviousPage: false,
+          currentPage: 1,
+          purchaseOrders: [],
+        });
       },
 
       async loadPO(id: string) {
@@ -217,11 +342,40 @@ export const usePOStore = create<POState>()(
       async createPO(poData) {
         set({ isLoading: true, error: undefined });
         try {
-          const newPO = await purchaseOrderService.createPO(poData);
-          set((state) => ({
-            isLoading: false,
-            purchaseOrders: [newPO, ...state.purchaseOrders],
-          }));
+          // Convert the PurchaseOrder type to what the service expects
+          const createData = {
+            customerId: poData.customerId,
+            items: poData.items.map((item) => ({
+              productCode: item.productCode,
+              description: item.description,
+              color: item.color,
+              quantity: item.quantity,
+              category: item.category,
+            })),
+            metadata: {
+              shippingAddress: {
+                oneLineAddress: poData.address,
+                googleMapsUrl: poData.googleMapsUrl,
+              },
+            },
+            address: poData.address,
+            googleMapsUrl: poData.googleMapsUrl,
+            notes: poData.notes,
+            orderDate:
+              poData.orderDate instanceof Date
+                ? poData.orderDate
+                : poData.orderDate
+                  ? new Date(poData.orderDate)
+                  : undefined,
+            deliveryDate:
+              poData.deliveryDate instanceof Date
+                ? poData.deliveryDate
+                : poData.deliveryDate
+                  ? new Date(poData.deliveryDate)
+                  : undefined,
+          };
+          await purchaseOrderService.createPO(createData);
+          await get().refreshPOs();
         } catch (error) {
           set({
             isLoading: false,
@@ -234,12 +388,8 @@ export const usePOStore = create<POState>()(
       async updatePO(id, data) {
         set({ isLoading: true, error: undefined });
         try {
-          const updatedPO = await purchaseOrderService.updatePO(id, data);
-          set((state) => ({
-            isLoading: false,
-            purchaseOrders: state.purchaseOrders.map((po) => (po.id === id ? updatedPO : po)),
-            currentPO: state.currentPO?.id === id ? updatedPO : state.currentPO,
-          }));
+          await purchaseOrderService.updatePO(id, data);
+          await get().refreshPOs();
         } catch (error) {
           set({
             isLoading: false,
@@ -271,14 +421,11 @@ export const usePOStore = create<POState>()(
         }));
 
         try {
-          const updatedPO = await purchaseOrderService.confirmPO(id);
+          await purchaseOrderService.confirmPO(id);
 
           // Only update if this request is still valid (prevent race conditions)
           if (get()._finishRequest(id, requestId)) {
-            set((state) => ({
-              purchaseOrders: state.purchaseOrders.map((po) => (po.id === id ? updatedPO : po)),
-              currentPO: state.currentPO?.id === id ? updatedPO : state.currentPO,
-            }));
+            await get().refreshPOs();
           }
         } catch (error) {
           // Finish request tracking even on error
@@ -315,14 +462,11 @@ export const usePOStore = create<POState>()(
         }));
 
         try {
-          const updatedPO = await purchaseOrderService.processPO(id);
+          await purchaseOrderService.processPO(id);
 
           // Only update if this request is still valid (prevent race conditions)
           if (get()._finishRequest(id, requestId)) {
-            set((state) => ({
-              purchaseOrders: state.purchaseOrders.map((po) => (po.id === id ? updatedPO : po)),
-              currentPO: state.currentPO?.id === id ? updatedPO : state.currentPO,
-            }));
+            await get().refreshPOs();
           }
         } catch (error) {
           // Finish request tracking even on error
@@ -359,14 +503,11 @@ export const usePOStore = create<POState>()(
         }));
 
         try {
-          const updatedPO = await purchaseOrderService.shipPO(id, data);
+          await purchaseOrderService.shipPO(id, data);
 
           // Only update if this request is still valid (prevent race conditions)
           if (get()._finishRequest(id, requestId)) {
-            set((state) => ({
-              purchaseOrders: state.purchaseOrders.map((po) => (po.id === id ? updatedPO : po)),
-              currentPO: state.currentPO?.id === id ? updatedPO : state.currentPO,
-            }));
+            await get().refreshPOs();
           }
         } catch (error) {
           // Finish request tracking even on error
@@ -381,7 +522,7 @@ export const usePOStore = create<POState>()(
         }
       },
 
-      async deliverPO(id) {
+      async deliverPO(id, data) {
         // Check if request is already pending
         if (get()._isRequestPending(id)) {
           throw new Error('Deliver request already pending for this PO');
@@ -403,14 +544,11 @@ export const usePOStore = create<POState>()(
         }));
 
         try {
-          const updatedPO = await purchaseOrderService.deliverPO(id);
+          await purchaseOrderService.deliverPO(id, data);
 
           // Only update if this request is still valid (prevent race conditions)
           if (get()._finishRequest(id, requestId)) {
-            set((state) => ({
-              purchaseOrders: state.purchaseOrders.map((po) => (po.id === id ? updatedPO : po)),
-              currentPO: state.currentPO?.id === id ? updatedPO : state.currentPO,
-            }));
+            await get().refreshPOs();
           }
         } catch (error) {
           // Finish request tracking even on error
@@ -447,14 +585,11 @@ export const usePOStore = create<POState>()(
         }));
 
         try {
-          const updatedPO = await purchaseOrderService.cancelPO(id, data);
+          await purchaseOrderService.cancelPO(id, data);
 
           // Only update if this request is still valid (prevent race conditions)
           if (get()._finishRequest(id, requestId)) {
-            set((state) => ({
-              purchaseOrders: state.purchaseOrders.map((po) => (po.id === id ? updatedPO : po)),
-              currentPO: state.currentPO?.id === id ? updatedPO : state.currentPO,
-            }));
+            await get().refreshPOs();
           }
         } catch (error) {
           // Finish request tracking even on error
@@ -491,14 +626,11 @@ export const usePOStore = create<POState>()(
         }));
 
         try {
-          const updatedPO = await purchaseOrderService.refundPO(id, data);
+          await purchaseOrderService.refundPO(id, data);
 
           // Only update if this request is still valid (prevent race conditions)
           if (get()._finishRequest(id, requestId)) {
-            set((state) => ({
-              purchaseOrders: state.purchaseOrders.map((po) => (po.id === id ? updatedPO : po)),
-              currentPO: state.currentPO?.id === id ? updatedPO : state.currentPO,
-            }));
+            await get().refreshPOs();
           }
         } catch (error) {
           // Finish request tracking even on error
@@ -554,10 +686,12 @@ export const usePOError = () => usePOStore((state) => state.error);
 // Export hook with stable reference by calling the store multiple times
 // This pattern prevents infinite re-renders as each function reference is stable
 export const usePOActions = () => {
-  const loadPOs = usePOStore((state) => state.loadPOs);
-  const loadCustomers = usePOStore((state) => state.loadCustomers);
-  const loadProducts = usePOStore((state) => state.loadProducts);
+  const loadPOsWithFilter = usePOStore((state) => state.loadPOsWithFilter);
+  const loadMorePOs = usePOStore((state) => state.loadMorePOs);
+  const loadNextPage = usePOStore((state) => state.loadNextPage);
+  const loadPreviousPage = usePOStore((state) => state.loadPreviousPage);
   const refreshPOs = usePOStore((state) => state.refreshPOs);
+  const resetPagination = usePOStore((state) => state.resetPagination);
   const loadPO = usePOStore((state) => state.loadPO);
   const createPO = usePOStore((state) => state.createPO);
   const updatePO = usePOStore((state) => state.updatePO);
@@ -570,10 +704,12 @@ export const usePOActions = () => {
   const clearError = usePOStore((state) => state.clearError);
 
   return {
-    loadPOs,
-    loadCustomers,
-    loadProducts,
+    loadPOsWithFilter,
+    loadMorePOs,
+    loadNextPage,
+    loadPreviousPage,
     refreshPOs,
+    resetPagination,
     loadPO,
     createPO,
     updatePO,
@@ -605,3 +741,22 @@ export const usePOsByCustomer = (customerId: string) =>
   usePOStore((state) => state.getPOsByCustomer(customerId)) || EMPTY_ARRAY;
 export const useCurrentPO = () => usePOStore((state) => state.currentPO);
 export const useSetCurrentPO = () => usePOStore((state) => state.setCurrentPO);
+
+// Pagination state hooks
+export const usePOPaginationState = () => {
+  const currentCursor = usePOStore((state) => state.currentCursor);
+  const hasMorePOs = usePOStore((state) => state.hasMorePOs);
+  const hasPreviousPage = usePOStore((state) => state.hasPreviousPage);
+  const isLoadingMore = usePOStore((state) => state.isLoadingMore);
+  const activeFilters = usePOStore((state) => state.activeFilters);
+  const currentPage = usePOStore((state) => state.currentPage);
+
+  return {
+    currentCursor,
+    hasMorePOs,
+    hasPreviousPage,
+    isLoadingMore,
+    activeFilters,
+    currentPage,
+  };
+};

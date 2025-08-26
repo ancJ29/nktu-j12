@@ -22,7 +22,8 @@ const THEME_COLOR = process.env.VITE_THEME_COLOR || '#324e71';
 // https://vite.dev/config/
 export default defineConfig({
   server: {
-    allowedHosts: ['864531080d99.ngrok-free.app'],
+    // https://efde3343abb4.ngrok-free.app
+    allowedHosts: ['efde3343abb4.ngrok-free.app'],
   },
   resolve: {
     alias: {

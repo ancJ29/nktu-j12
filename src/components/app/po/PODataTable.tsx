@@ -6,8 +6,9 @@ import { POStatusBadge } from './POStatusBadge';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { PurchaseOrder } from '@/services/sales/purchaseOrder';
 import { getPODetailRoute } from '@/config/routeConfig';
-import { formatDate } from '@/utils/time';
-import { formatCurrency } from '@/utils/number';
+import { formatDate, getLocaleFormat } from '@/utils/time';
+import { getCustomerNameByCustomerId } from '@/utils/overview';
+import { useCustomerMapByCustomerId } from '@/stores/useAppStore';
 
 type PODataTableProps = {
   readonly purchaseOrders: readonly PurchaseOrder[];
@@ -32,9 +33,9 @@ function PODataTableComponent({
   onCancelPO,
   onRefundPO,
 }: PODataTableProps) {
-  const { t } = useTranslation();
+  const { t, currentLanguage } = useTranslation();
   const navigate = useNavigate();
-
+  const customerMapByCustomerId = useCustomerMapByCustomerId();
   // Memoized navigation handler
   const handleRowClick = useCallback(
     (poId: string) => () => {
@@ -56,6 +57,13 @@ function PODataTableComponent({
     [],
   );
 
+  const fmtDate = useCallback(
+    (date: Date | string | undefined) => {
+      return formatDate(date, getLocaleFormat(currentLanguage));
+    },
+    [currentLanguage],
+  );
+
   return (
     <ScrollArea>
       <Table striped highlightOnHover aria-label={t('po.tableAriaLabel')}>
@@ -66,8 +74,6 @@ function PODataTableComponent({
             <Table.Th>{t('po.orderDate')}</Table.Th>
             <Table.Th>{t('po.deliveryDate')}</Table.Th>
             <Table.Th>{t('po.items')}</Table.Th>
-            <Table.Th>{t('po.total')}</Table.Th>
-            <Table.Th>{t('po.paymentTerms')}</Table.Th>
             <Table.Th>{t('po.poStatus')}</Table.Th>
             {noAction ? null : <Table.Th style={{ width: 120 }}>{t('common.actions')}</Table.Th>}
           </Table.Tr>
@@ -87,20 +93,18 @@ function PODataTableComponent({
                 </Table.Td>
                 <Table.Td>
                   <Group gap="sm" justify="start">
-                    <Text fw={400}>{po.customer?.name ?? '-'}</Text>
+                    <Text fw={400}>
+                      {getCustomerNameByCustomerId(customerMapByCustomerId, po.customerId)}
+                    </Text>
                   </Group>
                 </Table.Td>
-                <Table.Td>{formatDate(po.orderDate)}</Table.Td>
-                <Table.Td>{po.deliveryDate ? formatDate(po.deliveryDate) : '-'}</Table.Td>
+                <Table.Td>{fmtDate(po.orderDate)}</Table.Td>
+                <Table.Td>{po.deliveryDate ? fmtDate(po.deliveryDate) : '-'}</Table.Td>
                 <Table.Td>
                   <Text size="sm">
                     {po.items.length} {t('po.itemsCount')}
                   </Text>
                 </Table.Td>
-                <Table.Td>
-                  <Text fw={500}>{formatCurrency(po.totalAmount)}</Text>
-                </Table.Td>
-                <Table.Td>{po.paymentTerms ?? '-'}</Table.Td>
                 <Table.Td>
                   <POStatusBadge status={po.status} />
                 </Table.Td>
