@@ -1131,6 +1131,7 @@
     "selectEndDate": "Select end date",
     "selectStartDate": "Select start date",
     "selectStatus": "Select status",
+    "statusesSelected": "statuses selected",
     "dateRange": "Date Range",
     "ship": "Ship",
     "shipFailed": "Failed to mark as shipped",

@@ -1126,6 +1126,7 @@
     "selectCategory": "Chọn danh mục",
     "selectCustomer": "Chọn khách hàng",
     "selectStatus": "Chọn trạng thái",
+    "statusesSelected": "trạng thái đã chọn",
     "ship": "Gửi Hàng",
     "shipFailed": "Không thể đánh dấu đã gửi hàng",
     "shipOrder": "Gửi Đơn Hàng",
