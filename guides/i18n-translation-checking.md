@@ -1,6 +1,6 @@
 # i18n Translation Checking Guide
 
-This guide explains how to analyze and maintain i18n translations in the Credo app, ensuring all translation keys are properly used and no obsolete keys remain in the codebase.
+This guide explains how to analyze and maintain i18n translations in the CMngt app, ensuring all translation keys are properly used and no obsolete keys remain in the codebase.
 
 ## Overview
 

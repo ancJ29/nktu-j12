@@ -1,18 +1,24 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { Container, Loader, Center, Alert } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useDeviceType } from '@/hooks/useDeviceType';
-import { AppPageTitle, AppMobileLayout, AppDesktopLayout } from '@/components/common';
+import {
+  AppPageTitle,
+  AppMobileLayout,
+  AppDesktopLayout,
+  PermissionDeniedPage,
+} from '@/components/common';
 import { POForm, POErrorBoundary } from '@/components/app/po';
 import { usePOActions, usePOLoading, usePOError } from '@/stores/usePOStore';
-import { useCustomers } from '@/stores/useAppStore';
+import { useCustomers, usePermissions } from '@/stores/useAppStore';
 import { purchaseOrderService } from '@/services/sales/purchaseOrder';
 import { ROUTERS } from '@/config/routeConfig';
 import { getPODetailRoute } from '@/config/routeConfig';
 import { useAction } from '@/hooks/useAction';
+import { isPOLocked } from '@/utils/purchaseOrder';
 import { useOnce } from '@/hooks/useOnce';
 import { type POFormValues, usePOForm } from '@/hooks/usePOForm';
 import type { PurchaseOrder } from '@/services/sales/purchaseOrder';
@@ -29,8 +35,8 @@ export function POFormPage({ mode }: POFormPageProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { isMobile } = useDeviceType();
+  const permissions = usePermissions();
   const customers = useCustomers();
-
   const isLoading = usePOLoading();
   const error = usePOError();
   const { clearError, createPurchaseOrder, updatePurchaseOrder } = usePOActions();
@@ -49,7 +55,7 @@ export function POFormPage({ mode }: POFormPageProps) {
   });
 
   // Load PO data for edit mode
-  const loadPO = async () => {
+  const loadPO = useCallback(async () => {
     if (!id) {
       navigate(ROUTERS.PO_MANAGEMENT);
       return;
@@ -65,7 +71,7 @@ export function POFormPage({ mode }: POFormPageProps) {
       }
 
       // Check if PO can be edited (only NEW status)
-      if (po.status !== 'NEW') {
+      if (isPOLocked(po)) {
         navigate(getPODetailRoute(po.id));
         return;
       }
@@ -96,7 +102,7 @@ export function POFormPage({ mode }: POFormPageProps) {
     } finally {
       setIsLoadingPO(false);
     }
-  };
+  }, [id, form, navigate, initialValues]);
 
   // Load initial data
   useOnce(() => {
@@ -183,6 +189,14 @@ export function POFormPage({ mode }: POFormPageProps) {
     </POErrorBoundary>
   );
 
+  if (isEditMode && !permissions.purchaseOrder.canEdit) {
+    return <PermissionDeniedPage />;
+  }
+
+  if (!isEditMode && !permissions.purchaseOrder.canCreate) {
+    return <PermissionDeniedPage />;
+  }
+
   if (isMobile) {
     return (
       <AppMobileLayout
@@ -200,7 +214,7 @@ export function POFormPage({ mode }: POFormPageProps) {
 
   return (
     <AppDesktopLayout isLoading={isLoading} error={error} clearError={clearError}>
-      <AppPageTitle title={pageTitle} />
+      <AppPageTitle withGoBack title={pageTitle} route={ROUTERS.PO_MANAGEMENT} />
       <Container fluid>{content}</Container>
     </AppDesktopLayout>
   );

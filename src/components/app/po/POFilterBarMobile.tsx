@@ -1,4 +1,4 @@
-import { Stack, Group, Box, Button } from '@mantine/core';
+import { Stack, Group, Button } from '@mantine/core';
 import { IconChevronDown, IconClearAll } from '@tabler/icons-react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { SearchBar } from '@/components/common';
@@ -64,59 +64,57 @@ export function POFilterBarMobile({
   };
 
   return (
-    <Box p="sm" style={{ borderBottom: '1px solid var(--mantine-color-gray-3)' }}>
-      <Stack gap="sm">
-        {/* Search Input */}
-        <SearchBar
-          placeholder={t('po.searchPlaceholder')}
-          searchQuery={searchQuery}
-          setSearchQuery={onSearchChange}
-        />
+    <Stack p="sm" gap="sm" style={{ borderBottom: '1px solid var(--mantine-color-gray-3)' }}>
+      {/* Search Input */}
+      <SearchBar
+        placeholder={t('po.searchPlaceholder')}
+        searchQuery={searchQuery}
+        setSearchQuery={onSearchChange}
+      />
 
-        {/* Filter Buttons */}
-        <Group gap="xs">
-          <Button
-            size="xs"
-            variant={customerId ? 'filled' : 'light'}
-            rightSection={<IconChevronDown size={16} />}
-            onClick={onCustomerClick}
-            style={{ flex: 1 }}
-          >
-            {getCustomerLabel()}
-          </Button>
+      {/* Filter Buttons */}
+      <Group gap="xs">
+        <Button
+          size="xs"
+          variant={customerId ? 'filled' : 'light'}
+          rightSection={<IconChevronDown size={16} />}
+          onClick={onCustomerClick}
+          style={{ flex: 1 }}
+        >
+          {getCustomerLabel()}
+        </Button>
 
-          <Button
-            size="xs"
-            variant={selectedStatuses.length > 0 ? 'filled' : 'light'}
-            rightSection={<IconChevronDown size={16} />}
-            onClick={onStatusClick}
-            style={{ flex: 1 }}
-          >
-            {getStatusLabel()}
-          </Button>
+        <Button
+          size="xs"
+          variant={selectedStatuses.length > 0 ? 'filled' : 'light'}
+          rightSection={<IconChevronDown size={16} />}
+          onClick={onStatusClick}
+          style={{ flex: 1 }}
+        >
+          {getStatusLabel()}
+        </Button>
 
-          <Button
-            size="xs"
-            variant={hasOrderDateFilter || hasDeliveryDateFilter ? 'filled' : 'light'}
-            rightSection={<IconChevronDown size={16} />}
-            onClick={onDateClick}
-            style={{ flex: 1 }}
-          >
-            {getDateLabel()}
-          </Button>
+        <Button
+          size="xs"
+          variant={hasOrderDateFilter || hasDeliveryDateFilter ? 'filled' : 'light'}
+          rightSection={<IconChevronDown size={16} />}
+          onClick={onDateClick}
+          style={{ flex: 1 }}
+        >
+          {getDateLabel()}
+        </Button>
 
-          <Button
-            size="xs"
-            variant="subtle"
-            color="red"
-            disabled={!hasActiveFilters}
-            onClick={onClearFilters}
-            leftSection={<IconClearAll size={16} color="var(--mantine-color-red-6)" />}
-          >
-            {t('common.clear')}
-          </Button>
-        </Group>
-      </Stack>
-    </Box>
+        <Button
+          size="xs"
+          variant="subtle"
+          color="red"
+          disabled={!hasActiveFilters}
+          onClick={onClearFilters}
+          leftSection={<IconClearAll size={16} color="var(--mantine-color-red-6)" />}
+        >
+          {t('common.clear')}
+        </Button>
+      </Group>
+    </Stack>
   );
 }

@@ -14,16 +14,16 @@ process.env.VITE_APP_BUILD = new Date(Date.now() + tzOffset)
   .slice(0, -7);
 
 // Default app branding values (can be overridden by .env file)
-const APP_NAME = process.env.VITE_APP_NAME || 'Credo';
-const APP_SHORT_NAME = process.env.VITE_APP_SHORT_NAME || 'Credo';
-const APP_DESCRIPTION = process.env.VITE_APP_DESCRIPTION || 'Credo Progressive Web Application';
+const APP_NAME = process.env.VITE_APP_NAME || 'CMngt';
+const APP_SHORT_NAME = process.env.VITE_APP_SHORT_NAME || 'CMngt';
+const APP_DESCRIPTION = process.env.VITE_APP_DESCRIPTION || 'CMngt Progressive Web Application';
 const THEME_COLOR = process.env.VITE_THEME_COLOR || '#324e71';
 
 // https://vite.dev/config/
 export default defineConfig({
   server: {
-    // https://efde3343abb4.ngrok-free.app
-    allowedHosts: ['efde3343abb4.ngrok-free.app'],
+    // https://533a614b56bc.ngrok-free.app
+    allowedHosts: ['533a614b56bc.ngrok-free.app'],
   },
   resolve: {
     alias: {

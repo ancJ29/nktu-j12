@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router';
 import {
   Stack,
   Group,
-  Box,
   SimpleGrid,
   Button,
   Affix,
@@ -13,7 +12,7 @@ import {
   Center,
   Flex,
 } from '@mantine/core';
-import { IconFileInvoice, IconPlus, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
+import { IconPlus, IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { usePOFilters } from '@/hooks/usePOFilters';
 import {
@@ -23,13 +22,14 @@ import {
   usePOActions,
   usePOPaginationState,
 } from '@/stores/usePOStore';
-import { useCustomers } from '@/stores/useAppStore';
+import { useCustomers, usePermissions } from '@/stores/useAppStore';
 import {
   AppPageTitle,
   SwitchView,
   BlankState,
   AppMobileLayout,
   AppDesktopLayout,
+  PermissionDeniedPage,
 } from '@/components/common';
 import {
   POCard,
@@ -53,6 +53,7 @@ export function POListPage() {
   const navigate = useNavigate();
   const { isMobile, isDesktop } = useDeviceType();
   const { t } = useTranslation();
+  const permissions = usePermissions();
   const purchaseOrders = usePurchaseOrderList();
   const customers = useCustomers();
   const isLoading = usePOLoading();
@@ -85,11 +86,6 @@ export function POListPage() {
   const [isNearBottom, setIsNearBottom] = useState(false);
   const lastLoadTimeRef = useRef<number>(0);
 
-  const hasOrderDateFilter = !!(filters.orderDateRange.start || filters.orderDateRange.end);
-  const hasDeliveryDateFilter = !!(
-    filters.deliveryDateRange.start || filters.deliveryDateRange.end
-  );
-
   // Create stable filter params with useMemo to prevent unnecessary re-renders
   const filterParams = useMemo(
     () => ({
@@ -104,6 +100,8 @@ export function POListPage() {
       orderDateTo: filters.orderDateRange.end?.toISOString(),
       deliveryDateFrom: filters.deliveryDateRange.start?.toISOString(),
       deliveryDateTo: filters.deliveryDateRange.end?.toISOString(),
+      sortBy: 'orderDate' as const, // Sort by order date (deliveryDate not available in sortBy)
+      sortOrder: 'asc' as const, // Ascending order
     }),
     [
       filters.customerId,
@@ -168,12 +166,35 @@ export function POListPage() {
 
   // Memoized navigation handlers
   const handleNavigateToAdd = useCallback(() => {
+    if (!permissions.purchaseOrder.canCreate) {
+      return;
+    }
     navigate(ROUTERS.PO_ADD);
-  }, [navigate]);
+  }, [navigate, permissions.purchaseOrder.canCreate]);
+
+  // Common BlankState configuration to reduce duplication
+  const blankStateProps = useMemo(
+    () => ({
+      hidden: purchaseOrders.length > 0 || isLoading,
+      title: hasActiveFilters ? t('po.noPOsFoundSearch') : t('po.noPOsFound'),
+      description: hasActiveFilters ? t('po.tryDifferentSearch') : t('po.createFirstPODescription'),
+    }),
+    [purchaseOrders.length, isLoading, hasActiveFilters, t],
+  );
+
+  if (!permissions.purchaseOrder.canView) {
+    return <PermissionDeniedPage />;
+  }
 
   // Initial load is handled by filter effect
 
   if (isMobile) {
+    // Date filter indicators for mobile view
+    const hasOrderDateFilter = !!(filters.orderDateRange.start || filters.orderDateRange.end);
+    const hasDeliveryDateFilter = !!(
+      filters.deliveryDateRange.start || filters.deliveryDateRange.end
+    );
+
     return (
       <AppMobileLayout
         showLogo
@@ -233,27 +254,24 @@ export function POListPage() {
             onDeliveryDateRangeSelect={filterHandlers.setDeliveryDateRange}
           />
 
-          <BlankState
-            hidden={purchaseOrders.length > 0 || isLoading}
-            icon={
-              <IconFileInvoice size={48} color="var(--mantine-color-gray-5)" aria-hidden="true" />
-            }
-            title={hasActiveFilters ? t('po.noPOsFoundSearch') : t('po.noPOsFound')}
-            description={
-              hasActiveFilters ? t('po.tryDifferentSearch') : t('po.createFirstPODescription')
-            }
-          />
-          <Box mt="md">
+          <BlankState {...blankStateProps} />
+          <Stack mt="md" gap={0}>
             {isLoading && purchaseOrders.length === 0 ? (
               <POListSkeleton count={5} />
             ) : (
               <Stack gap="sm" px="sm">
                 {purchaseOrders.map((po) => (
-                  <POCard key={po.id} noActions isLoading={isLoading} purchaseOrder={po} />
+                  <POCard
+                    canEdit={permissions.purchaseOrder.canEdit}
+                    key={po.id}
+                    noActions
+                    isLoading={isLoading}
+                    purchaseOrder={po}
+                  />
                 ))}
               </Stack>
             )}
-          </Box>
+          </Stack>
 
           {/* Mobile Pagination Controls */}
           {purchaseOrders.length > 0 && !isLoading && (
@@ -262,7 +280,7 @@ export function POListPage() {
                 variant="light"
                 leftSection={<IconChevronLeft size={16} />}
                 onClick={() => void loadPreviousPage()}
-                disabled={!hasPreviousPage || isLoading}
+                disabled={!hasPreviousPage || isLoading || !permissions.purchaseOrder.canView}
                 size="sm"
               >
                 {t('common.previous')}
@@ -285,8 +303,8 @@ export function POListPage() {
           )}
 
           {/* Floating Action Button for Add PO */}
-          {!isLoading && (
-            <Affix position={{ bottom: 120, right: 20 }}>
+          {!isLoading && permissions.purchaseOrder.canCreate && (
+            <Affix position={{ bottom: 80, right: 10 }}>
               <ActionIcon
                 size="xl"
                 radius="xl"
@@ -306,13 +324,19 @@ export function POListPage() {
   return (
     <AppDesktopLayout isLoading={isLoading} error={error} clearError={clearError}>
       <POErrorBoundary componentName="POListPage">
-        <AppPageTitle
-          title={t('po.title')}
-          button={{
-            label: t('po.addPO'),
-            onClick: handleNavigateToAdd,
-          }}
-        />
+        <Group justify="space-between" mb="lg">
+          <AppPageTitle title={t('po.title')} />
+          <Group gap="sm">
+            <SwitchView viewMode={viewMode} setViewMode={setViewMode} />
+            <Button
+              leftSection={<IconPlus size={16} />}
+              onClick={handleNavigateToAdd}
+              disabled={!permissions.purchaseOrder.canCreate}
+            >
+              {t('po.addPO')}
+            </Button>
+          </Group>
+        </Group>
 
         {/* Desktop Filter Controls */}
         <POFilterBarDesktop
@@ -333,27 +357,16 @@ export function POListPage() {
           onClearFilters={clearAllFilters}
         />
 
-        {/* View Mode Switch */}
-        <Group justify="end" mb="md">
-          <SwitchView viewMode={viewMode} setViewMode={setViewMode} />
-        </Group>
-
         {/* Content Area */}
         <BlankState
-          hidden={purchaseOrders.length > 0 || isLoading}
-          icon={
-            <IconFileInvoice size={48} color="var(--mantine-color-gray-5)" aria-hidden="true" />
-          }
-          title={hasActiveFilters ? t('po.noPOsFoundSearch') : t('po.noPOsFound')}
-          description={
-            hasActiveFilters ? t('po.tryDifferentSearch') : t('po.createFirstPODescription')
-          }
+          {...blankStateProps}
           button={
             hasActiveFilters
               ? undefined
               : {
                   label: t('po.createFirstPO'),
                   onClick: handleNavigateToAdd,
+                  disabled: !permissions.purchaseOrder.canCreate,
                 }
           }
         />
@@ -364,7 +377,12 @@ export function POListPage() {
             {isLoading && purchaseOrders.length === 0 ? (
               <POListSkeleton viewMode={viewMode} count={10} />
             ) : isTableView ? (
-              <PODataTable noAction isLoading={isLoading} purchaseOrders={purchaseOrders} />
+              <PODataTable
+                canEdit={permissions.purchaseOrder.canEdit}
+                noAction={isLoading}
+                isLoading={isLoading}
+                purchaseOrders={purchaseOrders}
+              />
             ) : (
               <SimpleGrid cols={{ base: 1, md: 2, lg: 3 }} spacing="lg">
                 {purchaseOrders.map((po) => (

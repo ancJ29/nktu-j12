@@ -1,13 +1,6 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { authService } from '@/services/auth';
-import { adminService } from '@/services/admin';
-import {
-  storeAdminSession,
-  clearAdminSession,
-  isAdminAuthenticated,
-  restoreAdminSession,
-} from '@/utils/adminSessionManager';
 import { authApi, clientApi, type ClientPublicConfigResponse } from '@/lib/api';
 import { updateClientTranslations, clearClientTranslations } from '@/lib/i18n';
 import type { GetMeResponse } from '@/lib/api/schemas/auth.schemas';
@@ -29,13 +22,11 @@ type AppState = {
   user: User | undefined; // Full user profile from /auth/me
   overviewData: OverviewData | undefined; // Combined overview data
   employeeMapByUserId: Map<string, EmployeeOverview>; // Stable Map for employee lookup
+  employeeMapByEmployeeId: Map<string, EmployeeOverview>; // Stable Map for employee lookup
   customerMapByCustomerId: Map<string, CustomerOverview>; // Stable Map for customer lookup
   isAuthenticated: boolean;
   authInitialized: boolean;
-  adminAuthenticated: boolean;
   isLoading: boolean;
-  adminApiLoading: boolean;
-  adminApiLoadingMessage: string;
   permissionError: boolean;
   theme: 'light' | 'dark';
   config: {
@@ -54,24 +45,17 @@ type AppState = {
   fetchUserProfile: () => Promise<void>;
   fetchOverviewData: () => Promise<void>;
   setTheme: (theme: 'light' | 'dark') => void;
-  setAdminAuth: (authenticated: boolean) => void;
-  setAdminApiLoading: (loading: boolean, message?: string) => void;
   setPermissionError: (hasError: boolean) => void;
   fetchPublicClientConfig: (clientCode: string) => Promise<void>;
   login: (params: { identifier: string; password: string; clientCode: string }) => Promise<void>;
   loginWithMagicLink: (params: { clientCode: string; token: string }) => Promise<void>;
   logout: () => void;
   checkAuth: () => Promise<boolean>;
-  adminLogin: (accessKey: string) => Promise<void>;
-  adminLogout: () => void;
 };
 
 export const useAppStore = create<AppState>()(
   devtools(
     (set, get) => {
-      // Restore admin session on initialization
-      restoreAdminSession();
-
       // Load public client config on initialization
       const clientCode = localStorage.getItem('clientCode') ?? 'NKTU';
       clientApi
@@ -91,13 +75,11 @@ export const useAppStore = create<AppState>()(
         user: undefined, // User will be fetched from /auth/me
         overviewData: undefined, // Overview data will be fetched after login
         employeeMapByUserId: new Map(), // Initialize empty Map
+        employeeMapByEmployeeId: new Map(), // Initialize empty Map
         customerMapByCustomerId: new Map(), // Initialize empty Map
         isAuthenticated: authService.hasValidToken(),
         authInitialized: false,
-        adminAuthenticated: isAdminAuthenticated(),
         isLoading: false,
-        adminApiLoading: false,
-        adminApiLoadingMessage: '',
         permissionError: false,
         theme: 'light',
         config: {
@@ -135,6 +117,8 @@ export const useAppStore = create<AppState>()(
               updateClientTranslations(user.clientConfig.translations);
             }
 
+            console.log('USER PERMISSIONS', JSON.stringify(user.permissions, null, 2));
+
             // Fetch overview data after getting user profile
             await get().fetchOverviewData();
           } catch (error: unknown) {
@@ -158,10 +142,20 @@ export const useAppStore = create<AppState>()(
             const employeeMapByUserId = new Map(
               overviewData.employees.map((employee) => [employee.userId || employee.id, employee]),
             );
+            const employeeMapByEmployeeId = new Map(
+              overviewData.employees.map((employee) => [employee.id, employee]),
+            );
             const customerMapByCustomerId = new Map(
               overviewData.customers.map((customer) => [customer.id, customer]),
             );
-            set({ overviewData, employeeMapByUserId, customerMapByCustomerId });
+            set({
+              overviewData,
+              employeeMapByUserId,
+              employeeMapByEmployeeId,
+              customerMapByCustomerId,
+            });
+            console.log('employeeMapByEmployeeId', employeeMapByEmployeeId);
+            console.log('employeeMapByUserId', employeeMapByUserId);
           } catch (error: unknown) {
             logError('Failed to fetch overview data:', error, {
               module: 'AppStore',
@@ -171,9 +165,6 @@ export const useAppStore = create<AppState>()(
           }
         },
         setTheme: (theme) => set({ theme }),
-        setAdminAuth: (authenticated) => set({ adminAuthenticated: authenticated }),
-        setAdminApiLoading: (loading, message = '') =>
-          set({ adminApiLoading: loading, adminApiLoadingMessage: message }),
         setPermissionError: (hasError) => set({ permissionError: hasError }),
         async fetchPublicClientConfig(clientCode: string) {
           try {
@@ -241,6 +232,7 @@ export const useAppStore = create<AppState>()(
             user: undefined,
             overviewData: undefined, // Clear overview data on logout
             employeeMapByUserId: new Map(), // Clear employee map on logout
+            employeeMapByEmployeeId: new Map(), // Clear employee map on logout
             customerMapByCustomerId: new Map(), // Clear customer map on logout
             // Don't clear client-specific public config on logout
             // publicClientConfig: undefined,
@@ -267,6 +259,7 @@ export const useAppStore = create<AppState>()(
               user: undefined,
               overviewData: undefined,
               employeeMapByUserId: new Map(),
+              employeeMapByEmployeeId: new Map(),
               customerMapByCustomerId: new Map(),
               isAuthenticated: false,
               permissionError: false,
@@ -274,28 +267,6 @@ export const useAppStore = create<AppState>()(
           }
           set({ authInitialized: true });
           return isAuthenticated;
-        },
-        async adminLogin(accessKey: string) {
-          set({ isLoading: true });
-          try {
-            const response = await adminService.login({ accessKey });
-            if (response.success) {
-              storeAdminSession(accessKey);
-              set({ adminAuthenticated: true, isLoading: false });
-            } else {
-              set({ isLoading: false });
-              throw new Error('Invalid access key');
-            }
-          } catch (error) {
-            set({ isLoading: false });
-            clearAdminSession();
-            throw error;
-          }
-        },
-        adminLogout() {
-          clearAdminSession();
-          adminService.logout();
-          set({ adminAuthenticated: false });
         },
       };
     },
@@ -305,12 +276,68 @@ export const useAppStore = create<AppState>()(
   ),
 );
 
-// Computed selectors for convenience
-export const useClientConfig = () => useAppStore((state) => state.user?.clientConfig);
-export const usePublicClientConfig = () => useAppStore((state) => state.publicClientConfig);
+// Stable empty arrays to avoid infinite re-renders (as per CLAUDE.md line 52)
+const EMPTY_CUSTOMERS_ARRAY: readonly CustomerOverview[] = [];
+const EMPTY_EMPLOYEES_ARRAY: readonly EmployeeOverview[] = [];
+const EMPTY_PERMISSIONS: User['permissions'] = Object.freeze({
+  customer: {
+    canView: false,
+    canCreate: false,
+    canEdit: false,
+    canDelete: false,
+  },
+  product: {
+    canView: false,
+    canCreate: false,
+    canEdit: false,
+    canDelete: false,
+  },
+  employee: {
+    canView: false,
+    canCreate: false,
+    canEdit: false,
+    canDelete: false,
+  },
+  purchaseOrder: {
+    canView: false,
+    canCreate: false,
+    canEdit: false,
+    canDelete: false,
+    actions: {
+      canConfirm: false,
+      canProcess: false,
+      canShip: false,
+      canMarkReady: false,
+      canDeliver: false,
+      canRefund: false,
+      canCancel: false,
+    },
+  },
+  deliveryRequest: {
+    canView: false,
+    canCreate: false,
+    canEdit: false,
+    canDelete: false,
+    actions: {
+      canStartTransit: false,
+      canComplete: false,
+      canTakePhoto: false,
+    },
+  },
+});
+
 // Return stable Map reference to avoid infinite re-renders
 export const useEmployeeMapByUserId = () => useAppStore((state) => state.employeeMapByUserId);
+export const useEmployeeMapByEmployeeId = () =>
+  useAppStore((state) => state.employeeMapByEmployeeId);
 export const useCustomerMapByCustomerId = () =>
   useAppStore((state) => state.customerMapByCustomerId);
-// Customer selectors
-export const useCustomers = () => useAppStore((state) => state.overviewData?.customers ?? []);
+// Customer selectors - use stable empty array reference
+export const useCustomers = () =>
+  useAppStore((state) => state.overviewData?.customers ?? EMPTY_CUSTOMERS_ARRAY);
+// Employee selectors - use stable empty array reference
+export const useEmployees = () =>
+  useAppStore((state) => state.overviewData?.employees ?? EMPTY_EMPLOYEES_ARRAY);
+
+export const usePermissions = () =>
+  useAppStore((state) => state.user?.permissions ?? EMPTY_PERMISSIONS);

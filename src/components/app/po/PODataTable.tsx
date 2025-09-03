@@ -11,11 +11,20 @@ import { getCustomerNameByCustomerId } from '@/utils/overview';
 import { useCustomerMapByCustomerId } from '@/stores/useAppStore';
 
 type PODataTableProps = {
+  readonly canEdit: boolean;
+  readonly canConfirm?: boolean;
+  readonly canProcess?: boolean;
+  readonly canShip?: boolean;
+  readonly canMarkReady?: boolean;
+  readonly canDeliver?: boolean;
+  readonly canRefund?: boolean;
+  readonly canCancel?: boolean;
   readonly purchaseOrders: readonly PurchaseOrder[];
   readonly noAction?: boolean;
   readonly isLoading?: boolean;
   readonly onConfirmPO?: (po: PurchaseOrder) => void;
   readonly onProcessPO?: (po: PurchaseOrder) => void;
+  readonly onMarkReadyPO?: (po: PurchaseOrder) => void;
   readonly onShipPO?: (po: PurchaseOrder) => void;
   readonly onDeliverPO?: (po: PurchaseOrder) => void;
   readonly onCancelPO?: (po: PurchaseOrder) => void;
@@ -25,9 +34,18 @@ type PODataTableProps = {
 function PODataTableComponent({
   purchaseOrders,
   noAction = false,
+  canEdit = false,
+  canConfirm = false,
+  canProcess = false,
+  canShip = false,
+  canMarkReady = false,
+  canDeliver = false,
+  canRefund = false,
+  canCancel = false,
   isLoading = false,
   onConfirmPO,
   onProcessPO,
+  onMarkReadyPO,
   onShipPO,
   onDeliverPO,
   onCancelPO,
@@ -111,11 +129,20 @@ function PODataTableComponent({
                 {noAction ? null : (
                   <Table.Td onClick={handleStopPropagation}>
                     <POActions
+                      canEdit={canEdit}
+                      canConfirm={canConfirm}
+                      canProcess={canProcess}
+                      canShip={canShip}
+                      canMarkReady={canMarkReady}
+                      canDeliver={canDeliver}
+                      canRefund={canRefund}
+                      canCancel={canCancel}
                       purchaseOrderId={po.id}
                       status={po.status}
                       isLoading={isLoading}
                       onConfirm={createActionHandler(onConfirmPO, po)}
                       onProcess={createActionHandler(onProcessPO, po)}
+                      onMarkReady={createActionHandler(onMarkReadyPO, po)}
                       onShip={createActionHandler(onShipPO, po)}
                       onDeliver={createActionHandler(onDeliverPO, po)}
                       onCancel={createActionHandler(onCancelPO, po)}

@@ -1,11 +1,20 @@
 import { ROUTERS } from '@/config/routeConfig';
-import {
-  LoginPage,
-  ForgotPasswordPage,
-  ResetPasswordPage,
-  RegisterPage,
-  MagicLinkLoginPage,
-} from './components';
+import { lazy } from 'react';
+
+const LoginPage = lazy(async () => {
+  const module = await import('@/pages/auth/LoginPage');
+  return { default: module.LoginPage };
+});
+
+const LogoutPage = lazy(async () => {
+  const module = await import('@/pages/auth/LogoutPage');
+  return { default: module.LogoutPage };
+});
+
+const MagicLinkLoginPage = lazy(async () => {
+  const module = await import('@/pages/auth/MagicLinkLoginPage');
+  return { default: module.MagicLinkLoginPage };
+});
 
 export const authRouteObjects = [
   {
@@ -24,16 +33,8 @@ export const authRouteObjects = [
         Component: LoginPage,
       },
       {
-        path: ROUTERS.FORGOT_PASSWORD,
-        Component: ForgotPasswordPage,
-      },
-      {
-        path: ROUTERS.RESET_PASSWORD,
-        Component: ResetPasswordPage,
-      },
-      {
-        path: ROUTERS.REGISTER,
-        Component: RegisterPage,
+        path: ROUTERS.LOGOUT,
+        Component: LogoutPage,
       },
     ],
   },

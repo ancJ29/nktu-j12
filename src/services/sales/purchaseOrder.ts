@@ -9,19 +9,25 @@ import {
 } from '@/lib/api/schemas/sales.schemas';
 import { logError, logInfo } from '@/utils/logger';
 import { RETRY_DELAY_MS } from '@/constants/po.constants';
+import type { DeliveryStatus, PICType } from './deliveryRequest';
 
 // Re-export types for compatibility
-export type {
-  POStatus,
-  POItem,
-  Address,
-  UpdatePOStatusRequest,
-} from '@/lib/api/schemas/sales.schemas';
+export type { POStatus, POItem, UpdatePOStatusRequest } from '@/lib/api/schemas/sales.schemas';
 
 export type PurchaseOrder = Omit<ApiPurchaseOrder, 'metadata'> & {
   address?: string;
   googleMapsUrl?: string;
   statusHistory?: POStatusHistory[];
+  deliveryRequest?: {
+    deliveryRequestId: string;
+    deliveryRequestNumber?: string;
+    status: DeliveryStatus;
+    assignedType: PICType;
+    scheduledDate: Date | string;
+    assignedTo?: string;
+    createdAt?: string;
+    createdBy?: string;
+  };
 };
 
 export type { Customer } from './customer';
@@ -37,6 +43,7 @@ function transformApiToFrontend(apiPO: ApiPurchaseOrder): Omit<PurchaseOrder, 'c
     address: metadata?.shippingAddress?.oneLineAddress,
     googleMapsUrl: metadata?.shippingAddress?.googleMapsUrl,
     statusHistory: metadata?.statusHistory,
+    deliveryRequest: metadata?.deliveryRequest,
   };
 }
 
@@ -236,12 +243,17 @@ export const purchaseOrderService = {
     await retryOnServerError(() => salesApi.updatePurchaseOrder(id, updateRequest), enableRetry);
   },
 
+  // ========== Update Purchase Order Status ==========
   async confirmPO(id: string): Promise<void> {
     await salesApi.confirmPurchaseOrder(id);
   },
 
   async processPO(id: string): Promise<void> {
     await salesApi.processPurchaseOrder(id);
+  },
+
+  async markPOReady(id: string, data?: UpdatePOStatusRequest): Promise<void> {
+    await salesApi.markPurchaseOrderReady(id, data);
   },
 
   async shipPO(id: string, data?: UpdatePOStatusRequest): Promise<void> {

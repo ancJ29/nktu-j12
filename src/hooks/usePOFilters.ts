@@ -31,18 +31,39 @@ export interface POFilterHandlers {
   resetFilters: () => void;
 }
 
+// Calculate default date range (today to end of next week)
+const getDefaultDeliveryDateRange = () => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Calculate end of next week (next Sunday)
+  const endOfNextWeek = new Date(today);
+  const daysUntilSunday = 7 - endOfNextWeek.getDay(); // Days until this Sunday
+  const daysToAdd = daysUntilSunday + 7; // Add another week
+  endOfNextWeek.setDate(endOfNextWeek.getDate() + daysToAdd);
+  endOfNextWeek.setHours(23, 59, 59, 999);
+
+  return {
+    start: today,
+    end: endOfNextWeek,
+  };
+};
+
 const defaultFilters: POFilters = {
   searchQuery: '',
   customerId: undefined,
-  statuses: [], // Empty array means show all
+  statuses: [
+    PO_STATUS.NEW,
+    PO_STATUS.CONFIRMED,
+    PO_STATUS.PROCESSING,
+    PO_STATUS.READY_FOR_PICKUP,
+    PO_STATUS.SHIPPED,
+  ],
   orderDateRange: {
     start: undefined,
     end: undefined,
   },
-  deliveryDateRange: {
-    start: undefined,
-    end: undefined,
-  },
+  deliveryDateRange: getDefaultDeliveryDateRange(),
 };
 
 // Pre-computed searchable text for each PO to avoid repeated toLowerCase() calls

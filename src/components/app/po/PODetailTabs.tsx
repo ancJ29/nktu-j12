@@ -21,27 +21,31 @@ import type { PurchaseOrder } from '@/services/sales/purchaseOrder';
 import { useState } from 'react';
 
 type PODetailTabsProps = {
+  readonly canEdit: boolean;
   readonly purchaseOrder: PurchaseOrder;
   readonly isLoading?: boolean;
-  readonly onEdit: () => void;
   readonly onConfirm: () => void;
   readonly onProcess: () => void;
+  readonly onMarkReady: () => void;
   readonly onShip: () => void;
   readonly onDeliver: () => void;
   readonly onCancel: () => void;
   readonly onRefund: () => void;
+  readonly onCreateDelivery?: () => void;
 };
 
 export function PODetailTabs({
+  canEdit,
   purchaseOrder,
   isLoading = false,
-  onEdit,
   onConfirm,
   onProcess,
+  onMarkReady,
   onShip,
   onDeliver,
   onCancel,
   onRefund,
+  onCreateDelivery,
 }: PODetailTabsProps) {
   const { t } = useTranslation();
 
@@ -101,19 +105,21 @@ export function PODetailTabs({
       <Tabs.Panel value="info" pt="xl">
         <Stack gap="sm">
           <POActionZone
+            canEdit={canEdit}
             purchaseOrder={purchaseOrder}
             isLoading={isLoading}
             onConfirm={onConfirm}
             onProcess={onProcess}
+            onMarkReady={onMarkReady}
             onShip={onShip}
             onDeliver={onDeliver}
             onCancel={onCancel}
             onRefund={onRefund}
+            onCreateDelivery={onCreateDelivery}
           />
           <POErrorBoundary componentName="POBasicInfoCard">
             <POBasicInfoCard
               purchaseOrder={purchaseOrder}
-              onEdit={onEdit}
               onNavigateToItemsList={() => {
                 setValue('items');
               }}

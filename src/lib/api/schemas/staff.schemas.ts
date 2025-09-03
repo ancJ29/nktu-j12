@@ -26,7 +26,7 @@ export const StaffSchema = z
       ...val,
       email: `${generateRandomString(4)}.${Date.now()}@example.com`,
       phoneNumber: '+84938765432',
-      clockInUrl: 'https://app.c-mngt.com/clock-in/',
+      clockInUrl: 'https://app.cMngt.com/clock-in/',
       clockInQrCode: '',
       workingPattern,
       weeklyContractedHours: workingPattern === 'fulltime' ? 40 : 32,

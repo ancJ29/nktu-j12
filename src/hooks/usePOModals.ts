@@ -2,7 +2,14 @@ import { useState, useCallback } from 'react';
 import { useDisclosure } from '@mantine/hooks';
 import type { PurchaseOrder } from '@/services/sales/purchaseOrder';
 
-export type ModalType = 'confirm' | 'process' | 'ship' | 'deliver' | 'cancel' | 'refund';
+export type ModalType =
+  | 'confirm'
+  | 'process'
+  | 'markReady'
+  | 'ship'
+  | 'deliver'
+  | 'cancel'
+  | 'refund';
 
 export function usePOModals() {
   const [selectedPO, setSelectedPO] = useState<PurchaseOrder | undefined>(undefined);
@@ -12,6 +19,8 @@ export function usePOModals() {
   const [confirmModalOpened, { open: openConfirmModal, close: closeConfirmModal }] =
     useDisclosure(false);
   const [processModalOpened, { open: openProcessModal, close: closeProcessModal }] =
+    useDisclosure(false);
+  const [markReadyModalOpened, { open: openMarkReadyModal, close: closeMarkReadyModal }] =
     useDisclosure(false);
   const [shipModalOpened, { open: openShipModal, close: closeShipModal }] = useDisclosure(false);
   const [deliverModalOpened, { open: openDeliverModal, close: closeDeliverModal }] =
@@ -28,29 +37,40 @@ export function usePOModals() {
       setActiveModal(type);
 
       switch (type) {
-        case 'confirm':
+        case 'confirm': {
           openConfirmModal();
           break;
-        case 'process':
+        }
+        case 'process': {
           openProcessModal();
           break;
-        case 'ship':
+        }
+        case 'markReady': {
+          openMarkReadyModal();
+          break;
+        }
+        case 'ship': {
           openShipModal();
           break;
-        case 'deliver':
+        }
+        case 'deliver': {
           openDeliverModal();
           break;
-        case 'cancel':
+        }
+        case 'cancel': {
           openCancelModal();
           break;
-        case 'refund':
+        }
+        case 'refund': {
           openRefundModal();
           break;
+        }
       }
     },
     [
       openConfirmModal,
       openProcessModal,
+      openMarkReadyModal,
       openShipModal,
       openDeliverModal,
       openCancelModal,
@@ -64,29 +84,40 @@ export function usePOModals() {
       setActiveModal(null);
 
       switch (type) {
-        case 'confirm':
+        case 'confirm': {
           closeConfirmModal();
           break;
-        case 'process':
+        }
+        case 'process': {
           closeProcessModal();
           break;
-        case 'ship':
+        }
+        case 'markReady': {
+          closeMarkReadyModal();
+          break;
+        }
+        case 'ship': {
           closeShipModal();
           break;
-        case 'deliver':
+        }
+        case 'deliver': {
           closeDeliverModal();
           break;
-        case 'cancel':
+        }
+        case 'cancel': {
           closeCancelModal();
           break;
-        case 'refund':
+        }
+        case 'refund': {
           closeRefundModal();
           break;
+        }
       }
     },
     [
       closeConfirmModal,
       closeProcessModal,
+      closeMarkReadyModal,
       closeShipModal,
       closeDeliverModal,
       closeCancelModal,
@@ -105,6 +136,13 @@ export function usePOModals() {
   const handleProcess = useCallback(
     (purchaseOrder: PurchaseOrder) => {
       openModal('process', purchaseOrder);
+    },
+    [openModal],
+  );
+
+  const handleMarkReady = useCallback(
+    (purchaseOrder: PurchaseOrder) => {
+      openModal('markReady', purchaseOrder);
     },
     [openModal],
   );
@@ -142,6 +180,7 @@ export function usePOModals() {
     modals: {
       confirmModalOpened,
       processModalOpened,
+      markReadyModalOpened,
       shipModalOpened,
       deliverModalOpened,
       cancelModalOpened,
@@ -159,6 +198,7 @@ export function usePOModals() {
     handlers: {
       handleConfirm,
       handleProcess,
+      handleMarkReady,
       handleShip,
       handleDeliver,
       handleCancel,
