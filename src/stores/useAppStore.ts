@@ -57,7 +57,7 @@ export const useAppStore = create<AppState>()(
   devtools(
     (set, get) => {
       // Load public client config on initialization
-      const clientCode = localStorage.getItem('clientCode') ?? 'ACME';
+      const clientCode = localStorage.getItem('clientCode') ?? 'NKTU';
       clientApi
         .getPubicClientConfig(clientCode)
         .then((config) => {

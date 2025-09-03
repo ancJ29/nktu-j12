@@ -1,4 +1,4 @@
-# Credo Application User Guide
+# CMngt Application User Guide
 
 ## Table of Contents
 - [Getting Started](#getting-started)
@@ -16,8 +16,8 @@
 
 ## Getting Started
 
-### What is Credo?
-Credo is a business management application that helps you manage employees, purchase orders, deliveries, and other business operations. The application works on both desktop computers and mobile devices.
+### What is CMngt?
+CMngt is a business management application that helps you manage employees, purchase orders, deliveries, and other business operations. The application works on both desktop computers and mobile devices.
 
 ### System Requirements
 - **Desktop**: Any modern web browser (Chrome, Firefox, Safari, Edge)
@@ -288,7 +288,7 @@ When you see "Desktop Feature" message:
 - Update your browser
 
 #### Mobile App Issues
-- **iOS Safari Updates**: 
+- **iOS Safari Updates**:
   1. Close app completely (swipe up and away)
   2. Wait 2-3 seconds
   3. Reopen from home screen
