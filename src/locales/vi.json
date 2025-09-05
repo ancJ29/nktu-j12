@@ -62,6 +62,10 @@
       "product": "Sản Phẩm",
       "customer": "Khách Hàng"
     },
+    "form": {
+      "memo": "Ghi Chú",
+      "memoPlaceholder": "Nhập ghi chú"
+    },
     "tryAgain": "Thử lại",
     "navigation": "Điều Hướng",
     "viewOnMap": "Xem trên Google Maps",

@@ -22,14 +22,16 @@ export const CustomerSchema = z.object({
   address: optionalStringSchema,
   metadata: z.looseObject({
     googleMapsUrl: optionalStringSchema,
+    memo: optionalStringSchema,
   }),
   taxCode: optionalStringSchema,
   isActive: z.boolean(),
 });
 
-const BulkUpsertCustomerMetadataSchema = z
+const CustomerMetadataSchema = z
   .looseObject({
     googleMapsUrl: optionalStringSchema,
+    memo: optionalStringSchema,
   })
   .optional();
 
@@ -40,7 +42,7 @@ export const CreateCustomerRequestSchema = z.object({
   contactEmail: emailSchema.optional(),
   contactPhone: optionalStringSchema,
   address: optionalStringSchema,
-  metadata: BulkUpsertCustomerMetadataSchema,
+  metadata: CustomerMetadataSchema,
   taxCode: optionalStringSchema,
 });
 
@@ -50,7 +52,7 @@ export const UpdateCustomerRequestSchema = z.object({
   contactEmail: emailSchema.optional(),
   contactPhone: optionalStringSchema,
   address: optionalStringSchema,
-  metadata: BulkUpsertCustomerMetadataSchema,
+  metadata: CustomerMetadataSchema,
   taxCode: optionalStringSchema,
   isActive: z.boolean().optional(),
 });
@@ -63,7 +65,7 @@ export const BulkUpsertCustomerItemSchema = z.object({
   contactPhone: optionalStringSchema,
   address: optionalStringSchema,
   taxCode: optionalStringSchema,
-  metadata: BulkUpsertCustomerMetadataSchema,
+  metadata: CustomerMetadataSchema,
 });
 
 export const BulkUpsertCustomersRequestSchema = z.object({

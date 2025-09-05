@@ -1,7 +1,17 @@
-import { Stack, TextInput, Switch, Group, Button, LoadingOverlay, Box } from '@mantine/core';
+import {
+  Stack,
+  TextInput,
+  Switch,
+  Group,
+  Button,
+  LoadingOverlay,
+  Box,
+  Textarea,
+} from '@mantine/core';
 import { useTranslation } from '@/hooks/useTranslation';
 import { ModalOrDrawer } from '@/components/common';
 import type { UseFormReturnType } from '@mantine/form';
+import { useClientConfig } from '@/stores/useAppStore';
 
 export type CustomerFormValues = {
   name: string;
@@ -11,7 +21,8 @@ export type CustomerFormValues = {
   address?: string;
   googleMapsUrl?: string;
   taxCode?: string;
-  isActive?: boolean;
+  isActive: boolean;
+  memo?: string;
 };
 
 type CustomerFormModalProps = {
@@ -41,7 +52,8 @@ export function CustomerFormModal({
 }: CustomerFormModalProps) {
   const { t } = useTranslation();
   const title = mode === 'create' ? t('common.add') : t('common.edit');
-
+  const clientConfig = useClientConfig();
+  const { noEmail, noTaxCode } = clientConfig.features.customer;
   return (
     <ModalOrDrawer title={title} opened={opened} onClose={onClose} drawerSize="md">
       <Box style={{ position: 'relative' }}>
@@ -67,13 +79,15 @@ export function CustomerFormModal({
               disabled={isLoading}
               {...form.getInputProps('companyName')}
             />
-            <TextInput
-              label={t('common.email')}
-              placeholder={t('customer.emailPlaceholder')}
-              error={form.errors.contactEmail}
-              disabled={isLoading}
-              {...form.getInputProps('contactEmail')}
-            />
+            {!noEmail && (
+              <TextInput
+                label={t('common.email')}
+                placeholder={t('customer.emailPlaceholder')}
+                error={form.errors.contactEmail}
+                disabled={isLoading}
+                {...form.getInputProps('contactEmail')}
+              />
+            )}
             <TextInput
               label={t('common.phone')}
               placeholder={t('customer.phonePlaceholder')}
@@ -95,12 +109,24 @@ export function CustomerFormModal({
               disabled={isLoading}
               {...form.getInputProps('googleMapsUrl')}
             />
-            <TextInput
-              label={t('customer.taxCode')}
-              placeholder={t('customer.taxCodePlaceholder')}
-              error={form.errors.taxCode}
+            {!noTaxCode && (
+              <TextInput
+                label={t('customer.taxCode')}
+                placeholder={t('customer.taxCodePlaceholder')}
+                error={form.errors.taxCode}
+                disabled={isLoading}
+                {...form.getInputProps('taxCode')}
+              />
+            )}
+            <Textarea
+              label={t('common.form.memo')}
+              placeholder={t('common.form.memoPlaceholder')}
+              minRows={4}
+              autosize
+              maxRows={4}
+              error={form.errors.memo}
               disabled={isLoading}
-              {...form.getInputProps('taxCode')}
+              {...form.getInputProps('memo')}
             />
             {mode === 'edit' && (
               <Switch

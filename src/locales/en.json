@@ -62,6 +62,10 @@
       "product": "Product",
       "customer": "Customer"
     },
+    "form": {
+      "memo": "Memo",
+      "memoPlaceholder": "Enter memo"
+    },
     "tryAgain": "Try again",
     "navigation": "Navigation",
     "viewOnMap": "View on Google Maps",
