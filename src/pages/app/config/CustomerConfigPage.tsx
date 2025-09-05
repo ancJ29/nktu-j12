@@ -172,6 +172,7 @@ export function CustomerConfigPage() {
         address: values.address || undefined,
         googleMapsUrl: values.googleMapsUrl || undefined,
         memo: values.memo || undefined,
+        pic: values.pic || undefined,
         taxCode: values.taxCode || undefined,
         isActive: values.isActive,
       };
