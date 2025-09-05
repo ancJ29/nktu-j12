@@ -52,6 +52,7 @@ export function CustomerConfigPage() {
       contactPhone: '',
       address: '',
       googleMapsUrl: '',
+      pic: '',
       taxCode: '',
       isActive: true,
       memo: '',
@@ -231,10 +232,11 @@ export function CustomerConfigPage() {
       contactEmail: customer.contactEmail || '',
       contactPhone: customer.contactPhone || '',
       address: customer.address || '',
-      googleMapsUrl: customer.metadata?.googleMapsUrl || '',
+      googleMapsUrl: customer?.googleMapsUrl || '',
       taxCode: customer.taxCode || '',
       isActive: customer.isActive,
-      memo: customer.metadata?.memo || '',
+      memo: customer?.memo || '',
+      pic: customer?.pic || '',
     });
     openEdit();
   };
@@ -414,7 +416,7 @@ export function CustomerConfigPage() {
               key: 'companyName',
               header: t('customer.company'),
               render: (customer: Customer) => {
-                const googleMapsUrl = customer.metadata?.googleMapsUrl || customer.googleMapsUrl;
+                const googleMapsUrl = customer?.googleMapsUrl || customer?.googleMapsUrl;
                 return (
                   <Stack gap={4}>
                     <Group gap="xs">

@@ -11,6 +11,14 @@ import {
 
 // ========== Customer Schemas ==========
 
+const CustomerMetadataSchema = z
+  .looseObject({
+    pic: optionalStringSchema,
+    googleMapsUrl: optionalStringSchema,
+    memo: optionalStringSchema,
+  })
+  .optional();
+
 // Customer base schema
 export const CustomerSchema = z.object({
   id: idSchema,
@@ -20,20 +28,10 @@ export const CustomerSchema = z.object({
   contactEmail: optionalStringSchema,
   contactPhone: phoneNumberSchema,
   address: optionalStringSchema,
-  metadata: z.looseObject({
-    googleMapsUrl: optionalStringSchema,
-    memo: optionalStringSchema,
-  }),
+  metadata: CustomerMetadataSchema,
   taxCode: optionalStringSchema,
   isActive: z.boolean(),
 });
-
-const CustomerMetadataSchema = z
-  .looseObject({
-    googleMapsUrl: optionalStringSchema,
-    memo: optionalStringSchema,
-  })
-  .optional();
 
 // Customer request schemas
 export const CreateCustomerRequestSchema = z.object({

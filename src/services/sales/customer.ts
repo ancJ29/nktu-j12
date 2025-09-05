@@ -1,4 +1,4 @@
-import { salesApi } from '@/lib/api';
+import { salesApi, type Customer as APICustomer } from '@/lib/api';
 import {
   type BulkUpsertCustomersRequest,
   type BulkUpsertCustomersResponse,
@@ -22,12 +22,9 @@ export type Customer = {
   address?: string;
   googleMapsUrl?: string;
   memo?: string;
+  pic?: string;
   taxCode?: string;
   isActive: boolean;
-  metadata: {
-    googleMapsUrl?: string;
-    memo?: string;
-  };
 };
 
 export const customerService = {
@@ -60,11 +57,13 @@ export const customerService = {
   async createCustomer({
     googleMapsUrl,
     memo,
+    pic,
     ...data
   }: Omit<Customer, 'metadata' | 'id' | 'clientId'>): Promise<Customer> {
     const customer = await salesApi.createCustomer({
       ...data,
       metadata: {
+        pic: pic || undefined,
         googleMapsUrl: googleMapsUrl || undefined,
         memo: memo || undefined,
       },
@@ -76,11 +75,12 @@ export const customerService = {
 
   async updateCustomer(
     id: string,
-    { googleMapsUrl, memo, ...data }: Omit<Customer, 'metadata' | 'id' | 'clientId'>,
+    { pic, googleMapsUrl, memo, ...data }: Omit<Customer, 'metadata' | 'id' | 'clientId'>,
   ): Promise<Customer> {
     const customer = await salesApi.updateCustomer(id, {
       ...data,
       metadata: {
+        pic: pic || undefined,
         googleMapsUrl: googleMapsUrl || undefined,
         memo: memo || undefined,
       },
@@ -114,10 +114,11 @@ export const customerService = {
   },
 };
 
-function transformCustomer(customer: Customer): Customer {
+function transformCustomer(customer: APICustomer): Customer {
   return {
     ...customer,
-    googleMapsUrl: customer.metadata.googleMapsUrl,
-    memo: customer.metadata.memo,
+    googleMapsUrl: customer.metadata?.googleMapsUrl,
+    memo: customer.metadata?.memo,
+    pic: customer.metadata?.pic as string | undefined,
   };
 }

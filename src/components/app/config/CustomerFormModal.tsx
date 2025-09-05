@@ -19,6 +19,7 @@ export type CustomerFormValues = {
   contactEmail?: string;
   contactPhone?: string;
   address?: string;
+  pic?: string;
   googleMapsUrl?: string;
   taxCode?: string;
   isActive: boolean;
@@ -79,10 +80,17 @@ export function CustomerFormModal({
               disabled={isLoading}
               {...form.getInputProps('companyName')}
             />
+            <TextInput
+              label={t('common.form.pic')}
+              placeholder={t('common.form.picPlaceholder')}
+              error={form.errors.pic}
+              disabled={isLoading}
+              {...form.getInputProps('pic')}
+            />
             {!noEmail && (
               <TextInput
-                label={t('common.email')}
-                placeholder={t('customer.emailPlaceholder')}
+                label={t('common.form.email')}
+                placeholder={t('common.form.emailPlaceholder')}
                 error={form.errors.contactEmail}
                 disabled={isLoading}
                 {...form.getInputProps('contactEmail')}
