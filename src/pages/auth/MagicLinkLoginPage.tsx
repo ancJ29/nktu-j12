@@ -157,7 +157,7 @@ export function MagicLinkLoginPage() {
         }
       } else {
         // Treat as token-only and use clientCode from localStorage
-        const clientCode = localStorage.getItem(STORAGE_KEYS.AUTH.CLIENT_CODE) ?? 'NKTU';
+        const clientCode = localStorage.getItem('clientCode') ?? 'NKTU';
 
         sessionStorage.setItem(
           MAGIC_LINK_STORAGE_KEY,
