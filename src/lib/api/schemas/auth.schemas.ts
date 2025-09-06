@@ -226,56 +226,27 @@ function fakePermission(code: DepartmentCode) {
     };
   }
 
+  interface Permission {
+    [key: string]: boolean | Permission;
+  }
+
+  function toTrue(permission: Permission): Permission {
+    Object.keys(permission).forEach((key) => {
+      if (typeof permission[key] === 'object') {
+        permission[key] = toTrue(permission[key]);
+      } else {
+        permission[key] = true;
+      }
+    });
+    return permission;
+  }
+
   const permissions = generateDefaultPermission();
+  const fullPermissions = toTrue(generateDefaultPermission()) as typeof permissions;
 
   switch (code) {
     case 'manager': {
-      return {
-        customer: {
-          canView: true,
-          canCreate: true,
-          canEdit: true,
-          canDelete: true,
-        },
-        product: {
-          canView: true,
-          canCreate: true,
-          canEdit: true,
-          canDelete: true,
-        },
-        employee: {
-          canView: true,
-          canCreate: true,
-          canEdit: true,
-          canDelete: true,
-        },
-        purchaseOrder: {
-          canView: true,
-          canCreate: true,
-          canEdit: true,
-          canDelete: true,
-          actions: {
-            canConfirm: true,
-            canProcess: true,
-            canShip: true,
-            canMarkReady: true,
-            canDeliver: true,
-            canCancel: true,
-            canRefund: true,
-          },
-        },
-        deliveryRequest: {
-          canView: true,
-          canCreate: true,
-          canEdit: true,
-          canDelete: true,
-          actions: {
-            canStartTransit: true,
-            canComplete: true,
-            canTakePhoto: true,
-          },
-        },
-      };
+      return fullPermissions;
     }
     case 'sales': {
       permissions.purchaseOrder = {
@@ -286,6 +257,7 @@ function fakePermission(code: DepartmentCode) {
         actions: {
           ...permissions.purchaseOrder.actions,
           canConfirm: true,
+          canDeliver: true,
           canCancel: true,
         },
       };
@@ -331,12 +303,14 @@ function fakePermission(code: DepartmentCode) {
         ...permissions.purchaseOrder,
         canView: true,
         actions: {
+          canShip: true,
           canRefund: true,
         },
       };
       permissions.deliveryRequest = {
         ...permissions.deliveryRequest,
         canView: true,
+        canCreate: true,
       };
       return permissions;
     }

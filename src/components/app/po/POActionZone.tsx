@@ -6,7 +6,14 @@ import type { PurchaseOrder } from '@/services/sales/purchaseOrder';
 type POActionZoneProps = {
   readonly canEdit: boolean;
   readonly purchaseOrder: PurchaseOrder;
-  readonly isLoading?: boolean;
+  readonly isLoading: boolean;
+  readonly canConfirm: boolean;
+  readonly canCancel: boolean;
+  readonly canProcess: boolean;
+  readonly canMarkReady: boolean;
+  readonly canShip: boolean;
+  readonly canDeliver: boolean;
+  readonly canRefund: boolean;
   readonly onConfirm: () => void;
   readonly onProcess: () => void;
   readonly onMarkReady: () => void;
@@ -19,8 +26,14 @@ type POActionZoneProps = {
 
 export function POActionZone({
   purchaseOrder,
-  canEdit = false,
-  isLoading = false,
+  isLoading,
+  canConfirm,
+  canCancel,
+  canProcess,
+  canMarkReady,
+  canShip,
+  canDeliver,
+  canRefund,
   onConfirm,
   onProcess,
   onMarkReady,
@@ -36,16 +49,15 @@ export function POActionZone({
   const actions = usePOActions({
     purchaseOrder,
     isLoading,
-    canEdit,
     // POActionZone uses canEdit for all permissions
     permissions: {
-      canConfirm: canEdit,
-      canCancel: canEdit,
-      canProcess: canEdit,
-      canMarkReady: canEdit,
-      canShip: canEdit,
-      canDeliver: canEdit,
-      canRefund: canEdit,
+      canConfirm,
+      canCancel,
+      canProcess,
+      canMarkReady,
+      canShip,
+      canDeliver,
+      canRefund,
     },
     callbacks: {
       onConfirm,
