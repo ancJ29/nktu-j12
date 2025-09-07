@@ -1,73 +1,57 @@
-import React from 'react';
 import { Stack, Group, Button } from '@mantine/core';
-import { IconChevronDown, IconClearAll } from '@tabler/icons-react';
+import { IconChevronDown, IconClearAll, IconCalendar } from '@tabler/icons-react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { SearchBar } from '@/components/common';
-import type { CustomerOverview as Customer } from '@/services/client/overview';
 import type { DeliveryStatusType } from '@/constants/deliveryRequest';
 
 interface DeliveryFilterBarMobileProps {
   readonly searchQuery: string;
-  readonly customerId?: string;
   readonly selectedStatuses: DeliveryStatusType[];
-  readonly hasScheduledDateFilter: boolean;
-  readonly hasCompletedDateFilter: boolean;
-  readonly customers: readonly Customer[];
+  readonly hasDateFilter: boolean;
+  readonly quickAction?: string;
   readonly hasActiveFilters: boolean;
   readonly onSearchChange: (query: string) => void;
-  readonly onCustomerClick: () => void;
+  readonly onQuickActionsClick: () => void;
   readonly onStatusClick: () => void;
-  readonly onDateClick: () => void;
   readonly onClearFilters: () => void;
 }
 
 export function DeliveryFilterBarMobile({
   searchQuery,
-  customerId,
   selectedStatuses,
-  hasScheduledDateFilter,
-  hasCompletedDateFilter,
-  customers,
+  hasDateFilter,
+  quickAction,
   hasActiveFilters,
   onSearchChange,
-  onCustomerClick,
+  onQuickActionsClick,
   onStatusClick,
-  onDateClick,
   onClearFilters,
 }: DeliveryFilterBarMobileProps) {
   const { t } = useTranslation();
 
-  const getCustomerLabel = () => {
-    if (!customerId) return 'All Customers';
-    const customer = customers.find((c) => c.id === customerId);
-    return customer ? customer.name : 'All Customers';
-  };
-
   const getStatusLabel = () => {
     if (selectedStatuses.length === 0) {
-      return 'All Status';
+      return t('delivery.filters.allStatus');
     }
     if (selectedStatuses.length === 1) {
-      // Translate individual status
-      const statusKey = `delivery.status.${selectedStatuses[0].toLowerCase()}` as const;
-      return t(statusKey as any);
+      const statusKey = `delivery.status.${selectedStatuses[0].toLowerCase()}` as any;
+      return t(statusKey);
     }
     return `${t('delivery.fields.status')} (${selectedStatuses.length})`;
   };
 
-  const getDateLabel = () => {
-    if (hasScheduledDateFilter && hasCompletedDateFilter) {
-      return 'Date Range (2)';
+  const getQuickActionLabel = () => {
+    if (quickAction) {
+      return quickAction;
     }
-    if (hasScheduledDateFilter || hasCompletedDateFilter) {
-      return 'Date Range (1)';
-    }
-    return 'Date Range';
+    return hasDateFilter
+      ? `${t('delivery.quickActions.title')} (1)`
+      : t('delivery.quickActions.title');
   };
 
   return (
     <Stack p="sm" gap="sm" style={{ borderBottom: '1px solid var(--mantine-color-gray-3)' }}>
-      {/* Search Input */}
+      {/* Search Input for Delivery Number */}
       <SearchBar
         placeholder={t('delivery.filters.searchPlaceholder')}
         searchQuery={searchQuery}
@@ -78,12 +62,12 @@ export function DeliveryFilterBarMobile({
       <Group gap="xs">
         <Button
           size="xs"
-          variant={customerId ? 'filled' : 'light'}
-          rightSection={<IconChevronDown size={16} />}
-          onClick={onCustomerClick}
+          variant={hasDateFilter || quickAction ? 'filled' : 'light'}
+          rightSection={<IconCalendar size={16} />}
+          onClick={onQuickActionsClick}
           style={{ flex: 1 }}
         >
-          {getCustomerLabel() as React.ReactNode}
+          {getQuickActionLabel()}
         </Button>
 
         <Button
@@ -94,16 +78,6 @@ export function DeliveryFilterBarMobile({
           style={{ flex: 1 }}
         >
           {getStatusLabel()}
-        </Button>
-
-        <Button
-          size="xs"
-          variant={hasScheduledDateFilter || hasCompletedDateFilter ? 'filled' : 'light'}
-          rightSection={<IconChevronDown size={16} />}
-          onClick={onDateClick}
-          style={{ flex: 1 }}
-        >
-          {getDateLabel() as React.ReactNode}
         </Button>
 
         <Button

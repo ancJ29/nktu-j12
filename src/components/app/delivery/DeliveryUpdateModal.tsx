@@ -1,45 +1,43 @@
 import { Modal, Drawer, Stack, Text, Group, Button, Select, Textarea, Switch } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
-import { IconTruck, IconCalendar, IconUrgent } from '@tabler/icons-react';
+import { IconEdit, IconCalendar, IconUrgent } from '@tabler/icons-react';
 import { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { useEmployees, useClientConfig } from '@/stores/useAppStore';
-import type { PurchaseOrder } from '@/services/sales/purchaseOrder';
-import { formatDate } from '@/utils/time';
+import type { DeliveryRequest } from '@/services/sales/deliveryRequest';
 import { getCustomerNameByCustomerId } from '@/utils/overview';
 import { useCustomerMapByCustomerId } from '@/stores/useAppStore';
-import type { PICType } from '@/services/sales/deliveryRequest';
 import { UrgentBadge } from '@/components/common';
 
-type DeliveryRequestModalProps = {
+type DeliveryUpdateModalProps = {
   readonly opened: boolean;
-  readonly purchaseOrder?: PurchaseOrder;
+  readonly deliveryRequest?: DeliveryRequest;
   readonly onClose: () => void;
   readonly onConfirm: (data: {
     assignedTo: string;
-    assignedType: PICType;
+    assignedType: 'EMPLOYEE' | 'USER';
     scheduledDate: string;
     notes: string;
     isUrgentDelivery?: boolean;
   }) => Promise<void>;
 };
 
-export function DeliveryRequestModal({
+export function DeliveryUpdateModal({
   opened,
-  purchaseOrder,
+  deliveryRequest,
   onClose,
   onConfirm,
-}: DeliveryRequestModalProps) {
+}: DeliveryUpdateModalProps) {
   const { t } = useTranslation();
   const { isMobile } = useDeviceType();
   const employees = useEmployees();
   const clientConfig = useClientConfig();
   const customerMapByCustomerId = useCustomerMapByCustomerId();
 
-  // Form state
+  // Form state - initialize with existing values
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
-  const [scheduledDate, setScheduledDate] = useState<Date | null>(new Date());
+  const [scheduledDate, setScheduledDate] = useState<Date | null>(null);
   const [notes, setNotes] = useState('');
   const [isUrgentDelivery, setIsUrgentDelivery] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -60,19 +58,23 @@ export function DeliveryRequestModal({
     }));
   }, [employees, clientConfig.features?.deliveryRequest]);
 
-  // Handle modal lifecycle - reset form when closed, set default notes when opened
+  // Initialize form with existing values when modal opens or deliveryRequest changes
   useEffect(() => {
-    if (!opened) {
+    if (opened && deliveryRequest) {
+      setSelectedEmployeeId(deliveryRequest.assignedTo || null);
+      setScheduledDate(
+        deliveryRequest.scheduledDate ? new Date(deliveryRequest.scheduledDate) : null,
+      );
+      setNotes(deliveryRequest.notes || '');
+      setIsUrgentDelivery(deliveryRequest.isUrgentDelivery || false);
+    } else if (!opened) {
       // Reset form when modal closes
       setSelectedEmployeeId(null);
-      setScheduledDate(new Date());
+      setScheduledDate(null);
       setNotes('');
       setIsUrgentDelivery(false);
-    } else if (purchaseOrder && !notes) {
-      // Only set default notes if empty (preserves user input)
-      setNotes(`Delivery request for PO ${purchaseOrder.poNumber}`);
     }
-  }, [opened, purchaseOrder?.poNumber]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [opened, deliveryRequest]);
 
   // Handle form submission
   const handleSubmit = async () => {
@@ -89,7 +91,6 @@ export function DeliveryRequestModal({
         notes,
         isUrgentDelivery,
       });
-      // Form will be reset by useEffect when modal closes
       onClose();
     } finally {
       setIsSubmitting(false);
@@ -98,14 +99,14 @@ export function DeliveryRequestModal({
 
   const content = (
     <Stack gap="md">
-      {purchaseOrder && (
+      {deliveryRequest && (
         <Stack gap="xs">
           <Group justify="space-between">
             <Text size="sm" c="dimmed">
-              {t('po.poNumber')}:
+              {t('delivery.fields.id')}:
             </Text>
             <Text size="sm" fw={500}>
-              {purchaseOrder.poNumber}
+              {deliveryRequest.deliveryRequestNumber}
             </Text>
           </Group>
           <Group justify="space-between">
@@ -113,15 +114,15 @@ export function DeliveryRequestModal({
               {t('po.customer')}:
             </Text>
             <Text size="sm" fw={500}>
-              {getCustomerNameByCustomerId(customerMapByCustomerId, purchaseOrder.customerId)}
+              {getCustomerNameByCustomerId(customerMapByCustomerId, deliveryRequest.customerId)}
             </Text>
           </Group>
           <Group justify="space-between">
             <Text size="sm" c="dimmed">
-              {t('po.orderDate')}:
+              {t('po.poNumber')}:
             </Text>
             <Text size="sm" fw={500}>
-              {formatDate(purchaseOrder.orderDate)}
+              {deliveryRequest.purchaseOrderNumber}
             </Text>
           </Group>
         </Stack>
@@ -135,7 +136,7 @@ export function DeliveryRequestModal({
         onChange={setSelectedEmployeeId}
         searchable
         required
-        leftSection={<IconTruck size={16} />}
+        leftSection={<IconEdit size={16} />}
       />
 
       <DateInput
@@ -179,9 +180,9 @@ export function DeliveryRequestModal({
           onClick={handleSubmit}
           loading={isSubmitting}
           disabled={!selectedEmployeeId || !scheduledDate}
-          leftSection={<IconTruck size={16} />}
+          leftSection={<IconEdit size={16} />}
         >
-          {t('delivery.actions.create')}
+          {t('common.form.update')}
         </Button>
       </Group>
     </Stack>
@@ -192,7 +193,7 @@ export function DeliveryRequestModal({
       <Drawer
         opened={opened}
         onClose={onClose}
-        title={t('delivery.actions.create')}
+        title={t('common.form.update')}
         position="bottom"
         size="auto"
         padding="md"
@@ -206,7 +207,7 @@ export function DeliveryRequestModal({
     <Modal
       opened={opened}
       onClose={onClose}
-      title={t('delivery.actions.create')}
+      title={t('common.form.update')}
       centered
       size="md"
       trapFocus

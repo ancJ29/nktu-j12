@@ -102,6 +102,12 @@ const PermissionSchema = z.object({
       canCreate: booleanSchema,
       canEdit: booleanSchema,
       canDelete: booleanSchema,
+      query: z
+        .object({
+          canFilter: optionalBooleanSchema,
+          canViewAll: optionalBooleanSchema,
+        })
+        .optional(),
       actions: z
         .object({
           canStartTransit: optionalBooleanSchema,
@@ -217,6 +223,10 @@ function fakePermission(code: DepartmentCode) {
       },
       deliveryRequest: {
         ...basePermission,
+        query: {
+          canFilter: false,
+          canViewAll: false,
+        },
         actions: {
           canStartTransit: false,
           canComplete: false,
@@ -263,6 +273,10 @@ function fakePermission(code: DepartmentCode) {
       };
       permissions.deliveryRequest = {
         ...permissions.deliveryRequest,
+        query: {
+          canFilter: true,
+          canViewAll: true,
+        },
         canView: true,
       };
       return permissions;
@@ -302,6 +316,7 @@ function fakePermission(code: DepartmentCode) {
       permissions.purchaseOrder = {
         ...permissions.purchaseOrder,
         canView: true,
+        canEdit: true,
         actions: {
           canShip: true,
           canRefund: true,
@@ -309,6 +324,10 @@ function fakePermission(code: DepartmentCode) {
       };
       permissions.deliveryRequest = {
         ...permissions.deliveryRequest,
+        query: {
+          canFilter: true,
+          canViewAll: true,
+        },
         canView: true,
         canCreate: true,
       };

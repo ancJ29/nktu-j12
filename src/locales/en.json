@@ -52,6 +52,7 @@
       }
     },
     "photos": {
+      "takePhoto": "Take Photo",
       "capture": "Capture",
       "retake": "Retake",
       "upload": "Upload",
@@ -60,9 +61,11 @@
     },
     "entity": {
       "product": "Product",
-      "customer": "Customer"
+      "customer": "Customer",
+      "deliveryRequest": "Delivery Request"
     },
     "form": {
+      "update": "Update",
       "memo": "Memo",
       "memoPlaceholder": "Enter memo",
       "email": "Email",
@@ -70,6 +73,7 @@
       "pic": "Contact Person",
       "picPlaceholder": "Enter Contact Person"
     },
+    "urgent": "Urgent",
     "tryAgain": "Try again",
     "navigation": "Navigation",
     "viewOnMap": "View on Google Maps",
@@ -381,22 +385,6 @@
     "departmentName": "Department",
     "departmentCode": "Department Code"
   },
-  "staff": {
-    "steps": {
-      "basicInfo": {},
-      "workingPattern": {},
-      "leaveManagement": {},
-      "accessPermissions": {}
-    },
-    "basicInfo": {
-      "clockInPreview": {}
-    },
-    "workingPattern": {},
-    "accessPermissions": {
-      "permissions": {}
-    },
-    "leaveManagement": {}
-  },
   "customer": {
     "company": "Company",
     "address": "Address",
@@ -665,16 +653,17 @@
       "create": "Create Delivery Request",
       "startTransit": "Start Transit",
       "startTransitDescription": "Mark this delivery request as in transit",
-      "takePhoto": "Take Photo",
       "complete": "Complete Delivery"
     },
     "status": {
       "pending": "Pending",
       "inTransit": "In Transit",
+      "in_transit": "In Transit",
       "completed": "Completed"
     },
     "fields": {
       "id": "Request ID",
+      "urgentDelivery": "Urgent",
       "purchaseOrder": "Purchase Order",
       "poNumber": "PO Number",
       "customer": "Customer",
@@ -686,6 +675,7 @@
     },
     "assignmentTypes": {},
     "form": {
+      "urgentDeliveryDescription": "Mark this delivery as urgent",
       "selectAssignee": "Select Assignee",
       "selectDate": "Select Scheduled Date",
       "enterNotes": "Enter delivery notes"
@@ -699,18 +689,28 @@
       "completeFailed": "Failed to complete delivery"
     },
     "filters": {
-      "searchPlaceholder": "Search by PO number",
+      "allStatus": "All",
+      "searchPlaceholder": "Search by delivery number",
       "selectStatus": "Select Status",
+      "selectAssignee": "Select Assignee",
       "selectCustomer": "Select Customer"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "today": "Today",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month",
+      "allDates": "All Dates"
     },
     "detail": {
       "title": "Delivery Details",
       "deliveryInfo": "Delivery Information",
+      "photosRequired": "Please upload at photo before completing the delivery",
       "photos": "Delivery Photos",
       "noPhotos": "No photos uploaded yet"
     },
     "completeDelivery": "Complete Delivery",
-    "completeDeliveryDescription": "Mark this delivery as completed with proof photos",
+    "completeDeliveryDescription": "Mark this delivery as completed",
     "markAsCompleted": "Mark as Completed",
     "deliveryDetails": "Delivery Details",
     "deliveryId": "Delivery ID",

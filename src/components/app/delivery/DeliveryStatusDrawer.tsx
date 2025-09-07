@@ -1,93 +1,295 @@
-import { Stack, Button, Checkbox, Group } from '@mantine/core';
-import { Drawer } from '@/components/common';
+import {
+  Drawer,
+  ScrollArea,
+  Text,
+  Group,
+  Button,
+  Stack,
+  Alert,
+  Textarea,
+  TextInput,
+  Image,
+  Grid,
+} from '@mantine/core';
+import { IconAlertTriangle, IconCheck, IconTruck, IconCamera } from '@tabler/icons-react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from '@/hooks/useTranslation';
-import { DELIVERY_STATUS, type DeliveryStatusType } from '@/constants/deliveryRequest';
+import { useDeviceType } from '@/hooks/useDeviceType';
+import type { DeliveryRequest } from '@/services/sales/deliveryRequest';
+import { formatDate } from '@/utils/time';
+import { DRAWER_BODY_PADDING_BOTTOM, DRAWER_HEADER_PADDING } from '@/constants/po.constants';
+import { DeliveryPhotoUpload } from './DeliveryPhotoUpload';
+import { useAction } from '@/hooks/useAction';
+import { usePermissions } from '@/stores/useAppStore';
+import { useDeliveryRequestActions } from '@/stores/useDeliveryRequestStore';
 
-interface DeliveryStatusDrawerProps {
+export type DeliveryModalMode = 'start_transit' | 'complete';
+
+type DeliveryStatusDrawerProps = {
   readonly opened: boolean;
-  readonly selectedStatuses: DeliveryStatusType[];
+  readonly mode: DeliveryModalMode;
+  readonly deliveryRequest?: DeliveryRequest;
   readonly onClose: () => void;
-  readonly onStatusToggle: (status: DeliveryStatusType) => void;
-  readonly onApply: () => void;
-  readonly onClear: () => void;
-}
+  readonly onConfirm: (data?: any) => Promise<void>;
+};
+
+// Modal configuration based on mode
+const getModalConfig = (mode: DeliveryModalMode, t: any) => {
+  const configs = {
+    start_transit: {
+      title: t('delivery.actions.startTransit'),
+      description: t('delivery.actions.startTransitDescription'),
+      buttonText: t('delivery.actions.startTransit'),
+      buttonColor: 'orange',
+      icon: <IconTruck size={16} />,
+      alertColor: 'orange',
+      requiresNotes: false,
+    },
+    complete: {
+      title: t('delivery.completeDelivery'),
+      description: t('delivery.completeDeliveryDescription'),
+      buttonText: t('delivery.markAsCompleted'),
+      buttonColor: 'red',
+      icon: <IconCheck size={16} />,
+      alertColor: 'red',
+      requiresNotes: true,
+      notesLabel: t('delivery.completionNotes'),
+      notesPlaceholder: t('delivery.enterCompletionNotes'),
+    },
+  };
+
+  return configs[mode];
+};
 
 export function DeliveryStatusDrawer({
   opened,
-  selectedStatuses,
+  mode,
+  deliveryRequest,
   onClose,
-  onStatusToggle,
-  onApply,
-  onClear,
+  onConfirm,
 }: DeliveryStatusDrawerProps) {
   const { t } = useTranslation();
+  const { isDesktop } = useDeviceType();
+  const [notes, setNotes] = useState('');
+  const [recipient, setRecipient] = useState('');
+  const [deliveryTime, setDeliveryTime] = useState('');
+  const [showPhotoUpload, setShowPhotoUpload] = useState(false);
+  const [uploadedPhotos, setUploadedPhotos] = useState<string[]>(deliveryRequest?.photoUrls || []);
+  const permissions = usePermissions();
+  const { uploadPhotos } = useDeliveryRequestActions();
+  const isComplete = mode === 'complete';
 
-  const statusOptions = [
-    { value: DELIVERY_STATUS.PENDING, label: t('delivery.status.pending') },
-    { value: DELIVERY_STATUS.IN_TRANSIT, label: t('delivery.status.inTransit') },
-    { value: DELIVERY_STATUS.COMPLETED, label: t('delivery.status.completed') },
-  ];
+  // Get modal configuration - memoized
+  const config = useMemo(() => getModalConfig(mode, t), [mode, t]);
 
-  const isAllSelected =
-    selectedStatuses.length === 0 || selectedStatuses.includes(DELIVERY_STATUS.ALL);
-  const selectedCount = isAllSelected ? 0 : selectedStatuses.length;
+  // Upload photos action
+  const uploadPhotosAction = useAction({
+    options: {
+      successTitle: t('common.success'),
+      successMessage: t('delivery.messages.photosUploaded'),
+      errorTitle: t('common.error'),
+      errorMessage: t('delivery.messages.uploadFailed'),
+    },
+    async actionHandler(data?: { photoUrls: string[] }) {
+      if (!permissions.deliveryRequest.actions?.canTakePhoto) {
+        throw new Error(t('delivery.messages.uploadFailed'));
+      }
+      if (!deliveryRequest || !data?.photoUrls) {
+        throw new Error(t('delivery.messages.uploadFailed'));
+      }
+      await uploadPhotos(deliveryRequest.id, data.photoUrls);
+    },
+  });
 
-  const handleAllToggle = () => {
-    onStatusToggle(DELIVERY_STATUS.ALL);
+  const handlePhotoUpload = async (data: { photoUrls: string[] }) => {
+    setUploadedPhotos((prev) => [...prev, ...data.photoUrls]);
+    await uploadPhotosAction(data);
+    setShowPhotoUpload(false);
   };
 
-  const handleStatusToggle = (status: DeliveryStatusType) => {
-    onStatusToggle(status);
+  const handleConfirm = async () => {
+    let data: any = undefined;
+
+    if (mode === 'start_transit') {
+      data = {
+        transitNotes: notes.trim(),
+        startedAt: new Date().toISOString(),
+        photoUrls: uploadedPhotos,
+      };
+    } else if (mode === 'complete') {
+      data = {
+        completionNotes: notes.trim(),
+        recipient: recipient.trim(),
+        deliveredAt: deliveryTime || new Date().toISOString(),
+        photoUrls: uploadedPhotos,
+      };
+    }
+
+    await onConfirm(data);
+    handleClose();
   };
 
-  const handleApply = () => {
-    onApply();
+  const handleClose = () => {
+    setNotes('');
+    setRecipient('');
+    setDeliveryTime('');
+    setUploadedPhotos([]);
+    setShowPhotoUpload(false);
     onClose();
   };
 
-  const handleClear = () => {
-    onClear();
-    onClose();
+  // Check if confirm button should be disabled
+  const isConfirmDisabled = () => {
+    if (isComplete) {
+      return uploadedPhotos.length === 0 || !notes.trim() || !recipient.trim();
+    }
+    return false;
   };
+
+  if (!deliveryRequest) return null;
+
+  if (isDesktop) {
+    return null;
+  }
+
+  if (showPhotoUpload) {
+    return (
+      <DeliveryPhotoUpload
+        opened={showPhotoUpload}
+        onClose={() => setShowPhotoUpload(false)}
+        onUpload={handlePhotoUpload}
+      />
+    );
+  }
 
   return (
-    <Drawer
-      opened={opened}
-      size="360px"
-      title={
-        selectedCount > 0 ? `${t('po.selectStatus')} (${selectedCount})` : t('po.selectStatus')
-      }
-      onClose={onClose}
-    >
-      <Stack gap="md">
-        {/* All option */}
-        <Checkbox
-          label={t('po.allStatus')}
-          checked={isAllSelected}
-          onChange={() => handleAllToggle()}
-        />
+    <>
+      <Drawer
+        opened={opened}
+        onClose={handleClose}
+        title={config.title}
+        position="bottom"
+        size="90%"
+        trapFocus
+        returnFocus
+        styles={{
+          body: { paddingBottom: DRAWER_BODY_PADDING_BOTTOM },
+          header: { padding: DRAWER_HEADER_PADDING },
+        }}
+      >
+        <ScrollArea h="calc(90% - 80px)" type="never">
+          <Stack gap="md">
+            <Alert icon={<IconAlertTriangle size={16} />} color={config.alertColor} variant="light">
+              {config.description}
+            </Alert>
 
-        {/* Individual status options */}
-        <Stack gap="xs" pl="md">
-          {statusOptions.map((option) => (
-            <Checkbox
-              key={option.value}
-              label={option.label}
-              checked={!isAllSelected && selectedStatuses.includes(option.value)}
-              disabled={isAllSelected}
-              onChange={() => handleStatusToggle(option.value)}
-            />
-          ))}
-        </Stack>
+            <div>
+              <Text fw={500} mb="xs">
+                {t('delivery.deliveryDetails')}
+              </Text>
+              <Text size="sm" c="dimmed">
+                {t('delivery.deliveryId')}: {deliveryRequest.deliveryRequestNumber}
+              </Text>
+              <Text size="sm" c="dimmed">
+                {t('delivery.customerName')}: {deliveryRequest.customerName}
+              </Text>
+              {deliveryRequest.scheduledDate && (
+                <Text size="sm" c="dimmed">
+                  {t('delivery.fields.scheduledDate')}: {formatDate(deliveryRequest.scheduledDate)}
+                </Text>
+              )}
+            </div>
 
-        {/* Action buttons */}
-        <Group grow mt="md">
-          <Button variant="light" onClick={handleClear}>
-            {t('common.clear')}
-          </Button>
-          <Button onClick={handleApply}>{t('common.apply')}</Button>
-        </Group>
-      </Stack>
-    </Drawer>
+            {!isComplete && (
+              <Textarea
+                label={t('delivery.transitNotes')}
+                placeholder={t('delivery.enterTransitNotes')}
+                value={notes}
+                onChange={(event) => setNotes(event.currentTarget.value)}
+                rows={3}
+                description={t('delivery.transitNotesDescription')}
+              />
+            )}
+
+            {isComplete && (
+              <>
+                <Text size="sm" fw={500} mb="xs">
+                  {t('delivery.detail.photos')}
+                </Text>
+
+                {/* Display uploaded photos */}
+                {uploadedPhotos.length > 0 && (
+                  <>
+                    <Grid mb="xs">
+                      {uploadedPhotos.map((url, index) => (
+                        <Grid.Col key={index} span={4}>
+                          <Image
+                            src={url}
+                            alt={`Photo ${index + 1}`}
+                            height={80}
+                            fit="cover"
+                            radius="sm"
+                            fallbackSrc="/photos/no-photo.svg"
+                          />
+                        </Grid.Col>
+                      ))}
+                    </Grid>
+                    <Text size="xs" c="dimmed" mb="xs">
+                      {uploadedPhotos.length} {uploadedPhotos.length === 1 ? 'photo' : 'photos'}{' '}
+                      uploaded
+                    </Text>
+                  </>
+                )}
+
+                <Button
+                  variant="light"
+                  leftSection={<IconCamera size={16} />}
+                  onClick={() => setShowPhotoUpload(true)}
+                >
+                  {t('common.photos.takePhoto')}
+                </Button>
+                <TextInput
+                  label={t('delivery.recipient')}
+                  placeholder={t('delivery.enterRecipientName')}
+                  value={recipient}
+                  onChange={(event) => setRecipient(event.currentTarget.value)}
+                  required
+                  description={t('delivery.recipientDescription')}
+                />
+                <Textarea
+                  label={t('delivery.completionNotes')}
+                  placeholder={t('delivery.enterCompletionNotes')}
+                  value={notes}
+                  onChange={(event) => setNotes(event.currentTarget.value)}
+                  rows={3}
+                  required
+                  description={t('delivery.completionNotesDescription')}
+                />
+              </>
+            )}
+
+            {isComplete && uploadedPhotos.length === 0 && (
+              <Text size="xs" c="red" ta="center">
+                {t('delivery.detail.photosRequired')}
+              </Text>
+            )}
+
+            <Group justify="flex-end">
+              <Button variant="outline" onClick={handleClose}>
+                {t('common.cancel')}
+              </Button>
+              <Button
+                color={config.buttonColor}
+                leftSection={config.icon}
+                onClick={handleConfirm}
+                disabled={isConfirmDisabled()}
+              >
+                {config.buttonText}
+              </Button>
+            </Group>
+          </Stack>
+        </ScrollArea>
+      </Drawer>
+    </>
   );
 }

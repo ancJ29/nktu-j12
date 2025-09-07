@@ -35,6 +35,9 @@ export type CustomerOverview = {
   id: string;
   name: string;
   address: string | undefined;
+  pic: string | undefined;
+  phone: string | undefined;
+  email: string | undefined;
   googleMapsUrl: string | undefined;
 };
 
@@ -61,27 +64,11 @@ export const overviewService = {
   },
 
   /**
-   * Fetch overview data and return separated employee data
+   * Fetch overview data and return separated customer data
    */
-  async getEmployeeOverview(params?: OverviewParams): Promise<EmployeeOverview[]> {
+  async getCustomerOverview(params?: OverviewParams): Promise<Map<string, CustomerOverview>> {
     const data = await this.getOverviewData(params);
-    return data.employees;
-  },
-
-  /**
-   * Fetch overview data and return separated department data
-   */
-  async getDepartmentOverview(params?: OverviewParams): Promise<DepartmentOverview[]> {
-    const data = await this.getOverviewData(params);
-    return data.departments;
-  },
-
-  /**
-   * Fetch overview data and return separated product data
-   */
-  async getProductOverview(params?: OverviewParams): Promise<ProductOverview[]> {
-    const data = await this.getOverviewData(params);
-    return data.products;
+    return new Map(data.customers.map((customer) => [customer.id, customer]));
   },
 
   /**
@@ -104,6 +91,9 @@ export const overviewService = {
       id: beCustomer.id,
       name: beCustomer.name,
       address: beCustomer.address ?? undefined,
+      pic: beCustomer.pic ?? undefined,
+      phone: beCustomer.phone ?? undefined,
+      email: beCustomer.email ?? undefined,
       googleMapsUrl: beCustomer.googleMapsUrl ?? undefined,
     };
   },

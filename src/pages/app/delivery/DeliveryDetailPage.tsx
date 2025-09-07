@@ -18,8 +18,10 @@ import { AppPageTitle } from '@/components/common';
 import { AppMobileLayout, AppDesktopLayout } from '@/components/common';
 import { DeliveryDetailTabs } from '@/components/app/delivery/DeliveryDetailTabs';
 import { DeliveryDetailAccordion } from '@/components/app/delivery/DeliveryDetailAccordion';
-import { DeliveryStatusModal } from '@/components/app/delivery/DeliveryStatusModal';
+import { DeliveryStatusDrawer } from '@/components/app/delivery/DeliveryStatusDrawer';
 import { DeliveryPhotoUpload } from '@/components/app/delivery/DeliveryPhotoUpload';
+import { DeliveryUpdateModal } from '@/components/app/delivery/DeliveryUpdateModal';
+import { ROUTERS } from '@/config/routeConfig';
 
 export function DeliveryDetailPage() {
   const { deliveryId } = useParams<{ deliveryId: string }>();
@@ -33,8 +35,14 @@ export function DeliveryDetailPage() {
   const error = useDeliveryRequestError();
 
   // Store actions
-  const { loadDeliveryRequest, clearError, updateDeliveryStatus, completeDelivery, uploadPhotos } =
-    useDeliveryRequestActions();
+  const {
+    loadDeliveryRequest,
+    clearError,
+    updateDeliveryRequest,
+    updateDeliveryStatus,
+    completeDelivery,
+    uploadPhotos,
+  } = useDeliveryRequestActions();
 
   // Modal management
   const { modals, selectedDeliveryRequest, closeModal, handlers } = useDeliveryModals();
@@ -48,7 +56,8 @@ export function DeliveryDetailPage() {
 
   // Memoized modal close handlers
   const handleCloseModal = useCallback(
-    (modalType: 'startTransit' | 'complete' | 'uploadPhotos') => () => closeModal(modalType),
+    (modalType: 'startTransit' | 'complete' | 'uploadPhotos' | 'update') => () =>
+      closeModal(modalType),
     [closeModal],
   );
 
@@ -68,6 +77,12 @@ export function DeliveryDetailPage() {
   const handleTakeDeliveryPhoto = () => {
     if (deliveryRequest) {
       handlers.handleTakeDeliveryPhoto(deliveryRequest);
+    }
+  };
+
+  const handleUpdate = () => {
+    if (deliveryRequest) {
+      handlers.handleUpdate(deliveryRequest);
     }
   };
 
@@ -136,6 +151,37 @@ export function DeliveryDetailPage() {
     },
   });
 
+  // Update delivery request action
+  const updateDeliveryRequestAction = useAction({
+    options: {
+      successTitle: t('common.success'),
+      successMessage: t('common.updateFailed', {
+        entity: t('common.entity.deliveryRequest'),
+      }),
+      errorTitle: t('common.error'),
+      errorMessage: t('common.updateFailed', {
+        entity: t('common.entity.deliveryRequest'),
+      }),
+    },
+    async actionHandler(data?: any) {
+      if (!selectedDeliveryRequest) {
+        throw new Error(
+          t('common.updateFailed', {
+            entity: t('common.entity.deliveryRequest'),
+          }),
+        );
+      }
+      await updateDeliveryRequest(selectedDeliveryRequest.id, {
+        assignedTo: data?.assignedTo,
+        assignedType: data?.assignedType,
+        scheduledDate: data?.scheduledDate,
+        notes: data?.notes,
+        isUrgentDelivery: data?.isUrgentDelivery,
+      });
+      closeModal('update');
+    },
+  });
+
   const title = deliveryRequest
     ? `${deliveryRequest.deliveryRequestNumber}`
     : t('delivery.detail.title');
@@ -165,6 +211,16 @@ export function DeliveryDetailPage() {
       );
     }
 
+    if (modals.uploadPhotos) {
+      return (
+        <DeliveryPhotoUpload
+          opened={modals.uploadPhotos}
+          onClose={handleCloseModal('uploadPhotos')}
+          onUpload={uploadPhotosAction}
+        />
+      );
+    }
+
     return (
       <AppMobileLayout
         withGoBack
@@ -176,6 +232,7 @@ export function DeliveryDetailPage() {
       >
         <Stack gap="md">
           <DeliveryDetailAccordion
+            canEdit={permissions.deliveryRequest.canEdit}
             deliveryRequest={deliveryRequest}
             isLoading={isLoading}
             canStartTransit={permissions.deliveryRequest.actions?.canStartTransit}
@@ -184,28 +241,30 @@ export function DeliveryDetailPage() {
             onStartTransit={handleStartTransit}
             onComplete={handleComplete}
             onTakePhoto={handleTakeDeliveryPhoto}
+            onUpdate={handleUpdate}
           />
         </Stack>
 
-        {/* Modal components */}
-        <DeliveryStatusModal
+        {/* Drawer components */}
+        <DeliveryStatusDrawer
           opened={modals.startTransit}
           mode="start_transit"
           deliveryRequest={selectedDeliveryRequest}
           onClose={handleCloseModal('startTransit')}
           onConfirm={startTransitAction}
         />
-        <DeliveryStatusModal
+        <DeliveryStatusDrawer
           opened={modals.complete}
           mode="complete"
           deliveryRequest={selectedDeliveryRequest}
           onClose={handleCloseModal('complete')}
           onConfirm={completeDeliveryAction}
         />
-        <DeliveryPhotoUpload
-          opened={modals.uploadPhotos}
-          onClose={handleCloseModal('uploadPhotos')}
-          onUpload={uploadPhotosAction}
+        <DeliveryUpdateModal
+          opened={modals.update}
+          deliveryRequest={selectedDeliveryRequest}
+          onClose={handleCloseModal('update')}
+          onConfirm={updateDeliveryRequestAction}
         />
       </AppMobileLayout>
     );
@@ -214,12 +273,25 @@ export function DeliveryDetailPage() {
   // Desktop layout
   return (
     <AppDesktopLayout isLoading={isLoading} error={error} clearError={clearError}>
-      <AppPageTitle title={title} />
+      <AppPageTitle withGoBack route={ROUTERS.DELIVERY_MANAGEMENT} title={title} />
 
       {isLoading ? (
         <LoadingOverlay visible />
       ) : deliveryRequest ? (
-        <DeliveryDetailTabs deliveryRequest={deliveryRequest} isLoading={isLoading} />
+        <>
+          <DeliveryDetailTabs
+            deliveryRequest={deliveryRequest}
+            isLoading={isLoading}
+            canEdit={permissions.deliveryRequest.canEdit}
+            onUpdate={handleUpdate}
+          />
+          <DeliveryUpdateModal
+            opened={modals.update}
+            deliveryRequest={selectedDeliveryRequest}
+            onClose={handleCloseModal('update')}
+            onConfirm={updateDeliveryRequestAction}
+          />
+        </>
       ) : (
         <ResourceNotFound message={t('delivery.notFound')} />
       )}

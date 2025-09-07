@@ -1,10 +1,12 @@
 import { deliveryRequestApi } from '@/lib/api';
+import type { CustomerOverview } from '@/services/client/overview';
 import {
   type DeliveryRequest as ApiDeliveryRequest,
   type CreateDeliveryRequest,
   type UpdateDeliveryRequest,
   type DeliveryStatus,
 } from '@/lib/api/schemas/deliveryRequest.schemas';
+import { overviewService } from '../client/overview';
 
 // Re-export types for compatibility
 export type {
@@ -17,6 +19,7 @@ export type {
 
 // Frontend types with transformed metadata
 export type DeliveryRequest = Omit<ApiDeliveryRequest, 'metadata'> & {
+  isUrgentDelivery?: boolean;
   deliveryRequestNumber: string;
   purchaseOrderNumber?: string | undefined;
   purchaseOrderId?: string | undefined;
@@ -32,13 +35,19 @@ export type DeliveryRequest = Omit<ApiDeliveryRequest, 'metadata'> & {
 /**
  * Transform API DeliveryRequest to Frontend DeliveryRequest
  */
-function transformApiToFrontend(apiDR: ApiDeliveryRequest): DeliveryRequest {
+function transformApiToFrontend(
+  apiDR: ApiDeliveryRequest,
+  customerMapByCustomerId: Map<string, CustomerOverview>,
+): DeliveryRequest {
   const { ...rest } = apiDR;
+  const customerId = apiDR.metadata?.po?.customerId;
+  const customerName = customerId ? (customerMapByCustomerId.get(customerId)?.name ?? '') : '';
   return {
     ...rest,
+    isUrgentDelivery: apiDR.metadata?.isUrgentDelivery ?? false,
     purchaseOrderId: apiDR.metadata?.po?.poId,
-    purchaseOrderNumber: apiDR.metadata?.po?.poNumber,
-    customerName: apiDR.metadata?.po?.customerName,
+    purchaseOrderNumber: apiDR.metadata?.po?.poNumber as string,
+    customerName,
     customerId: apiDR.metadata?.po?.customerId,
     photoUrls: apiDR.metadata?.photoUrls ?? [],
     deliveryAddress: apiDR.metadata?.deliveryAddress ?? {},
@@ -52,7 +61,7 @@ export type DeliveryRequestFilterParams = {
   scheduledDate?: string | Date;
   scheduledDateFrom?: string | Date;
   scheduledDateTo?: string | Date;
-  purchaseOrderId?: string;
+  deliveryRequestNumber?: string;
   customerId?: string;
   cursor?: string;
   limit?: number;
@@ -71,6 +80,7 @@ export const deliveryRequestService = {
       limit: number;
     };
   }> {
+    const customerMapByCustomerId = await overviewService.getCustomerOverview();
     // Transform Date objects to ISO strings for API
     const apiParams = filters
       ? {
@@ -88,7 +98,7 @@ export const deliveryRequestService = {
             filters.scheduledDateTo instanceof Date
               ? filters.scheduledDateTo.toISOString()
               : filters.scheduledDateTo,
-          purchaseOrderId: filters.purchaseOrderId,
+          deliveryRequestNumber: filters.deliveryRequestNumber,
           customerId: filters.customerId,
           cursor: filters.cursor,
           limit: filters.limit,
@@ -98,25 +108,38 @@ export const deliveryRequestService = {
       : undefined;
 
     const response = await deliveryRequestApi.getDeliveryRequests(apiParams);
+    const deliveryRequests = response.deliveryRequests.map((dr) =>
+      transformApiToFrontend(dr, customerMapByCustomerId),
+    );
+
+    deliveryRequests.sort((a, b) => {
+      if (a.isUrgentDelivery && !b.isUrgentDelivery) return -1;
+      if (!a.isUrgentDelivery && b.isUrgentDelivery) return 1;
+      const _a = a.scheduledDate.getTime();
+      const _b = b.scheduledDate.getTime();
+      return _a - _b;
+    });
 
     return {
-      deliveryRequests: response.deliveryRequests.map(transformApiToFrontend),
+      deliveryRequests,
       pagination: response.pagination,
     };
   },
 
   async getDeliveryRequestById(id: string): Promise<DeliveryRequest | undefined> {
     try {
+      const customerMapByCustomerId = await overviewService.getCustomerOverview();
       const dr = await deliveryRequestApi.getDeliveryRequestById(id);
-      return dr ? transformApiToFrontend(dr) : undefined;
+      return dr ? transformApiToFrontend(dr, customerMapByCustomerId) : undefined;
     } catch {
       return undefined;
     }
   },
 
   async createDeliveryRequest(data: CreateDeliveryRequest): Promise<DeliveryRequest> {
+    const customerMapByCustomerId = await overviewService.getCustomerOverview();
     const response = await deliveryRequestApi.createDeliveryRequest(data);
-    return transformApiToFrontend(response);
+    return transformApiToFrontend(response, customerMapByCustomerId);
   },
 
   async updateDeliveryRequest(id: string, data: UpdateDeliveryRequest): Promise<void> {

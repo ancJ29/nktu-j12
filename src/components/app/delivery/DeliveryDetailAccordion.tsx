@@ -1,37 +1,52 @@
 import { Stack, Accordion, Group, Button, Text, Grid, Anchor } from '@mantine/core';
-import { IconTruck, IconCheck, IconPhoto, IconPackage, IconMapPin } from '@tabler/icons-react';
+import {
+  IconTruck,
+  IconCheck,
+  IconPhoto,
+  IconPackage,
+  IconMapPin,
+  IconEdit,
+} from '@tabler/icons-react';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { DeliveryRequest } from '@/services/sales/deliveryRequest';
 import { formatDate } from '@/utils/time';
 import { useMemo } from 'react';
-import { useEmployeeMapByEmployeeId, useEmployeeMapByUserId } from '@/stores/useAppStore';
+import {
+  useCustomers,
+  useEmployeeMapByEmployeeId,
+  useEmployeeMapByUserId,
+} from '@/stores/useAppStore';
 import { getEmployeeNameByEmployeeId, getEmployeeNameByUserId } from '@/utils/overview';
 import { DeliveryStatusBadge } from './DeliveryStatusBadge';
 import { DeliveryPhotoGallery } from './DeliveryPhotoGallery';
-import { ViewOnMap } from '@/components/common';
+import { ViewOnMap, ContactInfo, UrgentBadge } from '@/components/common';
 import { getPODetailRoute } from '@/config/routeConfig';
 import { useNavigate } from 'react-router';
 
 type DeliveryDetailAccordionProps = {
   readonly deliveryRequest: DeliveryRequest;
   readonly isLoading?: boolean;
+  readonly canEdit?: boolean;
   readonly canStartTransit?: boolean;
   readonly canComplete?: boolean;
   readonly canTakePhoto?: boolean;
   readonly onStartTransit: () => void;
   readonly onComplete: () => void;
   readonly onTakePhoto: () => void;
+  readonly onUpdate: () => void;
 };
 
 export function DeliveryDetailAccordion({
   deliveryRequest,
   isLoading,
+  canEdit = false,
   canStartTransit = false,
   canComplete = false,
   canTakePhoto = false,
   onStartTransit,
   onComplete,
   onTakePhoto,
+  onUpdate,
 }: DeliveryDetailAccordionProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -69,7 +84,12 @@ export function DeliveryDetailAccordion({
     () => [
       {
         label: t('delivery.fields.status'),
-        value: <DeliveryStatusBadge status={deliveryRequest.status} />,
+        value: (
+          <Group gap="xs">
+            {deliveryRequest.isUrgentDelivery && <UrgentBadge size="xs" />}
+            <DeliveryStatusBadge status={deliveryRequest.status} />
+          </Group>
+        ),
       },
       {
         label: t('delivery.fields.poNumber'),
@@ -92,6 +112,10 @@ export function DeliveryDetailAccordion({
       {
         label: t('delivery.fields.customer'),
         value: deliveryRequest.customerName,
+      },
+      {
+        label: t('common.contact'),
+        value: <DeliveryCustomerInfo customerId={deliveryRequest.customerId} />,
       },
       {
         label: t('delivery.fields.scheduledDate'),
@@ -122,7 +146,19 @@ export function DeliveryDetailAccordion({
   return (
     <Stack gap="md">
       {/* Details Accordion */}
-      <Accordion defaultValue="delivery-info">
+      <Accordion
+        defaultValue="delivery-info"
+        styles={{
+          item: {
+            backgroundColor: deliveryRequest.isUrgentDelivery
+              ? 'var(--mantine-color-red-0)'
+              : undefined,
+            borderColor: deliveryRequest.isUrgentDelivery
+              ? 'var(--mantine-color-red-3)'
+              : undefined,
+          },
+        }}
+      >
         {/* Delivery Information */}
         <Accordion.Item value="delivery-info">
           <Accordion.Control icon={<IconPackage size={20} />}>
@@ -184,41 +220,71 @@ export function DeliveryDetailAccordion({
 
       {/* Action Buttons */}
       <Group justify="space-between" m="lg">
-        {canTakePhotoBased && canTakePhoto ? (
+        <Group gap="sm">
+          {canTakePhotoBased && canTakePhoto && (
+            <Button
+              leftSection={<IconPhoto size={16} />}
+              variant="outline"
+              onClick={onTakePhoto}
+              disabled={isLoading}
+            >
+              {t('common.photos.takePhoto')}
+            </Button>
+          )}
           <Button
-            leftSection={<IconPhoto size={16} />}
+            leftSection={<IconEdit size={16} />}
             variant="outline"
-            onClick={onTakePhoto}
-            disabled={isLoading}
+            onClick={onUpdate}
+            disabled={isLoading || !canEdit}
           >
-            {t('delivery.actions.takePhoto')}
+            {t('common.edit')}
           </Button>
-        ) : (
-          <div> </div>
-        )}
-        {canStartTransitBased && canStartTransit && (
-          <Button
-            leftSection={<IconTruck size={16} />}
-            color="orange"
-            onClick={onStartTransit}
-            disabled={isLoading}
-            w="50%"
-          >
-            {t('delivery.actions.startTransit')}
-          </Button>
-        )}
-        {canCompleteBased && canComplete && (
-          <Button
-            leftSection={<IconCheck size={16} />}
-            color="green"
-            onClick={onComplete}
-            disabled={isLoading}
-            w="50%"
-          >
-            {t('delivery.actions.complete')}
-          </Button>
-        )}
+        </Group>
+        <Group gap="sm">
+          {canStartTransitBased && canStartTransit && (
+            <Button
+              leftSection={<IconTruck size={16} />}
+              color="orange"
+              onClick={onStartTransit}
+              disabled={isLoading}
+            >
+              {t('delivery.actions.startTransit')}
+            </Button>
+          )}
+          {canCompleteBased && canComplete && (
+            <Button
+              leftSection={<IconCheck size={16} />}
+              color="green"
+              onClick={onComplete}
+              disabled={isLoading}
+            >
+              {t('delivery.actions.complete')}
+            </Button>
+          )}
+        </Group>
       </Group>
     </Stack>
+  );
+}
+
+function DeliveryCustomerInfo({ customerId }: { customerId: string | undefined }) {
+  const customers = useCustomers();
+  const customer = useMemo(() => {
+    if (!customerId) {
+      return undefined;
+    }
+    return customers.find((c) => c.id === customerId);
+  }, [customers, customerId]);
+
+  return customer ? (
+    <ContactInfo
+      horizontal
+      email={customer.email}
+      phoneNumber={customer.phone}
+      pic={customer.pic}
+      blank={'-'}
+    />
+  ) : (
+    '-'
   );
 }

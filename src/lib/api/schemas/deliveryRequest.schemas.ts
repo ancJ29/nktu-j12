@@ -6,6 +6,7 @@ import {
   stringSchema,
   timestampSchema,
   AddressSchema,
+  optionalBooleanSchema,
 } from './common.schemas';
 
 // ========== Delivery Request Schemas ==========
@@ -28,13 +29,13 @@ export const DeliveryRequestSchema = z.object({
   scheduledDate: timestampSchema,
   completedDate: timestampSchema.optional(),
   metadata: z.looseObject({
+    isUrgentDelivery: optionalBooleanSchema,
     photoUrls: z.array(stringSchema).optional(),
     deliveryAddress: AddressSchema.optional(),
     po: z
       .looseObject({
         poId: idSchema,
         poNumber: stringSchema,
-        customerName: stringSchema,
         customerId: idSchema,
       })
       .optional(),
@@ -52,6 +53,7 @@ export const CreateDeliveryRequestSchema = z.object({
   assignedType: PICTypeSchema,
   scheduledDate: stringSchema,
   notes: optionalStringSchema,
+  isUrgentDelivery: optionalBooleanSchema,
 });
 
 export const UpdateDeliveryRequestSchema = z.object({
@@ -59,6 +61,7 @@ export const UpdateDeliveryRequestSchema = z.object({
   assignedType: PICTypeSchema.optional(),
   scheduledDate: stringSchema.optional(),
   notes: optionalStringSchema,
+  isUrgentDelivery: optionalBooleanSchema,
 });
 
 export const UpdateDeliveryStatusSchema = z.object({

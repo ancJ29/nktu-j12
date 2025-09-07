@@ -52,6 +52,7 @@
       }
     },
     "photos": {
+      "takePhoto": "Chụp Ảnh",
       "capture": "Chụp Ảnh",
       "retake": "Chụp Lại",
       "upload": "Tải lên",
@@ -60,9 +61,11 @@
     },
     "entity": {
       "product": "Sản Phẩm",
-      "customer": "Khách Hàng"
+      "customer": "Khách Hàng",
+      "deliveryRequest": "Yêu Cầu Giao Hàng"
     },
     "form": {
+      "update": "Cập Nhật",
       "memo": "Ghi Chú",
       "memoPlaceholder": "Nhập ghi chú",
       "email": "Email",
@@ -70,6 +73,7 @@
       "pic": "Người Phụ Trách",
       "picPlaceholder": "Nhập Thông Tin Người Phụ Trách"
     },
+    "urgent": "Gấp",
     "tryAgain": "Thử lại",
     "navigation": "Điều Hướng",
     "viewOnMap": "Xem trên Google Maps",
@@ -381,22 +385,6 @@
     "departmentName": "Phòng Ban",
     "departmentCode": "Mã Phòng Ban"
   },
-  "staff": {
-    "steps": {
-      "basicInfo": {},
-      "workingPattern": {},
-      "leaveManagement": {},
-      "accessPermissions": {}
-    },
-    "basicInfo": {
-      "clockInPreview": {}
-    },
-    "workingPattern": {},
-    "accessPermissions": {
-      "permissions": {}
-    },
-    "leaveManagement": {}
-  },
   "customer": {
     "company": "Công Ty",
     "address": "Địa Chỉ",
@@ -663,18 +651,19 @@
     },
     "actions": {
       "create": "Tạo Yêu Cầu Giao Hàng",
-      "startTransit": "Bắt Đầu Vận Chuyển",
-      "startTransitDescription": "Đánh dấu yêu cầu giao hàng này đang vận chuyển",
-      "takePhoto": "Chụp Ảnh",
+      "startTransit": "Bắt Đầu",
+      "startTransitDescription": "Đánh dấu đang vận chuyển",
       "complete": "Hoàn Thành Giao Hàng"
     },
     "status": {
-      "pending": "Chờ Xử Lý",
-      "inTransit": "Đang Vận Chuyển",
-      "completed": "Đã Hoàn Thành"
+      "pending": "Chờ Giao",
+      "inTransit": "Đang Giao",
+      "in_transit": "Đang Giao",
+      "completed": "Đã Giao"
     },
     "fields": {
       "id": "Mã Yêu Cầu",
+      "urgentDelivery": "Giao Gấp",
       "purchaseOrder": "Đơn Đặt Hàng",
       "poNumber": "Số PO",
       "customer": "Khách Hàng",
@@ -686,6 +675,7 @@
     },
     "assignmentTypes": {},
     "form": {
+      "urgentDeliveryDescription": "Đánh dấu đơn hàng này là giao gấp",
       "selectAssignee": "Chọn Người Phụ Trách",
       "selectDate": "Chọn Ngày Dự Kiến",
       "enterNotes": "Nhập ghi chú giao hàng"
@@ -699,18 +689,28 @@
       "completeFailed": "Không thể hoàn thành giao hàng"
     },
     "filters": {
+      "allStatus": "Tất Cả",
       "searchPlaceholder": "Tìm kiếm theo số PO",
       "selectStatus": "Chọn Trạng Thái",
+      "selectAssignee": "Chọn Người Phụ Trách",
       "selectCustomer": "Chọn Khách Hàng"
+    },
+    "quickActions": {
+      "title": "Chọn Nhanh",
+      "today": "Hôm Nay",
+      "thisWeek": "Tuần Này",
+      "thisMonth": "Tháng Này",
+      "allDates": "Tất Cả"
     },
     "detail": {
       "title": "Chi Tiết Giao Hàng",
       "deliveryInfo": "Thông Tin Giao Hàng",
+      "photosRequired": "Vui lòng chụp hình trước khi hoàn thành giao hàng",
       "photos": "Ảnh Giao Hàng",
       "noPhotos": "Chưa có ảnh nào được tải lên"
     },
     "completeDelivery": "Hoàn Thành Giao Hàng",
-    "completeDeliveryDescription": "Đánh dấu giao hàng này đã hoàn thành với ảnh chứng minh",
+    "completeDeliveryDescription": "Chụp ảnh để hoàn thành đơn hàng!",
     "markAsCompleted": "Đánh Dấu Hoàn Thành",
     "deliveryDetails": "Chi Tiết Giao Hàng",
     "deliveryId": "Mã Giao Hàng",
@@ -736,7 +736,7 @@
     "noDeliveryRequestsFound": "Không có yêu cầu giao hàng",
     "tryDifferentSearch": "Thử điều chỉnh tiêu chí tìm kiếm",
     "createFirstDeliveryRequestDescription": "Tạo yêu cầu giao hàng đầu tiên từ đơn đặt hàng",
-    "noMoreDeliveryRequests": "Không còn yêu cầu giao hàng nào để tải"
+    "noMoreDeliveryRequests": "Tất cả yêu cầu giao hàng đã được tải"
   },
   "timekeeper": {
     "greeting": {
