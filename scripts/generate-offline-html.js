@@ -13,7 +13,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Read environment variables with defaults
-const APP_NAME = process.env.VITE_APP_NAME || 'Credo';
+const APP_NAME = process.env.VITE_APP_NAME || 'CMngt';
 const THEME_COLOR = `#${process.env.VITE_THEME_COLOR || '324e71'}`;
 
 const offlineHtml = `<!DOCTYPE html>

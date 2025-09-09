@@ -1,0 +1,32 @@
+{
+  "description": "Translation keys that should never be marked as unused, even if not found in code",
+  "safeKeys": [
+    "common.pages.customerConfig",
+    "common.pages.deliveryManagement",
+    "common.pages.deliveryManagementMobile",
+    "common.pages.employeeManagement",
+    "common.pages.employeeManagementMobile",
+    "common.pages.home",
+    "common.pages.masterData",
+    "common.pages.more",
+    "common.pages.poManagement",
+    "common.pages.poManagementMobile",
+    "common.pages.procurementManagement",
+    "common.pages.productConfig",
+    "common.pages.profile",
+    "common.pages.salesPoManagement",
+    "customer.bulkImportDescription",
+    "customer.downloadTemplate",
+    "customer.pleaseSelectExcelFile",
+    "customer.templateDescription",
+    "customer.templateDownloaded",
+    "customer.upsertDescription",
+    "product.bulkImportDescription",
+    "product.downloadTemplate",
+    "product.pleaseSelectExcelFile",
+    "product.templateDescription",
+    "product.templateDownloaded",
+    "product.upsertDescription"
+  ],
+  "patterns": []
+}
