@@ -493,8 +493,9 @@ export class BaseApiClient {
 
   private buildNonceHeaders(headers: Headers): void {
     const timestamp = Date.now().toString();
-    const requestKey = Math.random().toString(36).slice(2, 15);
+    const requestKey = Math.random().toString(16).slice(2);
     const nonce = this.generateNonce(timestamp, requestKey);
+    console.log('nonce', nonce);
     if (nonce) {
       headers.set('X-REQUEST-KEY', requestKey);
       headers.set('X-TIMESTAMP', timestamp);
@@ -524,6 +525,7 @@ export class BaseApiClient {
       const random = Math.random().toString(36).slice(2, 15);
       md5.appendStr(`${random}.${timestamp}.${requestKey}`);
       const nonce = md5.end().toString();
+      console.log('mark', { count, mark, nonce });
       if (nonce.endsWith(mark)) {
         return random;
       }
