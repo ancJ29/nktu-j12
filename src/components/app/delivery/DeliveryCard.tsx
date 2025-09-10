@@ -82,7 +82,7 @@ export function DeliveryCard({ deliveryRequest, style, className }: DeliveryCard
           {deliveryRequest.notes && (
             <Group gap="sm">
               <Text size="sm" c="dimmed">
-                {t('delivery.notes')}:
+                {t('common.notes')}:
               </Text>
               <Text size="sm" fw={500}>
                 {deliveryRequest.notes}

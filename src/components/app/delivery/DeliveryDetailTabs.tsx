@@ -161,7 +161,7 @@ export function DeliveryDetailTabs({
               {deliveryRequest.notes && (
                 <div>
                   <Text size="sm" c="dimmed" mt="md" mb="xs">
-                    {t('delivery.notes')}
+                    {t('common.notes')}
                   </Text>
                   <Text size="sm">{deliveryRequest.notes}</Text>
                 </div>

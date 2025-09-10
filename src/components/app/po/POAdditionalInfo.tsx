@@ -17,7 +17,7 @@ export function POAdditionalInfo({ form }: POAdditionalInfoProps) {
         </Text>
 
         <Textarea
-          label={t('po.notes')}
+          label={t('common.notes')}
           placeholder={t('po.notesPlaceholder')}
           rows={4}
           {...form.getInputProps('notes')}

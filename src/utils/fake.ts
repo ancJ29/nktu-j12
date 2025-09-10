@@ -328,10 +328,11 @@ export function fakePermission(code: FakeDepartmentCode): GetMeResponse['permiss
         actions: {
           canConfirm: false,
           canProcess: false,
-          canShip: false,
           canMarkReady: false,
-          canDeliver: false,
-          canCancel: false,
+          canShip: true,
+          canDeliver: true,
+          canCancel: true,
+          canRefund: true,
         },
       },
       deliveryRequest: {

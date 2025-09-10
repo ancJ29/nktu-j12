@@ -25,13 +25,8 @@ export type POFormValues = {
   items: POItem[];
   orderDate?: Date;
   deliveryDate?: Date;
-  shippingAddress: {
+  shippingAddress?: {
     oneLineAddress?: string;
-    street?: string;
-    city?: string;
-    state?: string;
-    postalCode?: string;
-    country?: string;
     googleMapsUrl?: string;
   };
   notes?: string;

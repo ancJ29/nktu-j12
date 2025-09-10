@@ -105,6 +105,9 @@ const POItemsEditorMobileComponent = forwardRef<POItemsEditorRef, POItemsEditorM
                 description: item.description,
                 quantity: item.quantity,
                 category: item.category,
+                notes: item.notes,
+                unit: item.unit,
+                productId: item.productId,
               });
               return item;
             }

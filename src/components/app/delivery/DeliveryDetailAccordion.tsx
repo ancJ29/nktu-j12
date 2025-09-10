@@ -132,7 +132,7 @@ export function DeliveryDetailAccordion({
           ]
         : []),
       {
-        label: t('delivery.notes'),
+        label: t('common.notes'),
         value: deliveryRequest.notes || '-',
       },
       {

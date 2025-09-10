@@ -219,10 +219,10 @@ export function usePOFilters(purchaseOrders: readonly PurchaseOrder[]) {
       }
 
       // Order date range filter
-      if (orderDateRange.start && po.orderDate < orderDateRange.start) {
+      if (orderDateRange.start && po.orderDate && po.orderDate < orderDateRange.start) {
         return false;
       }
-      if (orderDateRange.end && po.orderDate > orderDateRange.end) {
+      if (orderDateRange.end && po.orderDate && po.orderDate > orderDateRange.end) {
         return false;
       }
 

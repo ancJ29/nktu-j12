@@ -46,7 +46,7 @@ export function POBasicInfoCard({ purchaseOrder, onNavigateToItemsList }: POBasi
           <Grid.Col span={{ base: 12, md: 6 }}>
             <div>
               <Text size="sm" fw={500} c="dimmed" mb="xs">
-                {t('po.notes')}
+                {t('common.notes')}
               </Text>
               <Text size="sm">{purchaseOrder.notes}</Text>
             </div>

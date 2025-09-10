@@ -273,13 +273,7 @@ export const usePOStore = create<POState>()(
           // Convert the PurchaseOrder type to what the service expects
           const createData = {
             customerId: poData.customerId,
-            items: poData.items.map((item) => ({
-              productCode: item.productCode,
-              description: item.description,
-              color: item.color,
-              quantity: item.quantity,
-              category: item.category,
-            })),
+            items: poData.items,
             metadata: {
               shippingAddress: {
                 oneLineAddress: poData.address,

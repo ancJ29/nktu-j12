@@ -165,6 +165,14 @@ export function POFormPage({ mode }: POFormPageProps) {
     }
   };
 
+  if (isEditMode && !permissions.purchaseOrder.canEdit) {
+    return <PermissionDeniedPage />;
+  }
+
+  if (!isEditMode && !permissions.purchaseOrder.canCreate) {
+    return <PermissionDeniedPage />;
+  }
+
   const content = (
     <POErrorBoundary componentName="POFormPage">
       {isEditMode && isLoadingPO ? (
@@ -188,14 +196,6 @@ export function POFormPage({ mode }: POFormPageProps) {
       )}
     </POErrorBoundary>
   );
-
-  if (isEditMode && !permissions.purchaseOrder.canEdit) {
-    return <PermissionDeniedPage />;
-  }
-
-  if (!isEditMode && !permissions.purchaseOrder.canCreate) {
-    return <PermissionDeniedPage />;
-  }
 
   if (isMobile) {
     return (

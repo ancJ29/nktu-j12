@@ -35,6 +35,9 @@ export const createPOItem = (
     quantity: itemData.quantity || 1,
     color: itemData.color,
     category: itemData.category,
+    notes: itemData.notes ?? '',
+    unit: itemData.unit ?? '',
+    productId: itemData.productId ?? '',
   };
 
   return { item };

@@ -106,6 +106,9 @@ export function POAddItemModal({ opened, onClose, onAdd, existingItems }: POAddI
       description,
       quantity,
       category: category || undefined,
+      notes: '',
+      unit: '',
+      productId: '',
     };
 
     onAdd(newItem);

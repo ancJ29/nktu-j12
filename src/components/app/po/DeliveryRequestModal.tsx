@@ -131,7 +131,7 @@ export function DeliveryRequestModal({
       />
 
       <Textarea
-        label={t('delivery.notes')}
+        label={t('common.notes')}
         placeholder={t('delivery.form.enterNotes')}
         value={notes}
         onChange={(e) => setNotes(e.currentTarget.value)}

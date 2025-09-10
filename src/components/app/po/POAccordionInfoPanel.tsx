@@ -137,7 +137,7 @@ export function POAccordionInfoPanel({
 
       <div>
         <Text size="xs" fw={500} c="dimmed" mb={4}>
-          {t('po.notes')}
+          {t('common.notes')}
         </Text>
         <Text size="sm">{purchaseOrder.notes || '-'}</Text>
       </div>

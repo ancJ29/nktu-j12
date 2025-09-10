@@ -417,6 +417,11 @@ export function ProductConfigPage() {
               render: (product: Product) => product.name,
             },
             {
+              key: 'unit',
+              header: t('product.unit'),
+              render: (product: Product) => product.unit || '-',
+            },
+            {
               key: 'category',
               header: t('product.category'),
               render: (product: Product) => product.category || '-',

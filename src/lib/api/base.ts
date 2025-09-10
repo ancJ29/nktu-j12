@@ -493,12 +493,14 @@ export class BaseApiClient {
 
   private buildNonceHeaders(headers: Headers): void {
     const timestamp = Date.now().toString();
-    const requestKey = Math.random().toString(36).slice(2, 15);
+    const requestKey = Math.random().toString(16).slice(2);
     const nonce = this.generateNonce(timestamp, requestKey);
     if (nonce) {
       headers.set('X-REQUEST-KEY', requestKey);
       headers.set('X-TIMESTAMP', timestamp);
       headers.set('X-NONCE', nonce);
+    } else {
+      // alert('nonce is empty');
     }
   }
 

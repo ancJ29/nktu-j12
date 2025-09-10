@@ -29,6 +29,7 @@ export type ProductOverview = {
   id: string;
   name: string;
   code: string;
+  unit: string;
 };
 
 export type CustomerOverview = {
@@ -136,6 +137,7 @@ export const overviewService = {
       id: beProduct.id,
       name: beProduct.name,
       code: beProduct.code,
+      unit: beProduct.unit,
     };
   },
 };
