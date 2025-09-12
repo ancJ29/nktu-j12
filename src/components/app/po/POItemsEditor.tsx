@@ -1,7 +1,8 @@
 import { useDeviceType } from '@/hooks/useDeviceType';
+import type { POItem } from '@/services/sales/purchaseOrder';
+
 import { POItemsEditorDesktop } from './POItemsEditorDesktop';
 import { POItemsEditorMobile } from './POItemsEditorMobile';
-import type { POItem } from '@/services/sales/purchaseOrder';
 
 type POItemsEditorProps = {
   readonly items: POItem[];

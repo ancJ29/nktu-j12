@@ -64,6 +64,10 @@
       "customer": "Customer",
       "deliveryRequest": "Delivery Request"
     },
+    "file": {
+      "pleaseSelectExcelFile": "Please select a CSV or Excel file",
+      "pleaseSelectFileFirst": "Please select a file first"
+    },
     "form": {
       "update": "Update",
       "memo": "Memo",
@@ -94,6 +98,8 @@
     "delete": "Delete",
     "deleteFailed": "Failed to delete {{entity}}",
     "description": "Description",
+    "invalidFormData": "Invalid form data",
+    "doNotHavePermissionForAction": "You don't have permission to perform this action",
     "download": "Download",
     "downloading": "Downloading",
     "dragAndDropFile": "Drag and drop your file here",
@@ -281,8 +287,6 @@
     "noValidEmployeesFound": "No valid employees found in the file",
     "importedEmployees": "Imported {{success}} out of {{total}} employees",
     "importEmployees": "Import Employees",
-    "pleaseSelectExcelFile": "Please select a CSV or Excel file",
-    "pleaseSelectFileFirst": "Please select a file first",
     "magicLink": "Magic Link",
     "getMagicLink": "Get login magic link",
     "magicLinkCopied": "Magic link copied to clipboard",
@@ -424,7 +428,6 @@
     "downloadTemplate": "Download Excel Template",
     "templateDescription": "Download a sample Excel file with the correct format",
     "templateDownloaded": "Template downloaded successfully",
-    "pleaseSelectExcelFile": "Please select an Excel file (.xlsx, .xls, or .csv)",
     "noValidDataFound": "No valid customer data found in the file"
   },
   "product": {
@@ -463,7 +466,6 @@
     "downloadTemplate": "Download Excel Template",
     "templateDescription": "Download a sample Excel file with the correct format",
     "templateDownloaded": "Template downloaded successfully",
-    "pleaseSelectExcelFile": "Please select an Excel file (.xlsx, .xls, or .csv)",
     "noValidDataFound": "No valid product data found in the file"
   },
   "orientation": {

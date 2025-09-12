@@ -1,13 +1,17 @@
 import { useCallback } from 'react';
-import { Card, Group, Box, Text, type MantineStyleProp } from '@mantine/core';
+
 import { useNavigate } from 'react-router';
+
+import { Box, Card, Group, type MantineStyleProp, Text } from '@mantine/core';
+
+import { UrgentBadge } from '@/components/common';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { DeliveryRequest } from '@/services/sales/deliveryRequest';
-import { formatDate, getLocaleFormat } from '@/utils/time';
-import { getEmployeeNameByEmployeeId } from '@/utils/overview';
 import { useEmployeeMapByEmployeeId } from '@/stores/useAppStore';
+import { getEmployeeNameByEmployeeId } from '@/utils/overview';
+import { formatDate, getLocaleFormat } from '@/utils/time';
+
 import { DeliveryStatusBadge } from './DeliveryStatusBadge';
-import { UrgentBadge } from '@/components/common';
 
 type DeliveryCardProps = {
   readonly deliveryRequest: DeliveryRequest;

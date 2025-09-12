@@ -1,22 +1,25 @@
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
+
 import {
-  Table,
-  TextInput,
-  NumberInput,
   ActionIcon,
-  Button,
   Box,
-  Stack,
+  Button,
   Card,
-  Title,
+  NumberInput,
+  Stack,
+  Table,
   Text,
+  TextInput,
+  Title,
 } from '@mantine/core';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
+
 import { useTranslation } from '@/hooks/useTranslation';
-import { showErrorNotification } from '@/utils/notifications';
-import { POProductSearch } from './POProductSearch';
-import { createPOItem } from '@/utils/poItemUtils';
 import type { POItem } from '@/services/sales/purchaseOrder';
+import { showErrorNotification } from '@/utils/notifications';
+import { createPOItem } from '@/utils/poItemUtils';
+
+import { POProductSearch } from './POProductSearch';
 
 type POItemsEditorDesktopProps = {
   readonly items: POItem[];
