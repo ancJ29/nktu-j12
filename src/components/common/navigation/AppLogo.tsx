@@ -13,7 +13,8 @@ type AppLogoProps = {
 export function AppLogo({ noTitle = false, c, fw, link = '/home' }: AppLogoProps) {
   const navigate = useNavigate();
   const { logoUrl, title } = useLogoAndTitle();
-
+  console.log('logoUrl', logoUrl);
+  console.log('title', title);
   return (
     <Group gap="xs" style={{ cursor: 'pointer' }} onClick={() => navigate(link)}>
       <Box
