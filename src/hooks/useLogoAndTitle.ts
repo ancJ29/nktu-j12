@@ -12,7 +12,6 @@ export function useLogoAndTitle(options?: { color?: boolean }) {
   );
 
   useEffect(() => {
-    console.log('publicClientConfig', publicClientConfig);
     if (publicClientConfig?.clientName) {
       setTitle(publicClientConfig.clientName);
     }
