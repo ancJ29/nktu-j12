@@ -69,7 +69,6 @@ export const CreateProductRequestSchema = z.object({
 });
 
 export const UpdateProductRequestSchema = z.object({
-  productCode: stringSchema.optional(),
   name: stringSchema.optional(),
   description: optionalStringSchema,
   category: optionalStringSchema,
