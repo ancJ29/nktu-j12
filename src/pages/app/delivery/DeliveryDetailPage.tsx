@@ -175,7 +175,7 @@ export function DeliveryDetailPage() {
         successTitle: t('common.success'),
         successMessage: t('delivery.messages.photosUploaded'),
         errorTitle: t('common.errors.notificationTitle'),
-        errorMessage: t('delivery.messages.uploadFailed'),
+        errorMessage: t('common.messages.uploadFailed'),
       },
     },
   );
