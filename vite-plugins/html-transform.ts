@@ -10,13 +10,13 @@ export function htmlTransformPlugin(): Plugin {
     transformIndexHtml(html) {
       const appName = process.env.VITE_APP_NAME || 'CMngt';
       const appDescription = process.env.VITE_APP_DESCRIPTION || 'CMngt Progressive Web Application';
-      
+
       return html
         // Replace title
         .replace(/<title>.*?<\/title>/, `<title>${appName} App</title>`)
         // Replace meta description
         .replace(
-          /<meta name="description" content=".*?"/, 
+          /<meta name="description" content=".*?"/,
           `<meta name="description" content="${appDescription}"`
         )
         // Replace OpenGraph tags
