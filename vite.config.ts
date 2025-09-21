@@ -14,9 +14,9 @@ process.env.VITE_APP_BUILD = new Date(Date.now() + tzOffset)
   .slice(0, -7);
 
 // Default app branding values (can be overridden by .env file)
-const APP_NAME = process.env.VITE_APP_NAME || 'Credo';
-const APP_SHORT_NAME = process.env.VITE_APP_SHORT_NAME || 'Credo';
-const APP_DESCRIPTION = process.env.VITE_APP_DESCRIPTION || 'Credo Progressive Web Application';
+const APP_NAME = process.env.VITE_APP_NAME || 'CMngt';
+const APP_SHORT_NAME = process.env.VITE_APP_SHORT_NAME || 'CMngt';
+const APP_DESCRIPTION = process.env.VITE_APP_DESCRIPTION || 'CMngt Progressive Web Application';
 
 // https://vite.dev/config/
 export default defineConfig({

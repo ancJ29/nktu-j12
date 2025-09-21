@@ -8,8 +8,8 @@ export function htmlTransformPlugin(): Plugin {
   return {
     name: 'html-transform',
     transformIndexHtml(html) {
-      const appName = process.env.VITE_APP_NAME || 'Credo';
-      const appDescription = process.env.VITE_APP_DESCRIPTION || 'Credo Progressive Web Application';
+      const appName = process.env.VITE_APP_NAME || 'CMngt';
+      const appDescription = process.env.VITE_APP_DESCRIPTION || 'CMngt Progressive Web Application';
       
       return html
         // Replace title
