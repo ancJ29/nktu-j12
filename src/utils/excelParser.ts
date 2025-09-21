@@ -381,10 +381,10 @@ export const generateCustomerExcelTemplate = (
       ]
     : [
         buildSampleRow(
-          'Company',
-          'Company Inc',
+          'ACME',
+          'Acme Inc',
           'John Doe',
-          'john@company.com',
+          'john@acme.com',
           '555-1234',
           '123 Main St',
           'https://maps.app.goo.gl/example1',
