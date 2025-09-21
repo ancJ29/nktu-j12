@@ -6,13 +6,13 @@ import { logError } from '@/utils/logger';
 import { uploadBase64ToS3 } from '@/utils/mediaUpload';
 import { showErrorNotification } from '@/utils/notifications';
 
-type DeliveryPhotoUploadProps = {
+type POPhotoUploadProps = {
   readonly opened: boolean;
   readonly onClose: () => void;
   readonly onUpload: (data: { photos: { publicUrl: string; key: string }[] }) => Promise<void>;
 };
 
-export function DeliveryPhotoUpload({ opened, onClose, onUpload }: DeliveryPhotoUploadProps) {
+export function POPhotoUpload({ opened, onClose, onUpload }: POPhotoUploadProps) {
   const { t } = useTranslation();
 
   // Handle photo capture, upload to S3, save to backend, and close
@@ -21,10 +21,10 @@ export function DeliveryPhotoUpload({ opened, onClose, onUpload }: DeliveryPhoto
       try {
         // Step 1: Upload to S3
         const { publicUrl, key } = await uploadBase64ToS3(capturedPhoto, {
-          fileName: `delivery-photo-${Date.now()}.jpg`,
+          fileName: `po-photo-${Date.now()}.jpg`,
           fileType: 'image/jpeg',
-          purpose: 'DELIVERY_REQUEST_PHOTO',
-          prefix: 'delivery',
+          purpose: 'DELIVERY_REQUEST_PHOTO', // Same purpose type for all photos
+          prefix: 'purchase-order',
         });
 
         if (publicUrl) {
@@ -33,7 +33,7 @@ export function DeliveryPhotoUpload({ opened, onClose, onUpload }: DeliveryPhoto
         }
       } catch (error) {
         logError('Failed to upload photo', error, {
-          module: 'DeliveryPhotoUpload',
+          module: 'POPhotoUpload',
           action: 'handlePhotoCapture',
         });
         showErrorNotification(
