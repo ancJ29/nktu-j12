@@ -118,9 +118,7 @@ export function DeliveryDetailTabs({
                         {t('delivery.scheduledDate')}
                       </Text>
                       <Text size="sm" fw={500}>
-                        {deliveryRequest.scheduledDate
-                          ? formatDate(deliveryRequest.scheduledDate)
-                          : t('common.notScheduled')}
+                        {formatDate(deliveryRequest.scheduledDate, t('common.notScheduled'))}
                       </Text>
                     </div>
                     {deliveryRequest.completedDate && (
@@ -193,11 +191,7 @@ export function DeliveryDetailTabs({
             <Text fw={500} mb="md">
               {t('delivery.photos')}
             </Text>
-            <DeliveryPhotoGallery
-              photoUrls={deliveryRequest.photoUrls}
-              columns={12}
-              imageHeight={120}
-            />
+            <DeliveryPhotoGallery photos={deliveryRequest.photos} columns={6} imageHeight={120} />
           </Card>
         </Grid.Col>
       </Grid>

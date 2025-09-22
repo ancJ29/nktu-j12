@@ -109,9 +109,7 @@ export function DeliveryDetailAccordion({
       },
       {
         label: t('delivery.scheduledDate'),
-        value: deliveryRequest.scheduledDate
-          ? formatDate(deliveryRequest.scheduledDate)
-          : t('common.notScheduled'),
+        value: formatDate(deliveryRequest.scheduledDate, t('common.notScheduled')),
       },
       ...(deliveryRequest.completedDate
         ? [
@@ -200,7 +198,7 @@ export function DeliveryDetailAccordion({
           </Accordion.Control>
           <Accordion.Panel>
             <DeliveryPhotoGallery
-              photoUrls={deliveryRequest.photoUrls}
+              photos={deliveryRequest.photos}
               withScrollArea
               scrollAreaHeight="50vh"
             />
