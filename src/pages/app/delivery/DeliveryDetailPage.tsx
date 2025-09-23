@@ -25,6 +25,7 @@ import {
   useDeliveryRequestError,
   useDeliveryRequestLoading,
 } from '@/stores/useDeliveryRequestStore';
+import type { UploadPhoto } from '@/types';
 import {
   canCompleteDeliveryRequest,
   canEditDeliveryRequest,
@@ -60,8 +61,8 @@ export function DeliveryDetailPage() {
     loadDeliveryRequest,
     clearError,
     updateDeliveryRequest,
-    updateDeliveryStatus,
     completeDelivery,
+    startTransit,
     uploadPhotos,
   } = useDeliveryRequestActions();
 
@@ -95,7 +96,10 @@ export function DeliveryDetailPage() {
       if (!deliveryRequest) {
         throw new Error(t('common.invalidFormData'));
       }
-      await updateDeliveryStatus(deliveryRequest.id, 'IN_TRANSIT', data?.transitNotes);
+      await startTransit(deliveryRequest.id, {
+        transitNotes: data?.transitNotes,
+      });
+
       closeModal('startTransit');
     },
     {
@@ -113,22 +117,14 @@ export function DeliveryDetailPage() {
   // Complete delivery action
   const completeDeliveryAction = useSWRAction(
     'complete-delivery',
-    async (data: {
-      photos: { publicUrl: string; key: string }[];
-      completionNotes: string;
-      receivedBy: string;
-    }) => {
+    async (data: { photos: UploadPhoto[]; deliveryNotes: string; receivedBy: string }) => {
       if (!canComplete) {
         throw new Error(t('common.doNotHavePermissionForAction'));
       }
       if (!deliveryRequest) {
         throw new Error(t('common.invalidFormData'));
       }
-      await completeDelivery(deliveryRequest.id, {
-        photos: data.photos,
-        receivedBy: data.receivedBy,
-        notes: data.completionNotes,
-      });
+      await completeDelivery(deliveryRequest.id, data);
       closeModal('complete');
     },
     {

@@ -1,12 +1,14 @@
 import { deliveryRequestApi } from '@/lib/api';
 import {
   type DeliveryRequest as ApiDeliveryRequest,
+  type CompleteDelivery,
   type CreateDeliveryRequest,
   type DeliveryStatus,
+  type StartTransit,
   type UpdateDeliveryRequest,
 } from '@/lib/api/schemas/deliveryRequest.schemas';
 import type { CustomerOverview, EmployeeOverview } from '@/services/client/overview';
-import type { PhotoData } from '@/types';
+import type { Address, PhotoData } from '@/types';
 import { startOfDay } from '@/utils/time';
 import { endOfDay } from '@/utils/time';
 
@@ -28,12 +30,9 @@ export type DeliveryRequest = Omit<ApiDeliveryRequest, 'metadata'> & {
   purchaseOrderId?: string | undefined;
   customerName?: string | undefined;
   customerId?: string | undefined;
-  photos: PhotoData[];
   deliveryPerson: string | undefined;
-  deliveryAddress?: {
-    oneLineAddress?: string;
-    googleMapsUrl?: string;
-  };
+  deliveryAddress?: Address | undefined;
+  photos: PhotoData[];
 };
 
 /**
@@ -183,19 +182,12 @@ export const deliveryRequestService = {
     await deliveryRequestApi.deleteDeliveryPhoto(id, { photoId });
   },
 
-  async completeDelivery(
-    id: string,
-    data: { photos: { publicUrl: string; key: string; caption?: string }[]; notes?: string },
-  ): Promise<void> {
-    await deliveryRequestApi.completeDelivery(id, {
-      photos: data.photos.map((photo) => ({
-        publicUrl: photo.publicUrl,
-        key: photo.key,
-        caption: photo.caption,
-      })),
-      deliveryNotes: data?.notes,
-      receivedBy: '',
-    });
+  async startTransit(id: string, data: StartTransit): Promise<void> {
+    await deliveryRequestApi.startTransit(id, data);
+  },
+
+  async completeDelivery(id: string, data: CompleteDelivery): Promise<void> {
+    await deliveryRequestApi.completeDelivery(id, data);
   },
 
   async updateDeliveryOrderInDay(

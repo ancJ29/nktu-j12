@@ -17,6 +17,7 @@ import { formatDate } from '@/utils/time';
 
 import { DeliveryPhotoGallery } from './DeliveryPhotoGallery';
 import { DeliveryStatusBadge } from './DeliveryStatusBadge';
+import { DeliveryTypeBadge } from './DeliveryTypeBadge';
 
 type DeliveryDetailTabsProps = {
   readonly deliveryRequest: DeliveryRequest;
@@ -62,7 +63,7 @@ export function DeliveryDetailTabs({
             {t('delivery.deliveryId')}: {deliveryRequest.deliveryRequestNumber}
           </Text>
           {deliveryRequest.isUrgentDelivery && <UrgentBadge />}
-          <DeliveryStatusBadge status={deliveryRequest.status} />
+          <DeliveryTypeBadge type={deliveryRequest.type} />
         </Group>
         <Button
           disabled={!canEdit}
@@ -156,7 +157,9 @@ export function DeliveryDetailTabs({
                       <Text size="sm" c="dimmed">
                         {t('delivery.status')}
                       </Text>
-                      <DeliveryStatusBadge status={deliveryRequest.status} />
+                      <Group gap="xs">
+                        <DeliveryStatusBadge status={deliveryRequest.status} />
+                      </Group>
                     </div>
                   </Stack>
                 </Grid.Col>

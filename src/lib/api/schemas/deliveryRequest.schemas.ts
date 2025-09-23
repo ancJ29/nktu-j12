@@ -23,6 +23,8 @@ export const DeliveryStatusSchema = z.enum(['PENDING', 'IN_TRANSIT', 'COMPLETED'
 export type DeliveryStatus = z.infer<typeof DeliveryStatusSchema>;
 
 // Delivery Request base schema
+export const DeliveryRequestTypeSchema = z.enum(['DELIVERY', 'RECEIVE']);
+
 export const DeliveryRequestSchema = z.object({
   id: idSchema,
   deliveryRequestNumber: stringSchema,
@@ -30,6 +32,7 @@ export const DeliveryRequestSchema = z.object({
   assignedTo: optionalIdSchema,
   scheduledDate: timestampSchema,
   completedDate: optionalTimestampSchema,
+  type: DeliveryRequestTypeSchema,
   isUrgentDelivery: optionalBooleanSchema,
   deliveryOrderInDay: optionalNumberSchema,
   purchaseOrder: z
@@ -42,17 +45,20 @@ export const DeliveryRequestSchema = z.object({
   photos: z.array(PhotoDataSchema).optional(),
   deliveryAddress: AddressSchema.optional(),
   notes: optionalStringSchema,
+  receivedBy: optionalStringSchema,
+  completionNotes: optionalStringSchema,
   createdAt: timestampSchema,
   updatedAt: timestampSchema,
 });
 
 // ========== Request Schemas ==========
-
 export const CreateDeliveryRequestSchema = z.object({
-  purchaseOrderId: idSchema,
+  purchaseOrderId: idSchema.optional(),
   assignedTo: idSchema,
   scheduledDate: stringSchema,
   notes: optionalStringSchema,
+  type: DeliveryRequestTypeSchema,
+  receiveAddress: AddressSchema.optional(),
   isUrgentDelivery: optionalBooleanSchema,
 });
 
@@ -76,9 +82,13 @@ export const DeletePhotoRequestSchema = z.object({
   photoId: idSchema,
 });
 
+export const StartTransitSchema = z.object({
+  transitNotes: optionalStringSchema,
+});
+
 export const CompleteDeliverySchema = z.object({
   photos: z.array(UploadPhotoSchema),
-  deliveryNotes: optionalStringSchema,
+  deliveryNotes: stringSchema,
   receivedBy: stringSchema,
 });
 
@@ -108,6 +118,7 @@ export const GetDeliveryRequestResponseSchema = DeliveryRequestSchema;
 // ========== Type Exports ==========
 
 export type DeliveryRequest = z.infer<typeof DeliveryRequestSchema>;
+export type DeliveryRequestType = z.infer<typeof DeliveryRequestTypeSchema>;
 export type DeliveryRequestDetail = z.infer<typeof DeliveryRequestSchema>;
 
 export type CreateDeliveryRequest = z.infer<typeof CreateDeliveryRequestSchema>;
@@ -115,6 +126,7 @@ export type UpdateDeliveryRequest = z.infer<typeof UpdateDeliveryRequestSchema>;
 export type UpdateDeliveryStatus = z.infer<typeof UpdateDeliveryStatusSchema>;
 export type UploadPhotos = z.infer<typeof UploadPhotosSchema>;
 export type DeletePhotoRequest = z.infer<typeof DeletePhotoRequestSchema>;
+export type StartTransit = z.infer<typeof StartTransitSchema>;
 export type CompleteDelivery = z.infer<typeof CompleteDeliverySchema>;
 export type UpdateDeliveryOrderInDay = z.infer<typeof UpdateDeliveryOrderInDaySchema>;
 

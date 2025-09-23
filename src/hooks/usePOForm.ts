@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { useTranslation } from '@/hooks/useTranslation';
 import type { POItem } from '@/services/sales/purchaseOrder';
+import type { Address } from '@/types';
 import { getBasicValidators } from '@/utils/validation';
 
 export type POFormValues = {
@@ -11,10 +12,7 @@ export type POFormValues = {
   orderDate: Date;
   deliveryDate?: Date;
   isInternalDelivery: boolean;
-  shippingAddress?: {
-    oneLineAddress?: string;
-    googleMapsUrl?: string;
-  };
+  shippingAddress?: Address;
   notes?: string;
 };
 

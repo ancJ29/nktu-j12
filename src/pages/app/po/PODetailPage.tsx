@@ -391,6 +391,7 @@ export function PODetailPage() {
         purchaseOrderId: purchaseOrder.id,
         assignedTo: data.assignedTo,
         scheduledDate: data.scheduledDate,
+        type: 'DELIVERY',
         notes: data.notes,
         isUrgentDelivery: data.isUrgentDelivery,
       });

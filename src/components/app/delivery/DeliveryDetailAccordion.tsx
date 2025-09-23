@@ -31,6 +31,7 @@ import { formatDate } from '@/utils/time';
 
 import { DeliveryPhotoGallery } from './DeliveryPhotoGallery';
 import { DeliveryStatusBadge } from './DeliveryStatusBadge';
+import { DeliveryTypeBadge } from './DeliveryTypeBadge';
 
 type DeliveryDetailAccordionProps = {
   readonly deliveryRequest: DeliveryRequest;
@@ -99,6 +100,7 @@ export function DeliveryDetailAccordion({
         value: (
           <Group gap="xs">
             {deliveryRequest.isUrgentDelivery && <UrgentBadge size="xs" />}
+            <DeliveryTypeBadge type={deliveryRequest.type} size="xs" />
             <DeliveryStatusBadge status={deliveryRequest.status} />
           </Group>
         ),

@@ -9,6 +9,7 @@ import type { DeliveryRequest } from '@/services/sales';
 import { formatDate, formatDateTime } from '@/utils/time';
 
 import { DeliveryStatusBadge } from './DeliveryStatusBadge';
+import { DeliveryTypeBadge } from './DeliveryTypeBadge';
 
 type DeliveryGridCardProps = {
   readonly deliveryRequest: DeliveryRequest;
@@ -45,6 +46,12 @@ export function DeliveryGridCard({ deliveryRequest }: DeliveryGridCardProps) {
               {deliveryRequest.deliveryRequestNumber}
             </Text>
             <Stack gap="xs" mt="xs">
+              <Text size="sm" c="dimmed">
+                {t('delivery.requestType')}:
+              </Text>
+              <Text size="sm" fw={500}>
+                <DeliveryTypeBadge type={deliveryRequest.type} />
+              </Text>
               {deliveryRequest.customerName && (
                 <div>
                   <Text size="sm" c="dimmed">

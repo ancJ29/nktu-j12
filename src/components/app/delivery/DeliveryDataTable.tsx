@@ -10,6 +10,7 @@ import type { DeliveryRequest } from '@/services/sales';
 import { formatDate } from '@/utils/time';
 
 import { DeliveryStatusBadge } from './DeliveryStatusBadge';
+import { DeliveryTypeBadge } from './DeliveryTypeBadge';
 
 type DeliveryDataTableProps = {
   readonly deliveryRequests: readonly DeliveryRequest[];
@@ -70,6 +71,7 @@ function DeliveryDataTableComponent({ deliveryRequests }: DeliveryDataTableProps
                 <Table.Td>
                   <Group gap="xs">
                     {delivery.isUrgentDelivery && <UrgentBadge size="xs" />}
+                    <DeliveryTypeBadge type={delivery.type} size="xs" />
                     <DeliveryStatusBadge status={delivery.status} />
                   </Group>
                 </Table.Td>

@@ -12,6 +12,7 @@ import {
   type DeliveryStatus,
   type UpdateDeliveryRequest,
 } from '@/services/sales';
+import type { UploadPhoto } from '@/types';
 import { getErrorMessage } from '@/utils/errorUtils';
 import { endOfDay, startOfDay } from '@/utils/time';
 
@@ -68,12 +69,13 @@ type DeliveryRequestState = {
   updateDeliveryStatus: (id: string, status: DeliveryStatus, notes?: string) => Promise<void>;
   uploadPhotos: (id: string, photos: { publicUrl: string; key: string }[]) => Promise<void>;
   deletePhoto: (id: string, photoId: string) => Promise<void>;
+  startTransit: (id: string, data: { transitNotes?: string }) => Promise<void>;
   completeDelivery: (
     id: string,
-    data?: {
+    data: {
       receivedBy: string;
-      photos: { publicUrl: string; key: string }[];
-      notes: string;
+      photos: UploadPhoto[];
+      deliveryNotes: string;
     },
   ) => Promise<void>;
   updateDeliveryOrderInDay: (assignedTo: string, date: Date, requestIds: string[]) => Promise<void>;
@@ -411,9 +413,38 @@ export const useDeliveryRequestStore = create<DeliveryRequestState>()(
         }
       },
 
+      async startTransit(id: string, data: { transitNotes?: string }) {
+        const state = get();
+
+        // Check if action is already pending
+        if (state.pendingActions.has(id)) {
+          return;
+        }
+
+        // Mark as pending
+        get()._markPending(id);
+
+        try {
+          // Call service and use the response
+          await deliveryRequestService.startTransit(id, data);
+
+          // Force reload to get latest data from server
+          get()._forceReload(id);
+        } catch (error) {
+          set({ error: getErrorMessage(error, 'Failed to start transit') });
+          throw error;
+        } finally {
+          get()._removePending(id);
+        }
+      },
+
       async completeDelivery(
         id: string,
-        data: { photos: { publicUrl: string; key: string }[]; notes?: string },
+        data: {
+          photos: UploadPhoto[];
+          deliveryNotes: string;
+          receivedBy: string;
+        },
       ) {
         const state = get();
 
@@ -625,6 +656,7 @@ export const useDeliveryRequestActions = () => {
   const uploadPhotos = useDeliveryRequestStore((state) => state.uploadPhotos);
   const deletePhoto = useDeliveryRequestStore((state) => state.deletePhoto);
   const completeDelivery = useDeliveryRequestStore((state) => state.completeDelivery);
+  const startTransit = useDeliveryRequestStore((state) => state.startTransit);
   const updateDeliveryOrderInDay = useDeliveryRequestStore(
     (state) => state.updateDeliveryOrderInDay,
   );
@@ -647,6 +679,7 @@ export const useDeliveryRequestActions = () => {
     uploadPhotos,
     deletePhoto,
     completeDelivery,
+    startTransit,
     updateDeliveryOrderInDay,
     loadDeliveryRequestsForDate,
     clearError,

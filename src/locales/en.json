@@ -227,7 +227,7 @@
     "namePlaceholder": "Customer Name",
     "noValidDataFound": "No valid customer data found in the file",
     "phonePlaceholder": "+84901234567",
-    "searchPlaceholder": "Search customers by name, company, email, or phone...",
+    "searchPlaceholder": "Search customers by name",
     "taxCode": "Tax Code",
     "taxCodePlaceholder": "Tax Code (Optional)",
     "updated": "Customer Updated",
@@ -248,12 +248,13 @@
     "assignedTo": "Assigned To",
     "completedDate": "Completed Date",
     "completionNotes": "Completion Notes",
+    "createReceiveRequest": "Create Receive Request",
     "deliveryId": "Delivery ID",
     "deliveryInfo": "Delivery Information",
     "descriptions": {
       "completeDelivery": "Mark this delivery as completed",
       "completionNotes": "Notes about the completed delivery",
-      "createFirstDeliveryRequest": "Create your first delivery request from a purchase order"
+      "createFirstDeliveryRequest": "Create your first delivery request"
     },
     "detail": "Delivery Details",
     "filters": {
@@ -265,6 +266,7 @@
       "enterNotes": "Enter delivery notes",
       "selectAssignee": "Select Assignee",
       "selectDate": "Select Scheduled Date",
+      "selectDriver": "Select Driver",
       "urgentDeliveryDescription": "Mark this delivery as urgent"
     },
     "id": "Request ID",
@@ -292,8 +294,12 @@
       "title": "Quick Actions",
       "today": "Today"
     },
+    "receiveRequestDescription": "This will create a delivery request for receiving items from a vendor to the warehouse.",
+    "receiveRequestInfo": "Receive Request Information",
+    "receiveType": "RECEIVE",
     "receivedBy": "ReceivedBy",
     "receivedByDescription": "Name of person who received the delivery",
+    "requestType": "Request Type",
     "scheduledDate": "Scheduled Date",
     "status": "Status",
     "statuses": {
@@ -304,7 +310,13 @@
     "title": "Delivery Management",
     "transitNotes": "Transit Notes",
     "transitNotesDescription": "Optional notes about starting transit",
-    "urgentDelivery": "Urgent"
+    "types": {
+      "delivery": "Delivery",
+      "receive": "Receive"
+    },
+    "urgentDelivery": "Urgent",
+    "vendorPickupAddress": "Vendor Pickup Address",
+    "vendorPickupAddressPlaceholder": "Enter vendor address where driver will pick up items"
   },
   "employee": {
     "activateEmployee": "Activate Employee",
@@ -653,7 +665,7 @@
     "noValidDataFound": "No valid product data found in the file",
     "productCode": "Product Code",
     "productCodePlaceholder": "Enter product code",
-    "searchPlaceholder": "Search products by name, code, category...",
+    "searchPlaceholder": "Search products by name, code...",
     "unit": "Unit",
     "unitPlaceholder": "pcs, kg, etc.",
     "updated": "Product Updated",

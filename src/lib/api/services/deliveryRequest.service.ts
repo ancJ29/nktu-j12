@@ -13,6 +13,8 @@ import {
   GetDeliveryRequestResponseSchema,
   type GetDeliveryRequestsResponse,
   GetDeliveryRequestsResponseSchema,
+  type StartTransit,
+  StartTransitSchema,
   type UpdateDeliveryOrderInDay,
   UpdateDeliveryOrderInDaySchema,
   type UpdateDeliveryRequest,
@@ -122,6 +124,15 @@ export class DeliveryRequestApi extends BaseApiClient {
       data,
       undefined,
       DeletePhotoRequestSchema,
+    );
+  }
+
+  async startTransit(id: string, data: StartTransit): Promise<void> {
+    return this.patch<void, StartTransit>(
+      `/api/sales/delivery-requests/${id}/start-transit`,
+      data,
+      undefined,
+      StartTransitSchema,
     );
   }
 

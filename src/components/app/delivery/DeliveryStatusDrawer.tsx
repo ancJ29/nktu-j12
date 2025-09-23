@@ -22,6 +22,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import type { DeliveryRequest } from '@/services/sales';
 import { usePermissions } from '@/stores/useAppStore';
 import { useDeliveryRequestActions } from '@/stores/useDeliveryRequestStore';
+import type { UploadPhoto } from '@/types';
 import { canTakePhotoDeliveryRequest } from '@/utils/permission.utils';
 import { formatDate } from '@/utils/time';
 
@@ -36,8 +37,8 @@ type DeliveryStatusDrawerProps = {
   readonly onClose: () => void;
   readonly onConfirm?: (data?: { transitNotes?: string }) => Promise<void>;
   readonly onComplete?: (data: {
-    photos: { publicUrl: string; key: string }[];
-    completionNotes: string;
+    photos: UploadPhoto[];
+    deliveryNotes: string;
     receivedBy: string;
   }) => Promise<void>;
 };
