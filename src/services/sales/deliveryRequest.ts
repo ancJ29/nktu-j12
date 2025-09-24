@@ -187,7 +187,11 @@ export const deliveryRequestService = {
   },
 
   async completeDelivery(id: string, data: CompleteDelivery): Promise<void> {
-    await deliveryRequestApi.completeDelivery(id, data);
+    await deliveryRequestApi.completeDelivery(id, {
+      receivedBy: data.receivedBy ?? '',
+      photos: data.photos,
+      deliveryNotes: data.deliveryNotes ?? '',
+    });
   },
 
   async updateDeliveryOrderInDay(
