@@ -83,7 +83,6 @@ export function DeliveryStatusDrawer({
   const { isDesktop } = useDeviceType();
   const [notes, setNotes] = useState('');
   const [receivedBy, setReceivedBy] = useState('');
-  const [deliveryTime, setDeliveryTime] = useState('');
   const [showPhotoUpload, setShowPhotoUpload] = useState(false);
   const [uploadedPhotos, setUploadedPhotos] = useState<{ publicUrl: string; key: string }[]>(
     deliveryRequest?.photos?.map((photo) => ({ publicUrl: photo.publicUrl, key: photo.key })) || [],
@@ -137,26 +136,19 @@ export function DeliveryStatusDrawer({
   };
 
   const handleConfirm = async () => {
-    let data: any = undefined;
-
     if (mode === 'start_transit') {
-      data = {
-        transitNotes: notes.trim(),
-        startedAt: new Date().toISOString(),
-        photos: uploadedPhotos,
-      };
       if (onConfirm) {
-        await onConfirm(data);
+        await onConfirm({
+          transitNotes: notes.trim(),
+        });
       }
     } else if (mode === 'complete') {
-      data = {
-        completionNotes: notes.trim(),
-        receivedBy: receivedBy.trim(),
-        deliveredAt: deliveryTime || new Date().toISOString(),
-        photos: uploadedPhotos,
-      };
       if (onComplete) {
-        onComplete(data);
+        onComplete({
+          deliveryNotes: notes.trim(),
+          receivedBy: receivedBy.trim(),
+          photos: uploadedPhotos,
+        });
       }
     }
 
@@ -166,7 +158,6 @@ export function DeliveryStatusDrawer({
   const handleClose = () => {
     setNotes('');
     setReceivedBy('');
-    setDeliveryTime('');
     setUploadedPhotos([]);
     setShowPhotoUpload(false);
     onClose();
