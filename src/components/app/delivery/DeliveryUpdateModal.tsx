@@ -1,7 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { Button, Drawer, Group, Modal, Select, Stack, Switch, Text, Textarea } from '@mantine/core';
-import { IconCalendar, IconEdit, IconUrgent } from '@tabler/icons-react';
+import {
+  Button,
+  Drawer,
+  Group,
+  Modal,
+  Select,
+  Stack,
+  Switch,
+  Text,
+  Textarea,
+  TextInput,
+} from '@mantine/core';
+import { IconBuilding, IconCalendar, IconEdit, IconMapPin, IconUrgent } from '@tabler/icons-react';
 
 import { DateInput, UrgentBadge } from '@/components/common';
 import { useDeviceType } from '@/hooks/useDeviceType';
@@ -20,6 +31,15 @@ type DeliveryUpdateModalProps = {
     scheduledDate: string;
     notes: string;
     isUrgentDelivery?: boolean;
+    vendorName?: string;
+    receiveAddress?: {
+      oneLineAddress: string;
+      googleMapsUrl?: string;
+    };
+    deliveryAddress?: {
+      oneLineAddress: string;
+      googleMapsUrl?: string;
+    };
   }) => Promise<void>;
 };
 
@@ -40,6 +60,9 @@ export function DeliveryUpdateModal({
   const [scheduledDate, setScheduledDate] = useState<Date | undefined>(undefined);
   const [notes, setNotes] = useState('');
   const [isUrgentDelivery, setIsUrgentDelivery] = useState(false);
+  const [vendorName, setVendorName] = useState('');
+  const [oneLineAddress, setOneLineAddress] = useState('');
+  const [googleMapsUrl, setGoogleMapsUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Employee options for select - filtered by assigneeIds from clientConfig
@@ -67,12 +90,26 @@ export function DeliveryUpdateModal({
       );
       setNotes(deliveryRequest.notes || '');
       setIsUrgentDelivery(deliveryRequest.isUrgentDelivery || false);
+
+      // Set vendor name if RECEIVE type
+      setVendorName(deliveryRequest.vendorName || '');
+
+      // Set address based on type
+      const address = deliveryRequest.isReceive
+        ? deliveryRequest.receiveAddress
+        : deliveryRequest.deliveryAddress;
+
+      setOneLineAddress(address?.oneLineAddress || '');
+      setGoogleMapsUrl(address?.googleMapsUrl || '');
     } else if (!opened) {
       // Reset form when modal closes
       setSelectedEmployeeId(null);
       setScheduledDate(undefined);
       setNotes('');
       setIsUrgentDelivery(false);
+      setVendorName('');
+      setOneLineAddress('');
+      setGoogleMapsUrl('');
     }
   }, [opened, deliveryRequest]);
 
@@ -82,14 +119,37 @@ export function DeliveryUpdateModal({
       return;
     }
 
+    // For RECEIVE type, address is required
+    if (deliveryRequest?.isReceive && !oneLineAddress.trim()) {
+      return;
+    }
+
     setIsSubmitting(true);
     try {
-      await onConfirm({
+      const data: Parameters<typeof onConfirm>[0] = {
         assignedTo: selectedEmployeeId,
         scheduledDate: scheduledDate.toISOString(),
         notes,
         isUrgentDelivery,
-      });
+      };
+
+      // Add vendor name for RECEIVE type
+      if (deliveryRequest?.isReceive) {
+        data.vendorName = vendorName.trim() || undefined;
+        if (oneLineAddress.trim()) {
+          data.receiveAddress = {
+            oneLineAddress: oneLineAddress.trim(),
+            googleMapsUrl: googleMapsUrl.trim() || undefined,
+          };
+        }
+      } else if (deliveryRequest?.isDelivery && oneLineAddress.trim()) {
+        data.deliveryAddress = {
+          oneLineAddress: oneLineAddress.trim(),
+          googleMapsUrl: googleMapsUrl.trim() || undefined,
+        };
+      }
+
+      await onConfirm(data);
       onClose();
     } finally {
       setIsSubmitting(false);
@@ -108,22 +168,30 @@ export function DeliveryUpdateModal({
               {deliveryRequest.deliveryRequestNumber}
             </Text>
           </Group>
-          <Group justify="space-between">
-            <Text size="sm" c="dimmed">
-              {t('po.customer')}:
-            </Text>
-            <Text size="sm" fw={500}>
-              {getCustomerNameByCustomerId(customerMapByCustomerId, deliveryRequest.customerId)}
-            </Text>
-          </Group>
-          <Group justify="space-between">
-            <Text size="sm" c="dimmed">
-              {t('po.poNumber')}:
-            </Text>
-            <Text size="sm" fw={500}>
-              {deliveryRequest.purchaseOrderNumber}
-            </Text>
-          </Group>
+
+          {/* Show customer only if available (DELIVERY type usually has customer) */}
+          {deliveryRequest.customerId && (
+            <Group justify="space-between">
+              <Text size="sm" c="dimmed">
+                {t('common.customer')}:
+              </Text>
+              <Text size="sm" fw={500}>
+                {getCustomerNameByCustomerId(customerMapByCustomerId, deliveryRequest.customerId)}
+              </Text>
+            </Group>
+          )}
+
+          {/* Show PO number only if available (DELIVERY type usually has PO) */}
+          {deliveryRequest.purchaseOrderNumber && (
+            <Group justify="space-between">
+              <Text size="sm" c="dimmed">
+                {t('po.poNumber')}:
+              </Text>
+              <Text size="sm" fw={500}>
+                {deliveryRequest.purchaseOrderNumber}
+              </Text>
+            </Group>
+          )}
         </Stack>
       )}
 
@@ -146,6 +214,43 @@ export function DeliveryUpdateModal({
         required
         minDate={new Date()}
         leftSection={<IconCalendar size={16} />}
+      />
+
+      {/* Show vendor name field for RECEIVE type */}
+      {deliveryRequest?.isReceive && (
+        <TextInput
+          label={t('delivery.vendorName')}
+          placeholder={t('delivery.vendorNamePlaceholder')}
+          value={vendorName}
+          onChange={(e) => setVendorName(e.currentTarget.value)}
+          leftSection={<IconBuilding size={16} />}
+        />
+      )}
+
+      {/* Address fields - show appropriate label based on type */}
+      <TextInput
+        label={
+          deliveryRequest?.isReceive
+            ? t('delivery.vendorPickupAddress')
+            : t('customer.deliveryAddress')
+        }
+        placeholder={
+          deliveryRequest?.isReceive
+            ? t('delivery.vendorPickupAddressPlaceholder')
+            : t('customer.deliveryAddressPlaceholder')
+        }
+        value={oneLineAddress}
+        onChange={(e) => setOneLineAddress(e.currentTarget.value)}
+        leftSection={<IconMapPin size={16} />}
+        required={deliveryRequest?.isReceive}
+      />
+
+      <TextInput
+        label={t('common.googleMapsUrl')}
+        placeholder={t('common.googleMapsUrlPlaceholder')}
+        value={googleMapsUrl}
+        onChange={(e) => setGoogleMapsUrl(e.currentTarget.value)}
+        leftSection={<IconMapPin size={16} />}
       />
 
       <Textarea
@@ -178,7 +283,11 @@ export function DeliveryUpdateModal({
         <Button
           onClick={handleSubmit}
           loading={isSubmitting}
-          disabled={!selectedEmployeeId || !scheduledDate}
+          disabled={
+            !selectedEmployeeId ||
+            !scheduledDate ||
+            (deliveryRequest?.isReceive && !oneLineAddress.trim())
+          }
           leftSection={<IconEdit size={16} />}
         >
           {t('common.form.update')}
@@ -187,12 +296,17 @@ export function DeliveryUpdateModal({
     </Stack>
   );
 
+  // Determine modal title based on type
+  const modalTitle = deliveryRequest?.isReceive
+    ? t('delivery.updateReceiveRequest')
+    : t('delivery.updateDeliveryRequest');
+
   if (isMobile) {
     return (
       <Drawer
         opened={opened}
         onClose={onClose}
-        title={t('common.form.update')}
+        title={modalTitle}
         position="bottom"
         size="auto"
         padding="md"
@@ -206,7 +320,7 @@ export function DeliveryUpdateModal({
     <Modal
       opened={opened}
       onClose={onClose}
-      title={t('common.form.update')}
+      title={modalTitle}
       centered
       size="md"
       trapFocus

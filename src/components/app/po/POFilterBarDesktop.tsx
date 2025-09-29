@@ -109,7 +109,7 @@ export function POFilterBarDesktop({
         value={customerId || ''}
         style={{ flex: 1, minWidth: 150, borderRadius: '5px' }}
         onChange={(value) => onCustomerChange(value || undefined)}
-        label={t('po.customer')}
+        label={t('common.customer')}
       />
 
       {/* Status MultiSelect - flex 1 */}

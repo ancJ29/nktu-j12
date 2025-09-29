@@ -52,25 +52,36 @@ export function DeliveryGridCard({ deliveryRequest }: DeliveryGridCardProps) {
               <Text size="sm" fw={500}>
                 <DeliveryTypeBadge type={deliveryRequest.type} />
               </Text>
-              {deliveryRequest.customerName && (
+              {deliveryRequest.isDelivery ? (
+                <>
+                  <div>
+                    <Text size="sm" c="dimmed">
+                      {t('common.customer')}
+                    </Text>
+                    <Text size="sm" fw={500}>
+                      {deliveryRequest.customerName}
+                    </Text>
+                  </div>
+                  <div>
+                    <Text size="sm" c="dimmed">
+                      {t('delivery.purchaseOrder')}
+                    </Text>
+                    <Text size="sm" fw={500}>
+                      {/* LINK TO PURCHASE ORDER */}
+                      {deliveryRequest.purchaseOrderNumber || '-'}
+                    </Text>
+                  </div>
+                </>
+              ) : (
                 <div>
                   <Text size="sm" c="dimmed">
-                    {t('common.customer')}
+                    {t('common.vendor')}
                   </Text>
                   <Text size="sm" fw={500}>
-                    {deliveryRequest.customerName}
+                    {deliveryRequest.vendorName}
                   </Text>
                 </div>
               )}
-              <div>
-                <Text size="sm" c="dimmed">
-                  {t('delivery.purchaseOrder')}
-                </Text>
-                <Text size="sm" fw={500}>
-                  {/* LINK TO PURCHASE ORDER */}
-                  {deliveryRequest.purchaseOrderNumber || '-'}
-                </Text>
-              </div>
               <div>
                 <Text size="sm" c="dimmed">
                   {t('delivery.scheduledDate')}

@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Quản lý",
+    "code": "manager"
+  },
+  {
+    "name": "Kinh doanh",
+    "code": "sales"
+  },
+  {
+    "name": "Kho",
+    "code": "warehouse"
+  },
+  {
+    "name": "Kế Toán",
+    "code": "accounting"
+  },
+  {
+    "name": "Giao hàng",
+    "code": "delivery"
+  }
+]

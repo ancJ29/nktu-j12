@@ -34,6 +34,7 @@ type DeliveryCreateModalProps = {
     scheduledDate: string;
     notes?: string;
     isUrgentDelivery?: boolean;
+    vendorName: string;
     receiveAddress: {
       oneLineAddress: string;
       googleMapsUrl?: string;
@@ -54,6 +55,7 @@ export function DeliveryCreateModal({
 
   // Form state
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
+  const [vendorName, setVendorName] = useState('');
   const [scheduledDate, setScheduledDate] = useState<Date | undefined>(undefined);
   const [notes, setNotes] = useState('');
   const [oneLineAddress, setOneLineAddress] = useState('');
@@ -102,6 +104,7 @@ export function DeliveryCreateModal({
         scheduledDate: scheduledDate.toISOString(),
         notes: notes.trim() || undefined,
         isUrgentDelivery: false,
+        vendorName: vendorName.trim(),
         receiveAddress: {
           oneLineAddress: oneLineAddress.trim(),
           googleMapsUrl: googleMapsUrl.trim() || undefined,
@@ -115,7 +118,9 @@ export function DeliveryCreateModal({
     }
   };
 
-  const isFormValid = Boolean(selectedEmployeeId && scheduledDate && oneLineAddress.trim());
+  const isFormValid = Boolean(
+    selectedEmployeeId && scheduledDate && oneLineAddress.trim() && vendorName.trim(),
+  );
 
   return (
     <ModalOrDrawer
@@ -155,6 +160,16 @@ export function DeliveryCreateModal({
                 </Text>
               </Group>
             </Group>
+            {/* Vendor Name */}
+            <TextInput
+              required
+              label={t('delivery.vendorName')}
+              placeholder={t('delivery.vendorNamePlaceholder')}
+              value={vendorName}
+              onChange={(e) => setVendorName(e.currentTarget.value)}
+              leftSection={<IconMapPin size={16} />}
+              disabled={isLoading || isSubmitting}
+            />
 
             {/* Vendor Pickup Address */}
             <TextInput

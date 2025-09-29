@@ -94,64 +94,73 @@ export function DeliveryDetailAccordion({
 
   // Delivery info fields for cleaner rendering
   const deliveryInfoFields = useMemo(
-    () => [
-      {
-        label: t('delivery.status'),
-        value: (
-          <Group gap="xs">
-            {deliveryRequest.isUrgentDelivery && <UrgentBadge size="xs" />}
-            <DeliveryTypeBadge type={deliveryRequest.type} size="xs" />
-            <DeliveryStatusBadge status={deliveryRequest.status} />
-          </Group>
-        ),
-      },
-      {
-        label: t('delivery.poNumber'),
-        value: (
-          <Text size="sm" fw={500}>
-            <Anchor
-              size="sm"
-              c="blue"
-              fw="bold"
-              onClick={() => {
-                const purchaseOrderId = deliveryRequest.purchaseOrderId || '-';
-                navigate(getPODetailRoute(purchaseOrderId));
-              }}
-            >
-              {deliveryRequest.purchaseOrderNumber}
-            </Anchor>
-          </Text>
-        ),
-      },
-      {
-        label: t('common.customer'),
-        value: deliveryRequest.customerName,
-      },
-      {
-        label: t('common.contact'),
-        value: <DeliveryCustomerInfo customerId={deliveryRequest.customerId} />,
-      },
-      {
-        label: t('delivery.scheduledDate'),
-        value: formatDate(deliveryRequest.scheduledDate, t('common.notScheduled')),
-      },
-      ...(deliveryRequest.completedDate
-        ? [
-            {
-              label: t('delivery.completedDate'),
-              value: formatDate(deliveryRequest.completedDate),
-            },
-          ]
-        : []),
-      {
-        label: t('common.notes'),
-        value: deliveryRequest.notes || '-',
-      },
-      {
-        label: t('delivery.assignedTo'),
-        value: deliveryRequest.deliveryPerson,
-      },
-    ],
+    () =>
+      [
+        {
+          label: t('delivery.status'),
+          value: (
+            <Group gap="xs">
+              {deliveryRequest.isUrgentDelivery && <UrgentBadge size="xs" />}
+              <DeliveryTypeBadge type={deliveryRequest.type} size="xs" />
+              <DeliveryStatusBadge status={deliveryRequest.status} />
+            </Group>
+          ),
+        },
+        {
+          hidden: deliveryRequest.isReceive,
+          label: t('delivery.poNumber'),
+          value: (
+            <Text size="sm" fw={500}>
+              <Anchor
+                size="sm"
+                c="blue"
+                fw="bold"
+                onClick={() => {
+                  const purchaseOrderId = deliveryRequest.purchaseOrderId || '-';
+                  navigate(getPODetailRoute(purchaseOrderId));
+                }}
+              >
+                {deliveryRequest.purchaseOrderNumber}
+              </Anchor>
+            </Text>
+          ),
+        },
+        {
+          hidden: deliveryRequest.isReceive,
+          label: t('common.customer'),
+          value: deliveryRequest.customerName,
+        },
+        {
+          hidden: deliveryRequest.isDelivery,
+          label: t('common.vendor'),
+          value: deliveryRequest.vendorName,
+        },
+        {
+          hidden: deliveryRequest.isReceive,
+          label: t('common.contact'),
+          value: <DeliveryCustomerInfo customerId={deliveryRequest.customerId} />,
+        },
+        {
+          label: t('delivery.scheduledDate'),
+          value: formatDate(deliveryRequest.scheduledDate, t('common.notScheduled')),
+        },
+        ...(deliveryRequest.completedDate
+          ? [
+              {
+                label: t('delivery.completedDate'),
+                value: formatDate(deliveryRequest.completedDate),
+              },
+            ]
+          : []),
+        {
+          label: t('common.notes'),
+          value: deliveryRequest.notes || '-',
+        },
+        {
+          label: t('delivery.assignedTo'),
+          value: deliveryRequest.deliveryPerson,
+        },
+      ].filter((el) => !el.hidden),
     [t, deliveryRequest, navigate],
   );
 
@@ -201,19 +210,38 @@ export function DeliveryDetailAccordion({
         </Accordion.Item>
 
         {/* Delivery Address */}
-        <Accordion.Item value="address">
-          <Accordion.Control icon={<IconMapPin size={20} />}>
-            <Group justify="start" align="center" gap="sm">
-              <Text size="sm">{t('po.shippingAddress')}</Text>
-              <ViewOnMap googleMapsUrl={deliveryRequest.deliveryAddress?.googleMapsUrl} />
-            </Group>
-          </Accordion.Control>
-          <Accordion.Panel>
-            <Group justify="space-between" align="flex-start">
-              <Text size="sm">{deliveryRequest.deliveryAddress?.oneLineAddress || '-'}</Text>
-            </Group>
-          </Accordion.Panel>
-        </Accordion.Item>
+        {deliveryRequest.isDelivery && (
+          <Accordion.Item value="address">
+            <Accordion.Control icon={<IconMapPin size={20} />}>
+              <Group justify="start" align="center" gap="sm">
+                <Text size="sm">{t('po.shippingAddress')}</Text>
+                <ViewOnMap googleMapsUrl={deliveryRequest.deliveryAddress?.googleMapsUrl} />
+              </Group>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <Group justify="space-between" align="flex-start">
+                <Text size="sm">{deliveryRequest.deliveryAddress?.oneLineAddress || '-'}</Text>
+              </Group>
+            </Accordion.Panel>
+          </Accordion.Item>
+        )}
+
+        {/* Receiving Address */}
+        {deliveryRequest.isReceive && (
+          <Accordion.Item value="address">
+            <Accordion.Control icon={<IconMapPin size={20} />}>
+              <Group justify="start" align="center" gap="sm">
+                <Text size="sm">{t('po.receiveAddress')}</Text>
+                <ViewOnMap googleMapsUrl={deliveryRequest.receiveAddress?.googleMapsUrl} />
+              </Group>
+            </Accordion.Control>
+            <Accordion.Panel>
+              <Group justify="space-between" align="flex-start">
+                <Text size="sm">{deliveryRequest.receiveAddress?.oneLineAddress || '-'}</Text>
+              </Group>
+            </Accordion.Panel>
+          </Accordion.Item>
+        )}
 
         {/* Photos */}
         <Accordion.Item value="photos">

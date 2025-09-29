@@ -33,6 +33,7 @@
     "signIn": "Sign in"
   },
   "common": {
+    "vendor": "Vendor",
     "actions": "Actions",
     "activate": "Activate",
     "activated": "{{entity}} Activated",
@@ -249,6 +250,7 @@
     "completedDate": "Completed Date",
     "completionNotes": "Completion Notes",
     "createReceiveRequest": "Create Receive Request",
+    "deliveryAddress": "Delivery Address",
     "deliveryId": "Delivery ID",
     "deliveryInfo": "Delivery Information",
     "descriptions": {
@@ -294,6 +296,7 @@
       "title": "Quick Actions",
       "today": "Today"
     },
+    "receiveAddress": "Receive Address",
     "receiveRequestDescription": "This will create a delivery request for receiving items from a vendor to the warehouse.",
     "receiveRequestInfo": "Receive Request Information",
     "receiveType": "RECEIVE",
@@ -314,7 +317,11 @@
       "delivery": "Delivery",
       "receive": "Receive"
     },
+    "updateDeliveryRequest": "Update Delivery Request",
+    "updateReceiveRequest": "Update Receive Request",
     "urgentDelivery": "Urgent",
+    "vendorName": "Vendor Name",
+    "vendorNamePlaceholder": "Enter vendor name",
     "vendorPickupAddress": "Vendor Pickup Address",
     "vendorPickupAddressPlaceholder": "Enter vendor address where driver will pick up items"
   },
@@ -503,7 +510,6 @@
     "created": "Purchase order created successfully",
     "createdBy": "Created by",
     "current": "Current",
-    "customer": "Customer",
     "customerInformation": "Customer Information",
     "customerNotFound": "Customer not found",
     "customerRequired": "Customer is required",
@@ -594,6 +600,7 @@
     "productCode": "Product Code",
     "quantity": "Qty",
     "reason": "Reason",
+    "receiveAddress": "Receiving Address",
     "refund": "Refund",
     "refundFailed": "Failed to process refund",
     "refundOrder": "Refund Order",

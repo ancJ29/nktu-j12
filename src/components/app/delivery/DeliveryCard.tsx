@@ -58,13 +58,22 @@ export function DeliveryCard({ deliveryRequest, style, className }: DeliveryCard
             </Text>
             <DeliveryTypeBadge type={deliveryRequest.type} />
           </Group>
-          {deliveryRequest.customerName && (
+          {deliveryRequest.isDelivery ? (
             <Group gap="sm">
               <Text size="sm" c="dimmed">
                 {t('common.customer')}:
               </Text>
               <Text size="sm" fw={500}>
                 {deliveryRequest.customerName}
+              </Text>
+            </Group>
+          ) : (
+            <Group gap="sm">
+              <Text size="sm" c="dimmed">
+                {t('common.vendor')}:
+              </Text>
+              <Text size="sm" fw={500}>
+                {deliveryRequest.vendorName}
               </Text>
             </Group>
           )}

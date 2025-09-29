@@ -42,11 +42,13 @@ if (!existsSync(publicDir)) {
  */
 function hexToRgb(hex) {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16)
-  } : { r: 50, g: 78, b: 113 }; // Default to #324e71
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : { r: 50, g: 78, b: 113 }; // Default to #324e71
 }
 
 /**
@@ -73,8 +75,12 @@ async function generateThemeColoredLogo() {
   // This regex matches hex colors in the format #RRGGBB or #RGB
   svgContent = svgContent.replace(/#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}/g, (match) => {
     // Keep white colors unchanged
-    if (match.toLowerCase() === '#ffffff' || match.toLowerCase() === '#fff' ||
-        match.toLowerCase() === '#fdfefe' || match.toLowerCase() === '#fefefe') {
+    if (
+      match.toLowerCase() === '#ffffff' ||
+      match.toLowerCase() === '#fff' ||
+      match.toLowerCase() === '#fdfefe' ||
+      match.toLowerCase() === '#fefefe'
+    ) {
       return match;
     }
     // Replace any other color with theme color
@@ -387,7 +393,7 @@ function updateViteConfig() {
   // Update theme_color in manifest
   viteConfig = viteConfig.replace(
     /theme_color:\s*['"]#[0-9a-fA-F]{6}['"]/,
-    `theme_color: '#${THEME_COLOR_HEX}'`
+    `theme_color: '#${THEME_COLOR_HEX}'`,
   );
 
   // Update background_color if needed (keeping it white for better UX)

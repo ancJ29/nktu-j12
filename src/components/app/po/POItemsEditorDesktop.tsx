@@ -119,12 +119,9 @@ export function POItemsEditorDesktop({
 
   // Generate autocomplete options from products
   const productOptions = useMemo(() => {
-    const map = new Map(items.map((item) => [item.productCode, 1]));
-    return (
-      overviewData?.products.filter((p) => !map.has(p.code)).map((p) => `${p.code} - ${p.name}`) ||
-      []
-    );
-  }, [overviewData, items]);
+    // TODO: check if the product is already in the existing items
+    return overviewData?.products.map((p) => `${p.code} - ${p.name}`) || [];
+  }, [overviewData]);
 
   // Empty state
   if (!isReadOnly && items.length === 0) {

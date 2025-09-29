@@ -55,7 +55,7 @@ export function POCard({ purchaseOrder, style, className }: POCardProps) {
           </Text>
           <Group gap="lg">
             <Text size="xs" c="dimmed">
-              {t('po.customer')}:
+              {t('common.customer')}:
             </Text>
             <Text size="xs" fw={500}>
               {getCustomerNameByCustomerId(customerMapByCustomerId, purchaseOrder.customerId)}

@@ -33,6 +33,7 @@
     "signIn": "Đăng nhập"
   },
   "common": {
+    "vendor": "Nhà cung cấp",
     "actions": "",
     "activate": "Kích Hoạt",
     "activated": "Đã Kích Hoạt {{entity}}",
@@ -249,6 +250,7 @@
     "completedDate": "Ngày Hoàn Thành",
     "completionNotes": "Ghi Chú Hoàn Thành",
     "createReceiveRequest": "Tạo yêu cầu nhận hàng",
+    "deliveryAddress": "Địa chỉ giao hàng",
     "deliveryId": "Mã Giao Nhận",
     "deliveryInfo": "Thông Tin Giao Nhận",
     "descriptions": {
@@ -267,7 +269,7 @@
       "selectAssignee": "Chọn Người Phụ Trách",
       "selectDate": "Chọn Ngày Dự Kiến",
       "selectDriver": "Chọn tài xế",
-      "urgentDeliveryDescription": "Đánh dấu đơn hàng này là giao gấp"
+      "urgentDeliveryDescription": "Đánh dấu đơn hàng này cần xử lý gấp"
     },
     "id": "Mã Yêu Cầu",
     "messages": {
@@ -294,6 +296,7 @@
       "title": "Chọn Nhanh",
       "today": "Hôm Nay"
     },
+    "receiveAddress": "Địa chỉ nhận hàng",
     "receiveRequestDescription": "Tạo yêu cầu giao nhận để nhận hàng từ nhà cung cấp về kho.",
     "receiveRequestInfo": "Thông tin yêu cầu nhận hàng",
     "receiveType": "NHẬN HÀNG",
@@ -311,10 +314,14 @@
     "transitNotes": "Ghi Chú Vận Chuyển",
     "transitNotesDescription": "Ghi chú tùy chọn về việc bắt đầu vận chuyển",
     "types": {
-      "delivery": "Giao Nhận",
+      "delivery": "Giao Hàng",
       "receive": "Nhận Hàng"
     },
-    "urgentDelivery": "Giao Gấp",
+    "updateDeliveryRequest": "Cập nhật yêu cầu giao hàng",
+    "updateReceiveRequest": "Cập nhật yêu cầu nhận hàng",
+    "urgentDelivery": "Gấp",
+    "vendorName": "Tên nhà cung cấp",
+    "vendorNamePlaceholder": "Nhập tên nhà cung cấp",
     "vendorPickupAddress": "Địa chỉ lấy hàng từ nhà cung cấp",
     "vendorPickupAddressPlaceholder": "Nhập địa chỉ nhà cung cấp nơi tài xế sẽ đến lấy hàng"
   },
@@ -503,7 +510,6 @@
     "created": "Đã tạo đơn hàng thành công",
     "createdBy": "Được tạo bởi",
     "current": "Hiện Tại",
-    "customer": "Khách Hàng",
     "customerInformation": "Thông Tin Khách Hàng",
     "customerNotFound": "Không tìm thấy khách hàng",
     "customerRequired": "Khách hàng là bắt buộc",
@@ -594,6 +600,7 @@
     "productCode": "Mã Sản Phẩm",
     "quantity": "SL",
     "reason": "Lý do",
+    "receiveAddress": "Địa Chỉ Nhận Hàng",
     "refund": "Hoàn Trả",
     "refundFailed": "Không thể xử lý hoàn trả",
     "refundOrder": "Hoàn Tiền",

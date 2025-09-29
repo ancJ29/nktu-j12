@@ -168,6 +168,15 @@ export function DeliveryDetailPage() {
       scheduledDate?: string;
       notes?: string;
       isUrgentDelivery?: boolean;
+      vendorName?: string;
+      deliveryAddress?: {
+        oneLineAddress?: string;
+        googleMapsUrl?: string;
+      };
+      receiveAddress?: {
+        oneLineAddress?: string;
+        googleMapsUrl?: string;
+      };
     }) => {
       if (!canEdit) {
         throw new Error(t('common.doNotHavePermissionForAction'));
@@ -178,8 +187,12 @@ export function DeliveryDetailPage() {
       await updateDeliveryRequest(deliveryRequest.id, {
         assignedTo: data?.assignedTo,
         scheduledDate: data?.scheduledDate,
+        type: deliveryRequest.type,
         notes: data?.notes,
         isUrgentDelivery: data?.isUrgentDelivery,
+        vendorName: data?.vendorName,
+        receiveAddress: data?.receiveAddress,
+        deliveryAddress: data?.deliveryAddress,
       });
       closeModal('update');
     },
@@ -257,7 +270,6 @@ export function DeliveryDetailPage() {
   return (
     <AppDesktopLayout isLoading={isLoading} error={error} clearError={clearError}>
       <AppPageTitle withGoBack route={ROUTERS.DELIVERY_MANAGEMENT} title={title} />
-
       {isLoading ? (
         <LoadingOverlay visible />
       ) : deliveryRequest ? (

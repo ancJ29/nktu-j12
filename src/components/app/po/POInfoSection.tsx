@@ -57,7 +57,7 @@ export function POInfoSection({ purchaseOrder, onNavigateToItemsList }: POInfoSe
         <Stack gap="md">
           <div>
             <Text size="sm" fw={500} c="dimmed">
-              {t('po.customer')}
+              {t('common.customer')}
             </Text>
             <Group gap="xs">
               <IconBuilding size={16} color="var(--mantine-color-gray-6)" />

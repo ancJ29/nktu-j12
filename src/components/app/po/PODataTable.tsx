@@ -45,7 +45,7 @@ function PODataTableComponent({ purchaseOrders }: PODataTableProps) {
         <Table.Thead>
           <Table.Tr>
             <Table.Th>{t('po.poNumber')}</Table.Th>
-            <Table.Th>{t('po.customer')}</Table.Th>
+            <Table.Th>{t('common.customer')}</Table.Th>
             <Table.Th>{t('po.salesPerson')}</Table.Th>
             <Table.Th>{t('po.orderDate')}</Table.Th>
             <Table.Th>{t('po.deliveryDate')}</Table.Th>

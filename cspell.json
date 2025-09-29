@@ -1,0 +1,39 @@
+{
+  "ignorePaths": [
+    "scripts/i18n/flattened/",
+    "scripts/seed-data/**/*.json",
+    "scripts/seed-data/name.json",
+    ".gitignore",
+    "package.json",
+    "node_modules",
+    "src/locales/vi.json",
+    "dist"
+  ],
+  "words": [
+    "beforeinstallprompt",
+    "Cantarell",
+    "defval",
+    "dontShowAgain",
+    "dueonreceipt",
+    "Fira",
+    "gstatic",
+    "hammerjs",
+    "languagedetector",
+    "mantine",
+    "Neue",
+    "overscan",
+    "partialize",
+    "POUI",
+    "qrcode",
+    "Segoe",
+    "SUBKEYS",
+    "tabler",
+    "Tiếng",
+    "timesheet",
+    "unflatten",
+    "unhandledrejection",
+    "Việt",
+    "webfonts",
+    "zustand"
+  ]
+}

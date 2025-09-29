@@ -142,14 +142,12 @@ export function DeliveryStatusDrawer({
           transitNotes: notes.trim(),
         });
       }
-    } else if (mode === 'complete') {
-      if (onComplete) {
-        onComplete({
-          deliveryNotes: notes.trim(),
-          receivedBy: receivedBy.trim(),
-          photos: uploadedPhotos,
-        });
-      }
+    } else if (mode === 'complete' && onComplete) {
+      onComplete({
+        deliveryNotes: notes.trim(),
+        receivedBy: receivedBy.trim(),
+        photos: uploadedPhotos,
+      });
     }
 
     handleClose();

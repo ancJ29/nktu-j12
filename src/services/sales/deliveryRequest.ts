@@ -3,6 +3,7 @@ import {
   type DeliveryRequest as ApiDeliveryRequest,
   type CompleteDelivery,
   type CreateDeliveryRequest,
+  type DeliveryRequestType,
   type DeliveryStatus,
   type StartTransit,
   type UpdateDeliveryRequest,
@@ -24,7 +25,10 @@ export type {
 
 // Frontend types with transformed metadata
 export type DeliveryRequest = Omit<ApiDeliveryRequest, 'metadata'> & {
+  isReceive: boolean;
+  isDelivery: boolean;
   isUrgentDelivery?: boolean;
+  type: DeliveryRequestType;
   deliveryRequestNumber: string;
   purchaseOrderNumber?: string | undefined;
   purchaseOrderId?: string | undefined;
@@ -32,6 +36,7 @@ export type DeliveryRequest = Omit<ApiDeliveryRequest, 'metadata'> & {
   customerId?: string | undefined;
   deliveryPerson: string | undefined;
   deliveryAddress?: Address | undefined;
+  receiveAddress?: Address | undefined;
   photos: PhotoData[];
 };
 
@@ -52,13 +57,17 @@ function transformApiToFrontend(
   return {
     ...rest,
     deliveryPerson,
+    isReceive: apiDR.type === 'RECEIVE',
+    isDelivery: apiDR.type === 'DELIVERY',
     isUrgentDelivery: apiDR?.isUrgentDelivery ?? false,
+    type: apiDR.type,
     purchaseOrderId: apiDR?.purchaseOrder?.poId,
     purchaseOrderNumber: apiDR?.purchaseOrder?.poNumber as string,
     customerName,
     customerId: apiDR?.purchaseOrder?.customerId,
     photos: apiDR.photos ?? [],
     deliveryAddress: apiDR.deliveryAddress ?? {},
+    receiveAddress: apiDR.receiveAddress ?? {},
   };
 }
 

@@ -35,7 +35,11 @@ function DeliveryDataTableComponent({ deliveryRequests }: DeliveryDataTableProps
         <Table.Thead>
           <Table.Tr>
             <Table.Th>{t('delivery.id')}</Table.Th>
-            <Table.Th>{t('common.customer')}</Table.Th>
+            <Table.Th>
+              {t('common.customer')}
+              {' / '}
+              {t('common.vendor')}
+            </Table.Th>
             <Table.Th>{t('delivery.scheduledDate')}</Table.Th>
             <Table.Th>{t('delivery.completedDate')}</Table.Th>
             <Table.Th>{t('delivery.assignedTo')}</Table.Th>
@@ -60,7 +64,7 @@ function DeliveryDataTableComponent({ deliveryRequests }: DeliveryDataTableProps
                 </Table.Td>
                 <Table.Td>
                   <Group gap="sm" justify="start">
-                    <Text fw={400}>{delivery.customerName}</Text>
+                    <Text fw={400}>{delivery.customerName || delivery.vendorName}</Text>
                   </Group>
                 </Table.Td>
                 <Table.Td>{formatDate(delivery.scheduledDate)}</Table.Td>

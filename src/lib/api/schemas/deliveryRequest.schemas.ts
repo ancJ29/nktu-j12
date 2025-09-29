@@ -44,6 +44,8 @@ export const DeliveryRequestSchema = z.object({
     .optional(),
   photos: z.array(PhotoDataSchema).optional(),
   deliveryAddress: AddressSchema.optional(),
+  vendorName: optionalStringSchema,
+  receiveAddress: AddressSchema.optional(),
   notes: optionalStringSchema,
   receivedBy: optionalStringSchema,
   completionNotes: optionalStringSchema,
@@ -59,6 +61,7 @@ export const CreateDeliveryRequestSchema = z.object({
   notes: optionalStringSchema,
   type: DeliveryRequestTypeSchema,
   receiveAddress: AddressSchema.optional(),
+  vendorName: optionalStringSchema,
   isUrgentDelivery: optionalBooleanSchema,
 });
 
@@ -66,6 +69,10 @@ export const UpdateDeliveryRequestSchema = z.object({
   assignedTo: optionalIdSchema,
   scheduledDate: optionalStringSchema,
   notes: optionalStringSchema,
+  type: DeliveryRequestTypeSchema,
+  vendorName: optionalStringSchema,
+  receiveAddress: AddressSchema.optional(),
+  deliveryAddress: AddressSchema.optional(),
   isUrgentDelivery: optionalBooleanSchema,
 });
 

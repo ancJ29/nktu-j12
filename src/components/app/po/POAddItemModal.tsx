@@ -50,6 +50,7 @@ export function POAddItemModal({ opened, onClose, onAdd, existingItems }: POAddI
 
   // Generate autocomplete options
   const productOptions = useMemo(() => {
+    // TODO: check if the product is already in the existing items
     return overviewData?.products.map((p) => `${p.code} - ${p.name}`) || [];
   }, [overviewData]);
 

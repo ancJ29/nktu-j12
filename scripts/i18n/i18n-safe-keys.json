@@ -1,0 +1,15 @@
+{
+  "description": "Translation keys that should never be marked as unused, even if not found in code",
+  "safeKeys": [
+    "common.pages.deliveryManagement",
+    "common.pages.deliveryManagementMobile",
+    "common.pages.employeeManagementMobile",
+    "common.pages.masterData",
+    "common.pages.more",
+    "common.pages.poManagement",
+    "common.pages.poManagementMobile",
+    "common.pages.procurementManagement",
+    "common.pages.salesPoManagement"
+  ],
+  "patterns": []
+}

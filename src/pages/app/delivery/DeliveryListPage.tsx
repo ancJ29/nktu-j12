@@ -2,7 +2,18 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useNavigate } from 'react-router';
 
-import { ActionIcon, Affix, Button, Center, Flex, Group, Loader, SimpleGrid, Stack, Text } from '@mantine/core';
+import {
+  ActionIcon,
+  Affix,
+  Button,
+  Center,
+  Flex,
+  Group,
+  Loader,
+  SimpleGrid,
+  Stack,
+  Text,
+} from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import {
   IconChevronLeft,
@@ -248,6 +259,7 @@ export function DeliveryListPage() {
       scheduledDate: string;
       notes?: string;
       isUrgentDelivery?: boolean;
+      vendorName: string;
       receiveAddress: {
         oneLineAddress: string;
         googleMapsUrl?: string;
@@ -367,12 +379,16 @@ export function DeliveryListPage() {
           {/* Floating Action Button for Add Request */}
           {!createModalOpened && !isLoading && canCreate && (
             <Affix position={{ bottom: 80, right: 10 }}>
-              <ActionIcon size="xl" radius="xl" color="blue" onClick={() => setCreateModalOpened(true)}>
+              <ActionIcon
+                size="xl"
+                radius="xl"
+                color="blue"
+                onClick={() => setCreateModalOpened(true)}
+              >
                 <IconPlus size={24} />
               </ActionIcon>
             </Affix>
           )}
-
         </DeliveryErrorBoundary>
       </AppMobileLayout>
     );

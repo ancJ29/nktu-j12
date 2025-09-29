@@ -46,7 +46,7 @@ export function POGridCard({ purchaseOrder }: POGridCardProps) {
             <Group justify="space-between" w="100%">
               <div>
                 <Text size="sm" c="dimmed">
-                  {t('po.customer')}
+                  {t('common.customer')}
                 </Text>
                 <Text size="sm" fw={500}>
                   {getCustomerNameByCustomerId(customerMapByCustomerId, purchaseOrder.customerId)}

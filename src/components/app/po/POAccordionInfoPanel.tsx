@@ -98,7 +98,7 @@ export function POAccordionInfoPanel({
         </Grid.Col>
         <Grid.Col span={6}>
           <InfoField
-            label={t('po.customer')}
+            label={t('common.customer')}
             icon={IconIdentifiers.BUILDING}
             value={getCustomerNameByCustomerId(customerMapByCustomerId, purchaseOrder.customerId)}
           />
