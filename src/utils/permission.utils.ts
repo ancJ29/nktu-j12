@@ -48,6 +48,22 @@ export function canDeleteCustomer(permissions: Permission) {
   return Boolean(permissions.customer.canDelete);
 }
 
+export function canViewVendor(permissions: Permission) {
+  return Boolean(permissions.vendor?.canView);
+}
+
+export function canCreateVendor(permissions: Permission) {
+  return Boolean(permissions.vendor?.canCreate);
+}
+
+export function canEditVendor(permissions: Permission) {
+  return Boolean(permissions.vendor?.canEdit);
+}
+
+export function canDeleteVendor(permissions: Permission) {
+  return Boolean(permissions.vendor?.canDelete);
+}
+
 export function canViewPurchaseOrder(permissions: Permission) {
   return Boolean(permissions.purchaseOrder.canView);
 }

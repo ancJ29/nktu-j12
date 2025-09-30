@@ -15,35 +15,38 @@ import { IconCheck, IconInfoCircle, IconTrash } from '@tabler/icons-react';
 
 import { ModalOrDrawer } from '@/components/common';
 import { useTranslation } from '@/hooks/useTranslation';
-import type { Product } from '@/services/sales/product';
-import { usePermissions } from '@/stores/useAppStore';
+import type { Vendor } from '@/services/sales/vendor';
+import { useClientConfig, usePermissions } from '@/stores/useAppStore';
 import { confirmAction } from '@/utils/modals';
-import { canCreateProduct, canEditProduct } from '@/utils/permission.utils';
+import { canCreateVendor, canDeleteVendor, canEditVendor } from '@/utils/permission.utils';
 
 import type { UseFormReturnType } from '@mantine/form';
 
-export type ProductFormValues = {
-  productCode: string;
+export type VendorFormValues = {
   name: string;
-  description?: string;
-  category?: string;
-  unit?: string;
-  color?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  address?: string;
+  googleMapsUrl?: string;
+  taxCode?: string;
+  isActive: boolean;
+  memo?: string;
+  pic?: string;
 };
 
-type ProductFormModalProps = {
+type VendorFormModalProps = {
   readonly opened: boolean;
   readonly onClose: () => void;
   readonly mode: 'create' | 'edit';
-  readonly form: UseFormReturnType<ProductFormValues>;
-  readonly onSubmit: (values: ProductFormValues) => void;
+  readonly form: UseFormReturnType<VendorFormValues>;
+  readonly onSubmit: (values: VendorFormValues) => void;
   readonly onActivate?: () => void;
   readonly onDeactivate?: () => void;
   readonly isLoading: boolean;
-  readonly product?: Product;
+  readonly vendor?: Vendor;
 };
 
-export function ProductFormModal({
+export function VendorFormModal({
   opened,
   onClose,
   mode,
@@ -52,16 +55,22 @@ export function ProductFormModal({
   onActivate,
   onDeactivate,
   isLoading,
-  product,
-}: ProductFormModalProps) {
+  vendor,
+}: VendorFormModalProps) {
   const { t } = useTranslation();
-  const title = mode === 'create' ? t('product.addProduct') : t('product.editProduct');
+  const title = mode === 'create' ? t('common.add') : t('common.edit');
+  const clientConfig = useClientConfig();
   const permissions = usePermissions();
 
-  const { canCreate, canEdit } = useMemo(() => {
+  const { noEmail, noTaxCode } = useMemo(() => {
+    return clientConfig.features?.vendor ?? { noEmail: false, noTaxCode: false };
+  }, [clientConfig]);
+
+  const { canCreate, canEdit, canDelete } = useMemo(() => {
     return {
-      canCreate: canCreateProduct(permissions),
-      canEdit: canEditProduct(permissions),
+      canCreate: canCreateVendor(permissions),
+      canEdit: canEditVendor(permissions),
+      canDelete: canDeleteVendor(permissions),
     };
   }, [permissions]);
 
@@ -75,68 +84,79 @@ export function ProductFormModal({
         />
         <form onSubmit={form.onSubmit(onSubmit)}>
           <Stack gap="md">
-            {/* Product Status Alert */}
-            {mode === 'edit' && product && (
+            {/* Vendor Status Alert */}
+            {mode === 'edit' && vendor && (
               <Alert
                 icon={<IconInfoCircle size={16} />}
                 variant="light"
-                color={!product.isActive ? 'var(--app-inactive-color)' : 'var(--app-active-color)'}
+                color={!vendor.isActive ? 'var(--app-inactive-color)' : 'var(--app-active-color)'}
               >
                 {t('common.status')}:{' '}
-                {!product.isActive ? t('product.inactive') : t('product.active')}
+                {!vendor.isActive ? t('employee.inactive') : t('common.active')}
               </Alert>
             )}
             <ScrollArea style={{ height: '50vh' }}>
-              {/* Basic Information */}
-              <TextInput
-                required
-                label={t('product.productCode')}
-                placeholder={t('product.productCodePlaceholder')}
-                error={form.errors.productCode}
-                disabled={isLoading || mode === 'edit'}
-                {...form.getInputProps('productCode')}
-              />
               <TextInput
                 required
                 label={t('common.name')}
-                placeholder={t('product.namePlaceholder')}
+                placeholder={t('vendor.namePlaceholder')}
                 error={form.errors.name}
                 disabled={isLoading}
                 {...form.getInputProps('name')}
               />
-              <Textarea
-                label={t('common.description')}
-                placeholder={t('product.descriptionPlaceholder')}
-                error={form.errors.description}
-                disabled={isLoading}
-                minRows={2}
-                {...form.getInputProps('description')}
-              />
-              <Group grow>
-                <TextInput
-                  label={t('product.category')}
-                  placeholder={t('product.categoryPlaceholder')}
-                  error={form.errors.category}
-                  disabled={isLoading}
-                  {...form.getInputProps('category')}
-                />
-                <TextInput
-                  label={t('product.color')}
-                  placeholder={t('product.colorPlaceholder')}
-                  error={form.errors.color}
-                  disabled={isLoading}
-                  {...form.getInputProps('color')}
-                />
-              </Group>
 
-              {/* Unit */}
               <TextInput
-                label={t('product.unit')}
-                placeholder={t('product.unitPlaceholder')}
-                error={form.errors.unit}
+                label={t('common.form.pic')}
+                placeholder={t('common.form.picPlaceholder')}
+                error={form.errors.pic}
                 disabled={isLoading}
-                {...form.getInputProps('unit')}
+                {...form.getInputProps('pic')}
               />
+
+              {!noEmail && (
+                <TextInput
+                  label={t('common.form.email')}
+                  placeholder={t('common.form.emailPlaceholder')}
+                  error={form.errors.contactEmail}
+                  disabled={isLoading}
+                  {...form.getInputProps('contactEmail')}
+                />
+              )}
+
+              <TextInput
+                label={t('common.phone')}
+                placeholder={t('vendor.phonePlaceholder')}
+                error={form.errors.contactPhone}
+                disabled={isLoading}
+                {...form.getInputProps('contactPhone')}
+              />
+
+              <TextInput
+                label={t('vendor.address')}
+                placeholder={t('vendor.addressPlaceholder')}
+                error={form.errors.address}
+                disabled={isLoading}
+                {...form.getInputProps('address')}
+              />
+
+              <TextInput
+                label={t('common.googleMapsUrl')}
+                placeholder={t('common.googleMapsUrlPlaceholder')}
+                error={form.errors.googleMapsUrl}
+                disabled={isLoading}
+                {...form.getInputProps('googleMapsUrl')}
+              />
+
+              {!noTaxCode && (
+                <TextInput
+                  label={t('vendor.taxCode')}
+                  placeholder={t('vendor.taxCodePlaceholder')}
+                  error={form.errors.taxCode}
+                  disabled={isLoading}
+                  {...form.getInputProps('taxCode')}
+                />
+              )}
+
               <Textarea
                 label={t('common.form.memo')}
                 placeholder={t('common.form.memoPlaceholder')}
@@ -148,20 +168,18 @@ export function ProductFormModal({
                 {...form.getInputProps('memo')}
               />
             </ScrollArea>
-
-            {/* Action Buttons */}
             <Group justify="space-between" mt="md">
               <Group>
-                {mode === 'edit' && product && (
+                {mode === 'edit' && vendor && (
                   <>
-                    {!product.isActive ? (
+                    {!vendor.isActive ? (
                       <Button
                         color="var(--app-active-color)"
                         leftSection={<IconCheck size={16} />}
                         onClick={() => {
                           confirmAction({
                             title: t('common.activate'),
-                            message: `${t('common.activate')} "${product.name}"?`,
+                            message: `${t('common.activate')} "${vendor.name}"?`,
                             confirmLabel: t('common.activate'),
                             cancelLabel: t('common.cancel'),
                             confirmColor: 'var(--app-active-color)',
@@ -179,14 +197,14 @@ export function ProductFormModal({
                         onClick={() => {
                           confirmAction({
                             title: t('common.deactivate'),
-                            message: `${t('common.deactivate')} "${product.name}"?`,
+                            message: `${t('common.deactivate')} "${vendor.name}"?`,
                             confirmLabel: t('common.deactivate'),
                             cancelLabel: t('common.cancel'),
                             confirmColor: 'var(--app-inactive-color)',
                             onConfirm: () => onDeactivate?.(),
                           });
                         }}
-                        disabled={isLoading || !canEdit}
+                        disabled={isLoading || !canDelete}
                       >
                         {t('common.deactivate')}
                       </Button>

@@ -279,7 +279,7 @@ export function ProductConfigPage() {
               header: t('common.status'),
               width: '200px',
               render: (product: Product) => {
-                const isActive = !product.isDeleted;
+                const isActive = product.isActive ?? true;
                 return (
                   <ActiveBadge
                     isActive={isActive}

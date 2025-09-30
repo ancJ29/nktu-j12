@@ -33,7 +33,6 @@
     "signIn": "Sign in"
   },
   "common": {
-    "vendor": "Vendor",
     "actions": "Actions",
     "activate": "Activate",
     "activated": "{{entity}} Activated",
@@ -49,7 +48,8 @@
       "fields": {
         "customer": "customer name",
         "employee": "first and last name",
-        "product": "product code"
+        "product": "product code",
+        "vendor": "vendor name"
       },
       "importFailed": "Failed to import {{entity}} data",
       "importSuccess": "Import {{entity}} completed successfully",
@@ -77,22 +77,20 @@
     "description": "Description",
     "doNotHavePermissionForAction": "You don't have permission to perform this action",
     "download": "Download",
-    "downloading": "Downloading",
     "dragAndDropFile": "Drag and drop your file here",
     "edit": "Edit",
     "entity": {
       "customer": "Customer",
       "deliveryRequest": "Delivery Request",
       "employee": "Employee",
-      "product": "Product"
+      "product": "Product",
+      "vendor": "Vendor"
     },
     "errors": {
       "notificationTitle": "Error",
       "setPasswordFailed": "Failed to set password"
     },
     "failed": "Failed",
-    "failedToParseExcel": "Failed to parse Excel file",
-    "failedToReadFile": "Failed to read file",
     "file": {
       "pleaseSelectExcelFile": "Please select a CSV or Excel file",
       "pleaseSelectFileFirst": "Please select a file first"
@@ -102,7 +100,6 @@
       "selectCustomer": "Select Customer",
       "selectStatus": "Select Status"
     },
-    "firstName": "First name",
     "form": {
       "email": "Email",
       "emailPlaceholder": "Enter email",
@@ -121,7 +118,6 @@
     "import": "Import",
     "importResults": "Import Results",
     "invalidFormData": "Invalid form data",
-    "lastName": "Last name",
     "loadingFailed": "Failed to load data",
     "loadingMore": "Loading more...",
     "logout": "Logout",
@@ -147,7 +143,6 @@
       "employeeManagement": "Employee Management",
       "employeeManagementDescription": "Manage employees and their information",
       "employeeManagementMobile": "Employee",
-      "home": "Home",
       "masterData": "Master Data",
       "more": "More",
       "notifications": "Notifications",
@@ -163,7 +158,10 @@
       "profileDescription": "Manage your profile",
       "salesPoManagement": "[Sales] Purchase Orders",
       "timeKeeper": "Timekeeper",
-      "timeKeeperDescription": "Manage timekeeping and attendance"
+      "timeKeeperDescription": "Manage timekeeping and attendance",
+      "vendorConfig": "Vendor Config",
+      "vendorConfigDescription": "Configure vendor settings",
+      "vendorManagement": "Vendor Management"
     },
     "phone": "Phone",
     "photos": {
@@ -200,7 +198,6 @@
     },
     "remove": "Remove",
     "save": "Save",
-    "selectFile": "Select File",
     "status": "Status",
     "statusesSelected": "{{count}} statuses selected",
     "success": "Success",
@@ -209,10 +206,10 @@
     "total": "Total",
     "tryAgain": "Try again",
     "tryDifferentSearch": "Try adjusting your search criteria",
-    "unknownError": "Unknown error",
     "updateFailed": "Failed to update {{entity}}",
     "updatedAt": "Updated At",
     "urgent": "Urgent",
+    "vendor": "Vendor",
     "viewOnMap": "View on Google Maps"
   },
   "customer": {
@@ -221,18 +218,13 @@
     "bulkImport": "Bulk Import",
     "company": "Company",
     "companyPlaceholder": "Company Name",
-    "created": "Customer Created",
-    "createdMessage": "Customer '{{name}}' has been successfully created",
     "deliveryAddress": "Delivery Address",
     "deliveryAddressPlaceholder": "Delivery Address (if different from main address)",
     "namePlaceholder": "Customer Name",
-    "noValidDataFound": "No valid customer data found in the file",
     "phonePlaceholder": "+84901234567",
     "searchPlaceholder": "Search customers by name",
     "taxCode": "Tax Code",
-    "taxCodePlaceholder": "Tax Code (Optional)",
-    "updated": "Customer Updated",
-    "updatedMessage": "Customer '{{name}}' has been successfully updated"
+    "taxCodePlaceholder": "Tax Code (Optional)"
   },
   "delivery": {
     "actions": {
@@ -250,7 +242,6 @@
     "completedDate": "Completed Date",
     "completionNotes": "Completion Notes",
     "createReceiveRequest": "Create Receive Request",
-    "deliveryAddress": "Delivery Address",
     "deliveryId": "Delivery ID",
     "deliveryInfo": "Delivery Information",
     "descriptions": {
@@ -296,7 +287,6 @@
       "title": "Quick Actions",
       "today": "Today"
     },
-    "receiveAddress": "Receive Address",
     "receiveRequestDescription": "This will create a delivery request for receiving items from a vendor to the warehouse.",
     "receiveRequestInfo": "Receive Request Information",
     "receiveType": "RECEIVE",
@@ -320,6 +310,7 @@
     "updateDeliveryRequest": "Update Delivery Request",
     "updateReceiveRequest": "Update Receive Request",
     "urgentDelivery": "Urgent",
+    "useCustomVendor": "Use custom vendor name",
     "vendorName": "Vendor Name",
     "vendorNamePlaceholder": "Enter vendor name",
     "vendorPickupAddress": "Vendor Pickup Address",
@@ -663,20 +654,15 @@
     "categoryPlaceholder": "Enter product category",
     "color": "Color",
     "colorPlaceholder": "Enter product color",
-    "created": "Product Created",
-    "createdMessage": "Product '{{name}}' has been successfully created",
     "descriptionPlaceholder": "Enter product description",
     "editProduct": "Edit Product",
     "inactive": "Stopped",
     "namePlaceholder": "Enter product name",
-    "noValidDataFound": "No valid product data found in the file",
     "productCode": "Product Code",
     "productCodePlaceholder": "Enter product code",
     "searchPlaceholder": "Search products by name, code...",
     "unit": "Unit",
-    "unitPlaceholder": "pcs, kg, etc.",
-    "updated": "Product Updated",
-    "updatedMessage": "Product '{{name}}' has been successfully updated"
+    "unitPlaceholder": "pcs, kg, etc."
   },
   "profile": {
     "changePassword": "Change Password",
@@ -806,5 +792,15 @@
     "phoneRequired": "Phone number is required",
     "required": "{{field}} is required",
     "tooShort": "{{field}} must be at least {{length}} characters"
+  },
+  "vendor": {
+    "address": "Address",
+    "addressPlaceholder": "Vendor Address",
+    "bulkImport": "Bulk Import",
+    "namePlaceholder": "Vendor Name",
+    "phonePlaceholder": "+84901234567",
+    "searchPlaceholder": "Search vendors by name",
+    "taxCode": "Tax Code",
+    "taxCodePlaceholder": "Tax Code (Optional)"
   }
 }

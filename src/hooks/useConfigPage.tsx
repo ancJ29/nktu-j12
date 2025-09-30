@@ -17,7 +17,6 @@ export interface BaseEntity {
   id: string;
   name: string;
   isActive?: boolean;
-  isDeleted?: boolean;
 }
 
 export interface ConfigService<

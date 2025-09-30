@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Button,
+  Checkbox,
   Group,
   LoadingOverlay,
   ScrollArea,
@@ -23,7 +24,7 @@ import {
 
 import { DateInput, ModalOrDrawer } from '@/components/common';
 import { useTranslation } from '@/hooks/useTranslation';
-import { useClientConfig, useEmployees } from '@/stores/useAppStore';
+import { useClientConfig, useEmployees, useVendorOptions } from '@/stores/useAppStore';
 
 type DeliveryCreateModalProps = {
   readonly opened: boolean;
@@ -52,10 +53,13 @@ export function DeliveryCreateModal({
   const { t } = useTranslation();
   const employees = useEmployees();
   const clientConfig = useClientConfig();
+  const vendorOptions = useVendorOptions();
 
   // Form state
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
-  const [vendorName, setVendorName] = useState('');
+  const [selectedVendorId, setSelectedVendorId] = useState<string | null>(null);
+  const [customVendorName, setCustomVendorName] = useState('');
+  const [useCustomVendor, setUseCustomVendor] = useState(false);
   const [scheduledDate, setScheduledDate] = useState<Date | undefined>(undefined);
   const [notes, setNotes] = useState('');
   const [oneLineAddress, setOneLineAddress] = useState('');
@@ -78,10 +82,33 @@ export function DeliveryCreateModal({
     }));
   }, [employees, clientConfig.features?.deliveryRequest]);
 
+  // Auto-fill address and google maps URL when vendor is selected (only in select mode)
+  useEffect(() => {
+    if (!useCustomVendor && selectedVendorId) {
+      const selectedVendor = vendorOptions.find((v) => v.id === selectedVendorId);
+      if (selectedVendor) {
+        setOneLineAddress(selectedVendor.address ?? '');
+        setGoogleMapsUrl(selectedVendor.googleMapsUrl ?? '');
+      }
+    }
+  }, [selectedVendorId, vendorOptions, useCustomVendor]);
+
+  // Clear vendor selection when switching to custom mode
+  useEffect(() => {
+    if (useCustomVendor) {
+      setSelectedVendorId(null);
+    } else {
+      setCustomVendorName('');
+    }
+  }, [useCustomVendor]);
+
   // Reset form when modal closes
   useEffect(() => {
     if (!opened) {
       setSelectedEmployeeId(null);
+      setSelectedVendorId(null);
+      setCustomVendorName('');
+      setUseCustomVendor(false);
       setScheduledDate(undefined);
       setNotes('');
       setOneLineAddress('');
@@ -96,6 +123,24 @@ export function DeliveryCreateModal({
       return;
     }
 
+    // Validate vendor input based on mode
+    let vendorName: string;
+    if (useCustomVendor) {
+      if (!customVendorName.trim()) {
+        return;
+      }
+      vendorName = customVendorName.trim();
+    } else {
+      if (!selectedVendorId) {
+        return;
+      }
+      const selectedVendor = vendorOptions.find((v) => v.id === selectedVendorId);
+      if (!selectedVendor) {
+        return;
+      }
+      vendorName = selectedVendor.label;
+    }
+
     setIsSubmitting(true);
     try {
       await onConfirm({
@@ -104,7 +149,7 @@ export function DeliveryCreateModal({
         scheduledDate: scheduledDate.toISOString(),
         notes: notes.trim() || undefined,
         isUrgentDelivery: false,
-        vendorName: vendorName.trim(),
+        vendorName,
         receiveAddress: {
           oneLineAddress: oneLineAddress.trim(),
           googleMapsUrl: googleMapsUrl.trim() || undefined,
@@ -119,7 +164,10 @@ export function DeliveryCreateModal({
   };
 
   const isFormValid = Boolean(
-    selectedEmployeeId && scheduledDate && oneLineAddress.trim() && vendorName.trim(),
+    selectedEmployeeId &&
+      scheduledDate &&
+      oneLineAddress.trim() &&
+      (useCustomVendor ? customVendorName.trim() : selectedVendorId),
   );
 
   return (
@@ -160,16 +208,39 @@ export function DeliveryCreateModal({
                 </Text>
               </Group>
             </Group>
-            {/* Vendor Name */}
-            <TextInput
-              required
-              label={t('delivery.vendorName')}
-              placeholder={t('delivery.vendorNamePlaceholder')}
-              value={vendorName}
-              onChange={(e) => setVendorName(e.currentTarget.value)}
-              leftSection={<IconMapPin size={16} />}
-              disabled={isLoading || isSubmitting}
-            />
+            {/* Vendor Input - Toggle between Select and Custom */}
+            <Stack gap="xs">
+              <Checkbox
+                label={t('delivery.useCustomVendor')}
+                checked={useCustomVendor}
+                onChange={(e) => setUseCustomVendor(e.currentTarget.checked)}
+                disabled={isLoading || isSubmitting}
+              />
+
+              {useCustomVendor ? (
+                <TextInput
+                  required
+                  label={t('delivery.vendorName')}
+                  placeholder={t('delivery.vendorNamePlaceholder')}
+                  value={customVendorName}
+                  onChange={(e) => setCustomVendorName(e.currentTarget.value)}
+                  leftSection={<IconMapPin size={16} />}
+                  disabled={isLoading || isSubmitting}
+                />
+              ) : (
+                <Select
+                  required
+                  label={t('delivery.vendorName')}
+                  placeholder={t('delivery.vendorNamePlaceholder')}
+                  data={vendorOptions}
+                  value={selectedVendorId}
+                  onChange={setSelectedVendorId}
+                  searchable
+                  leftSection={<IconMapPin size={16} />}
+                  disabled={isLoading || isSubmitting}
+                />
+              )}
+            </Stack>
 
             {/* Vendor Pickup Address */}
             <TextInput

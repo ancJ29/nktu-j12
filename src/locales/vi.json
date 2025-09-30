@@ -33,7 +33,6 @@
     "signIn": "Đăng nhập"
   },
   "common": {
-    "vendor": "Nhà cung cấp",
     "actions": "",
     "activate": "Kích Hoạt",
     "activated": "Đã Kích Hoạt {{entity}}",
@@ -49,7 +48,8 @@
       "fields": {
         "customer": "tên khách hàng",
         "employee": "họ và tên",
-        "product": "mã sản phẩm"
+        "product": "mã sản phẩm",
+        "vendor": "tên nhà cung cấp"
       },
       "importFailed": "Không thể nhập {{entity}}",
       "importSuccess": "Nhập {{entity}} thành công",
@@ -77,22 +77,20 @@
     "description": "Mô Tả",
     "doNotHavePermissionForAction": "Không có quyền thực hiện thao tác này",
     "download": "Tải xuống",
-    "downloading": "Đang tải xuống",
     "dragAndDropFile": "Kéo và thả file vào đây",
     "edit": "Sửa",
     "entity": {
       "customer": "Khách Hàng",
       "deliveryRequest": "Yêu Cầu Giao Nhận",
       "employee": "Nhân Viên",
-      "product": "Sản Phẩm"
+      "product": "Sản Phẩm",
+      "vendor": "Nhà Cung Cấp"
     },
     "errors": {
       "notificationTitle": "Lỗi",
       "setPasswordFailed": "Không thể đặt mật khẩu"
     },
     "failed": "Thất bại",
-    "failedToParseExcel": "Không thể phân tích file Excel",
-    "failedToReadFile": "Không thể đọc file",
     "file": {
       "pleaseSelectExcelFile": "Vui lòng chọn một file Excel (.xlsx, .xls, hoặc .csv)",
       "pleaseSelectFileFirst": "Vui lòng chọn file trước"
@@ -102,7 +100,6 @@
       "selectCustomer": "Chọn Khách Hàng",
       "selectStatus": "Chọn Trạng Thái"
     },
-    "firstName": "Tên",
     "form": {
       "email": "Email",
       "emailPlaceholder": "Nhập email",
@@ -121,7 +118,6 @@
     "import": "Nhập",
     "importResults": "Kết Quả Nhập",
     "invalidFormData": "Dữ liệu không hợp lệ",
-    "lastName": "Họ",
     "loadingFailed": "Không thể tải dữ liệu",
     "loadingMore": "Đang tải thêm...",
     "logout": "Đăng xuất",
@@ -147,7 +143,6 @@
       "employeeManagement": "Quản Lý Nhân Viên",
       "employeeManagementDescription": "Quản lý nhân viên và thông tin của họ",
       "employeeManagementMobile": "Nhân Viên",
-      "home": "Trang chủ",
       "masterData": "Danh Mục",
       "more": "Thêm",
       "notifications": "Thông báo",
@@ -163,7 +158,10 @@
       "profileDescription": "Quản lý hồ sơ cá nhân",
       "salesPoManagement": "Đơn Hàng",
       "timeKeeper": "Chấm Công",
-      "timeKeeperDescription": "Quản lý chấm công và điểm danh"
+      "timeKeeperDescription": "Quản lý chấm công và điểm danh",
+      "vendorConfig": "Cấu Hình Nhà Cung Cấp",
+      "vendorConfigDescription": "Cấu hình thiết lập nhà cung cấp",
+      "vendorManagement": "Quản Lý Nhà Cung Cấp"
     },
     "phone": "Điện thoại",
     "photos": {
@@ -200,7 +198,6 @@
     },
     "remove": "Xóa",
     "save": "Lưu",
-    "selectFile": "Chọn file",
     "status": "Trạng thái",
     "statusesSelected": "{{count}} trạng thái đã chọn",
     "success": "Thành công",
@@ -209,10 +206,10 @@
     "total": "Tổng",
     "tryAgain": "Thử lại",
     "tryDifferentSearch": "Thử điều chỉnh tiêu chí tìm kiếm",
-    "unknownError": "Lỗi không xác định",
     "updateFailed": "Không thể cập nhật {{entity}}",
     "updatedAt": "Ngày Cập Nhật",
     "urgent": "Gấp",
+    "vendor": "Nhà cung cấp",
     "viewOnMap": "Xem trên Google Maps"
   },
   "customer": {
@@ -221,18 +218,13 @@
     "bulkImport": "Nhập Hàng Loạt",
     "company": "Công Ty",
     "companyPlaceholder": "Tên công ty",
-    "created": "Đã Tạo Khách Hàng",
-    "createdMessage": "Khách hàng '{{name}}' đã được tạo thành công",
     "deliveryAddress": "Địa Chỉ Giao Hàng",
     "deliveryAddressPlaceholder": "Địa chỉ giao hàng (nếu khác địa chỉ chính)",
     "namePlaceholder": "Tên khách hàng",
-    "noValidDataFound": "Không có dữ liệu khách hàng hợp lệ trong tệp",
     "phonePlaceholder": "+84901234567",
     "searchPlaceholder": "Tìm khách hàng theo tên, công ty",
     "taxCode": "Mã Số Thuế",
-    "taxCodePlaceholder": "Mã Số Thuế (Tùy Chọn)",
-    "updated": "Đã Cập Nhật Khách Hàng",
-    "updatedMessage": "Khách hàng '{{name}}' đã được cập nhật thành công"
+    "taxCodePlaceholder": "Mã Số Thuế (Tùy Chọn)"
   },
   "delivery": {
     "actions": {
@@ -250,7 +242,6 @@
     "completedDate": "Ngày Hoàn Thành",
     "completionNotes": "Ghi Chú Hoàn Thành",
     "createReceiveRequest": "Tạo yêu cầu nhận hàng",
-    "deliveryAddress": "Địa chỉ giao hàng",
     "deliveryId": "Mã Giao Nhận",
     "deliveryInfo": "Thông Tin Giao Nhận",
     "descriptions": {
@@ -296,7 +287,6 @@
       "title": "Chọn Nhanh",
       "today": "Hôm Nay"
     },
-    "receiveAddress": "Địa chỉ nhận hàng",
     "receiveRequestDescription": "Tạo yêu cầu giao nhận để nhận hàng từ nhà cung cấp về kho.",
     "receiveRequestInfo": "Thông tin yêu cầu nhận hàng",
     "receiveType": "NHẬN HÀNG",
@@ -320,6 +310,7 @@
     "updateDeliveryRequest": "Cập nhật yêu cầu giao hàng",
     "updateReceiveRequest": "Cập nhật yêu cầu nhận hàng",
     "urgentDelivery": "Gấp",
+    "useCustomVendor": "Sử dụng tên nhà cung cấp tùy chỉnh",
     "vendorName": "Tên nhà cung cấp",
     "vendorNamePlaceholder": "Nhập tên nhà cung cấp",
     "vendorPickupAddress": "Địa chỉ lấy hàng từ nhà cung cấp",
@@ -663,20 +654,15 @@
     "categoryPlaceholder": "Nhập danh mục sản phẩm",
     "color": "Màu Sắc",
     "colorPlaceholder": "Nhập màu sắc sản phẩm",
-    "created": "Đã Tạo Sản Phẩm",
-    "createdMessage": "Sản phẩm '{{name}}' đã được tạo thành công",
     "descriptionPlaceholder": "Nhập mô tả sản phẩm",
     "editProduct": "Sửa Sản Phẩm",
     "inactive": "Ngừng Kinh Doanh",
     "namePlaceholder": "Nhập tên sản phẩm",
-    "noValidDataFound": "Không tìm thấy dữ liệu sản phẩm hợp lệ trong file",
     "productCode": "Mã Sản Phẩm",
     "productCodePlaceholder": "Nhập mã sản phẩm",
     "searchPlaceholder": "Tìm sản phẩm theo tên, mã...",
     "unit": "Đơn Vị",
-    "unitPlaceholder": "cái, kg, v.v.",
-    "updated": "Đã Cập Nhật Sản Phẩm",
-    "updatedMessage": "Sản phẩm '{{name}}' đã được cập nhật thành công"
+    "unitPlaceholder": "cái, kg, v.v."
   },
   "profile": {
     "changePassword": "Thay Đổi Mật Khẩu",
@@ -806,5 +792,15 @@
     "phoneRequired": "Cần nhập số điện thoại",
     "required": "{{field}} là bắt buộc",
     "tooShort": "{{field}} phải có ít nhất {{length}} ký tự"
+  },
+  "vendor": {
+    "address": "Địa Chỉ",
+    "addressPlaceholder": "Địa chỉ nhà cung cấp",
+    "bulkImport": "Nhập Hàng Loạt",
+    "namePlaceholder": "Tên nhà cung cấp",
+    "phonePlaceholder": "+84901234567",
+    "searchPlaceholder": "Tìm nhà cung cấp theo tên",
+    "taxCode": "Mã Số Thuế",
+    "taxCodePlaceholder": "Mã Số Thuế (Tùy Chọn)"
   }
 }

@@ -6,6 +6,7 @@ import type {
   EmployeeOverview as BEEmployeeOverview,
   ProductOverview as BEProductOverview,
   OverviewParams,
+  VendorOverview as BEVendorOverview,
 } from '@/lib/api/schemas/overview.schemas';
 import { renderFullName } from '@/utils/string';
 
@@ -31,6 +32,14 @@ export type ProductOverview = {
   unit: string;
 };
 
+export type VendorOverview = {
+  id: string;
+  name: string;
+  isActive: boolean;
+  address: string | undefined;
+  googleMapsUrl: string | undefined;
+};
+
 export type CustomerOverview = {
   id: string;
   name: string;
@@ -48,6 +57,7 @@ export type OverviewData = {
   departments: DepartmentOverview[];
   products: ProductOverview[];
   customers: CustomerOverview[];
+  vendors: VendorOverview[];
 };
 
 // Service object
@@ -90,6 +100,7 @@ export const overviewService = {
       departments: beData.departments.map(this.transformDepartment),
       products: beData.products.map(this.transformProduct),
       customers: beData.customers.map(this.transformCustomer),
+      vendors: beData.vendors.map(this.transformVendor),
     };
   },
 
@@ -148,6 +159,19 @@ export const overviewService = {
       name: beProduct.name,
       code: beProduct.code,
       unit: beProduct.unit,
+    };
+  },
+
+  /**
+   * Transform backend vendor to frontend format
+   */
+  transformVendor(beVendor: BEVendorOverview): VendorOverview {
+    return {
+      id: beVendor.id,
+      name: beVendor.name,
+      address: beVendor.address ?? undefined,
+      googleMapsUrl: beVendor.googleMapsUrl ?? undefined,
+      isActive: beVendor.isActive,
     };
   },
 };

@@ -7,11 +7,12 @@ import {
   IconBell,
   IconClock,
   IconExternalLink,
+  IconBuildingWarehouse,
   IconLogout,
   IconPackage,
-  IconSettings,
   IconUser,
   IconUsersGroup,
+  IconShoppingCart,
 } from '@tabler/icons-react';
 
 import { AppMobileLayout } from '@/components/common';
@@ -59,8 +60,15 @@ export function MorePage() {
       {
         title: t('common.pages.customerConfig'),
         description: t('common.pages.customerConfigDescription'),
-        icon: IconSettings,
+        icon: IconBuildingWarehouse,
         onClick: () => navigate(ROUTERS.CUSTOMER_CONFIG),
+        color: 'lime',
+      },
+      {
+        title: t('common.pages.vendorConfig'),
+        description: t('common.pages.vendorConfigDescription'),
+        icon: IconShoppingCart,
+        onClick: () => navigate(ROUTERS.VENDOR_CONFIG),
         color: 'lime',
       },
       {
