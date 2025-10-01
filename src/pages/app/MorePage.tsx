@@ -5,14 +5,14 @@ import { Navigate, useNavigate } from 'react-router';
 import { Box, Button, Card, Divider, Group, rem, Stack, Text } from '@mantine/core';
 import {
   IconBell,
+  IconBuildingWarehouse,
   IconClock,
   IconExternalLink,
-  IconBuildingWarehouse,
   IconLogout,
   IconPackage,
+  IconShoppingCart,
   IconUser,
   IconUsersGroup,
-  IconShoppingCart,
 } from '@tabler/icons-react';
 
 import { AppMobileLayout } from '@/components/common';

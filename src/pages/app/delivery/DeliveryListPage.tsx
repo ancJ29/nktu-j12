@@ -415,6 +415,7 @@ export function DeliveryListPage() {
             <Button
               leftSection={<IconPackage size={16} />}
               onClick={() => setCreateModalOpened(true)}
+              disabled={!canCreate}
             >
               {t('delivery.createReceiveRequest')}
             </Button>

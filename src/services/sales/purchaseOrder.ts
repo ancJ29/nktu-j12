@@ -1,4 +1,4 @@
-import { salesApi, type ProductOverview } from '@/lib/api';
+import { type ProductOverview, salesApi } from '@/lib/api';
 import {
   type POItem as ApiPOItem,
   type PurchaseOrder as ApiPurchaseOrder,
@@ -160,7 +160,9 @@ export const purchaseOrderService = {
     const po = await salesApi.getPurchaseOrderById(id);
     const employeeMapByEmployeeId = await overviewService.getEmployeeOverview();
     const productMapByProductId = await overviewService.getProductOverview();
-    return po ? transformApiToFrontend(po, employeeMapByEmployeeId, productMapByProductId) : undefined;
+    return po
+      ? transformApiToFrontend(po, employeeMapByEmployeeId, productMapByProductId)
+      : undefined;
   },
 
   async createPO(
