@@ -18,14 +18,14 @@ export const createPOItem = (
   }
 
   // Check for duplicate product
-  const isDuplicate = existingItems.some((item) => item.productCode === itemData.productCode);
+  // const isDuplicate = existingItems.some((item) => item.productCode === itemData.productCode);
 
-  if (isDuplicate) {
-    return {
-      item: null,
-      error: `Product ${itemData.productCode} is already added`,
-    };
-  }
+  // if (isDuplicate) {
+  //   return {
+  //     item: null,
+  //     error: `Product ${itemData.productCode} is already added`,
+  //   };
+  // }
 
   // Create the POItem with a unique ID
   const item: POItem = {
