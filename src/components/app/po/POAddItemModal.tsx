@@ -47,6 +47,7 @@ export function POAddItemModal({ opened, onClose, onAdd, existingItems }: POAddI
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState<string | undefined>(undefined);
   const [quantity, setQuantity] = useState<number>(1);
+  const [unit, setUnit] = useState<string>('');
 
   // Generate autocomplete options
   const productOptions = useMemo(() => {
@@ -62,6 +63,7 @@ export function POAddItemModal({ opened, onClose, onAdd, existingItems }: POAddI
       setDescription('');
       setCategory(undefined);
       setQuantity(1);
+      setUnit('');
     } else if (!isMobile) {
       // Only auto-focus on desktop to avoid disruptive keyboard/dropdown on mobile
       // Small delay to ensure modal is fully rendered
@@ -81,6 +83,7 @@ export function POAddItemModal({ opened, onClose, onAdd, existingItems }: POAddI
       setProductCode(product.code);
       setDescription(product.name);
       setProductSearch(product.code);
+      setUnit(product.unit || '');
     }
   };
 
@@ -173,6 +176,15 @@ export function POAddItemModal({ opened, onClose, onAdd, existingItems }: POAddI
         min={1}
         size="md"
         required
+      />
+
+      {/* Unit */}
+      <TextInput
+        label={t('common.unit')}
+        placeholder={t('common.unit')}
+        value={unit}
+        onChange={(e) => setUnit(e.target.value)}
+        size="md"
       />
 
       {/* Actions */}

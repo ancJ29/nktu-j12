@@ -1,4 +1,4 @@
-import { salesApi } from '@/lib/api';
+import { salesApi, type ProductOverview } from '@/lib/api';
 import {
   type POItem as ApiPOItem,
   type PurchaseOrder as ApiPurchaseOrder,
@@ -42,6 +42,7 @@ export type PurchaseOrder = Omit<ApiPurchaseOrder, 'deliveryRequest' | 'items'> 
 function transformApiToFrontend(
   apiPO: ApiPurchaseOrder,
   employeeMapByEmployeeId: Map<string, EmployeeOverview>,
+  productMapByProductId: Map<string, ProductOverview>,
 ): Omit<PurchaseOrder, 'customer'> {
   const salesPerson = apiPO.salesId
     ? employeeMapByEmployeeId.get(apiPO.salesId)?.fullName
@@ -72,7 +73,7 @@ function transformApiToFrontend(
       ...item,
       deliveryPerson: 'TODO',
       notes: item.notes ?? '',
-      unit: item.unit ?? '',
+      unit: item.unit ?? productMapByProductId.get(item.productId)?.unit ?? '',
       productId: item.productId ?? '',
     })),
   };
@@ -143,11 +144,12 @@ export const purchaseOrderService = {
 
     const response = await salesApi.getPurchaseOrders(apiParams);
     const employeeMapByEmployeeId = await overviewService.getEmployeeOverview();
+    const productMapByProductId = await overviewService.getProductOverview();
     const purchaseOrders = response.purchaseOrders
       .sort((a, b) => {
         return a.poNumber.localeCompare(b.poNumber);
       })
-      .map((po) => transformApiToFrontend(po, employeeMapByEmployeeId));
+      .map((po) => transformApiToFrontend(po, employeeMapByEmployeeId, productMapByProductId));
     return {
       purchaseOrders,
       pagination: response.pagination,
@@ -157,7 +159,8 @@ export const purchaseOrderService = {
   async getPOById(id: string): Promise<PurchaseOrder | undefined> {
     const po = await salesApi.getPurchaseOrderById(id);
     const employeeMapByEmployeeId = await overviewService.getEmployeeOverview();
-    return po ? transformApiToFrontend(po, employeeMapByEmployeeId) : undefined;
+    const productMapByProductId = await overviewService.getProductOverview();
+    return po ? transformApiToFrontend(po, employeeMapByEmployeeId, productMapByProductId) : undefined;
   },
 
   async createPO(

@@ -75,6 +75,7 @@
     "delete": "Xóa",
     "deleteConfirmationMessage": "Bạn có chắc chắn muốn xóa ảnh này không?",
     "description": "Mô Tả",
+    "unit": "Đơn Vị",
     "doNotHavePermissionForAction": "Không có quyền thực hiện thao tác này",
     "download": "Tải xuống",
     "dragAndDropFile": "Kéo và thả file vào đây",

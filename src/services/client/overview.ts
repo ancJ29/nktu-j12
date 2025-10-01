@@ -92,6 +92,14 @@ export const overviewService = {
   },
 
   /**
+   * Fetch overview data and return separated product data
+   */
+  async getProductOverview(params?: OverviewParams): Promise<Map<string, ProductOverview>> {
+    const data = await this.getOverviewData(params);
+    return new Map(data.products.map((product) => [product.id, product]));
+  },
+
+  /**
    * Transform backend data to frontend format
    */
   transformOverviewData(beData: BECombinedOverview): OverviewData {

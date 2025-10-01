@@ -106,11 +106,12 @@ export function POItemsEditorDesktop({
           category: newItem.category || '',
         });
       } else {
-        // Find current item to preserve quantity and other fields
+        // Find current item to preserve quantity, unit and other fields
         const currentItem = items.find((i) => i.id === itemId);
         if (currentItem) {
           handleUpdateItem(itemId, 'productCode', product.code);
           handleUpdateItem(itemId, 'description', product.name);
+          handleUpdateItem(itemId, 'unit', product.unit || '');
         }
       }
     },
@@ -191,6 +192,7 @@ export function POItemsEditorDesktop({
                 <Table.Th style={{ width: 200 }}>{t('po.productCode')}</Table.Th>
                 <Table.Th style={{ minWidth: 200 }}>{t('po.description')}</Table.Th>
                 <Table.Th style={{ width: 80 }}>{t('po.quantity')}</Table.Th>
+                <Table.Th style={{ width: 120 }}>{t('common.unit')}</Table.Th>
                 <Table.Th style={{ width: 300 }}>{t('common.notes')}</Table.Th>
                 {!isReadOnly && <Table.Th style={{ width: 60 }}>{t('common.actions')}</Table.Th>}
               </Table.Tr>
@@ -232,6 +234,21 @@ export function POItemsEditorDesktop({
                         min={1}
                         onChange={(value) => handleUpdateItem(item.id, 'quantity', value || 1)}
                         size="xs"
+                        disabled={isReadOnly}
+                      />
+                    )}
+                  </Table.Td>
+                  <Table.Td>
+                    {isReadOnly ? (
+                      <Text size="sm" ta="center">
+                        {item.unit}
+                      </Text>
+                    ) : (
+                      <TextInput
+                        value={item.unit}
+                        onChange={(e) => handleUpdateItem(item.id, 'unit', e.target.value)}
+                        size="xs"
+                        disabled={isReadOnly}
                       />
                     )}
                   </Table.Td>
@@ -287,6 +304,14 @@ export function POItemsEditorDesktop({
                       onChange={(value) =>
                         setNewItem({ ...newItem, quantity: typeof value === 'number' ? value : 1 })
                       }
+                      size="xs"
+                    />
+                  </Table.Td>
+                  <Table.Td>
+                    <TextInput
+                      placeholder={t('common.unit')}
+                      value={newItem.unit || ''}
+                      onChange={(e) => setNewItem({ ...newItem, unit: e.target.value })}
                       size="xs"
                     />
                   </Table.Td>
