@@ -25,6 +25,8 @@ const POUpsertMetadataSchema = z.object({
   notes: optionalStringSchema,
   shippingAddress: AddressSchema.optional(),
   isInternalDelivery: optionalBooleanSchema,
+  isUrgentPO: optionalBooleanSchema,
+  customerPONumber: optionalStringSchema,
 });
 
 // PO Item schemas
@@ -89,6 +91,8 @@ export const PurchaseOrderSchema = z.object({
   orderDate: timestampSchema,
   deliveryDate: optionalTimestampSchema,
   isInternalDelivery: booleanSchema,
+  isUrgentPO: optionalBooleanSchema,
+  customerPONumber: optionalStringSchema,
   completedDate: optionalTimestampSchema,
   notes: optionalStringSchema,
   items: z.array(POItemSchema),

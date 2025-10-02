@@ -11,7 +11,9 @@ export type POFormValues = {
   items: POItem[];
   orderDate: Date;
   deliveryDate?: Date;
+  customerPONumber?: string;
   isInternalDelivery: boolean;
+  isUrgentPO: boolean;
   shippingAddress?: Address;
   notes?: string;
 };
@@ -30,6 +32,8 @@ export function usePOForm({ isEditMode }: UsePOFormOptions) {
       customerId: '',
       items: [],
       isInternalDelivery: true,
+      isUrgentPO: false,
+      customerPONumber: '',
       orderDate: new Date(new Date().setHours(0, 0, 0, 1)),
     }),
     [],
@@ -58,6 +62,8 @@ export function usePOForm({ isEditMode }: UsePOFormOptions) {
       shippingAddress: values.shippingAddress,
       notes: values.notes,
       isInternalDelivery: values.isInternalDelivery ?? false,
+      isUrgentPO: values.isUrgentPO ?? false,
+      customerPONumber: values.customerPONumber,
     };
 
     if (!isEditMode) {

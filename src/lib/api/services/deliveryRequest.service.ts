@@ -153,4 +153,8 @@ export class DeliveryRequestApi extends BaseApiClient {
       UpdateDeliveryOrderInDaySchema,
     );
   }
+
+  async deleteDeliveryRequest(id: string): Promise<void> {
+    return this.delete<void>(`/api/sales/delivery-requests/${id}`, undefined, undefined);
+  }
 }

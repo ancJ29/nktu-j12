@@ -90,6 +90,14 @@ export function POStatusModalContent({
         </Text>
         <Text size="sm" c="dimmed">
           {t('po.poNumber')}: {purchaseOrder.poNumber}
+          {purchaseOrder.customerPONumber ? (
+            <Text size="sm" c="dimmed">
+              {' '}
+              ({purchaseOrder.customerPONumber})
+            </Text>
+          ) : (
+            <></>
+          )}
         </Text>
         <Text size="sm" c="dimmed">
           {t('common.customer')}:{' '}

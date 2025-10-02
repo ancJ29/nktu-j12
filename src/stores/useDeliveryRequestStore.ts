@@ -80,6 +80,7 @@ type DeliveryRequestState = {
   ) => Promise<void>;
   updateDeliveryOrderInDay: (assignedTo: string, date: Date, requestIds: string[]) => Promise<void>;
   loadDeliveryRequestsForDate: (assignedTo: string, date: Date) => Promise<DeliveryRequest[]>;
+  deleteDeliveryRequest: (id: string) => Promise<void>;
   clearError: () => void;
 
   // Selectors
@@ -514,6 +515,37 @@ export const useDeliveryRequestStore = create<DeliveryRequestState>()(
         }
       },
 
+      async deleteDeliveryRequest(id: string) {
+        const state = get();
+
+        // Check if action is already pending
+        if (state.pendingActions.has(id)) {
+          return;
+        }
+
+        // Mark as pending
+        get()._markPending(id);
+
+        try {
+          // Call service
+          await deliveryRequestService.deleteDeliveryRequest(id);
+
+          // Remove from list and clear current if it's the same
+          set((state) => ({
+            deliveryRequests: state.deliveryRequests.filter((dr) => dr.id !== id),
+            currentDeliveryRequest:
+              state.currentDeliveryRequest?.id === id ? undefined : state.currentDeliveryRequest,
+          }));
+        } catch (error) {
+          const errorMessage = getErrorMessage(error, 'Failed to delete delivery request');
+          set({ error: errorMessage });
+          throw error;
+        } finally {
+          // Clear pending
+          get()._removePending(id);
+        }
+      },
+
       clearError: () => set({ error: undefined }),
 
       // Selectors
@@ -663,6 +695,7 @@ export const useDeliveryRequestActions = () => {
   const loadDeliveryRequestsForDate = useDeliveryRequestStore(
     (state) => state.loadDeliveryRequestsForDate,
   );
+  const deleteDeliveryRequest = useDeliveryRequestStore((state) => state.deleteDeliveryRequest);
   const clearError = useDeliveryRequestStore((state) => state.clearError);
 
   return {
@@ -682,6 +715,7 @@ export const useDeliveryRequestActions = () => {
     startTransit,
     updateDeliveryOrderInDay,
     loadDeliveryRequestsForDate,
+    deleteDeliveryRequest,
     clearError,
   };
 };

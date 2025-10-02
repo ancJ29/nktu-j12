@@ -317,6 +317,10 @@ export class SalesApi extends BaseApiClient {
     );
   }
 
+  async deletePurchaseOrder(id: string): Promise<void> {
+    return this.delete<void>(`/api/sales/purchase-orders/${id}`, undefined, undefined);
+  }
+
   // ========== Product APIs ==========
   async getProducts(): Promise<GetProductsResponse> {
     return this.get<GetProductsResponse, void>(

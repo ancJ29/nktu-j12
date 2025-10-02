@@ -2,8 +2,8 @@ import { Badge, type BadgeProps } from '@mantine/core';
 
 import { useTranslation } from '@/hooks/useTranslation';
 
-type PODeliveryBadgeProps = {
-  readonly isInternalDelivery?: boolean;
+type POUrgentBadgeProps = {
+  readonly isUrgentPO?: boolean;
   /** Badge size */
   readonly size?: BadgeProps['size'];
   /** Badge variant */
@@ -12,19 +12,19 @@ type PODeliveryBadgeProps = {
   readonly radius?: BadgeProps['radius'];
 };
 
-export function PODeliveryBadge({
+export function POUrgentBadge({
   size = 'sm',
-  variant = 'outline',
+  variant = 'filled',
   radius = 'sm',
-  isInternalDelivery,
-}: PODeliveryBadgeProps) {
+  isUrgentPO,
+}: POUrgentBadgeProps) {
   const { t } = useTranslation();
-  if (isInternalDelivery) {
+  if (!isUrgentPO) {
     return null;
   }
   return (
-    <Badge color="orange" size={size} variant={variant} radius={radius}>
-      {t('po.externalDelivery')}
+    <Badge color="red" size={size} variant={variant} radius={radius}>
+      {t('po.isUrgentPO')}
     </Badge>
   );
 }

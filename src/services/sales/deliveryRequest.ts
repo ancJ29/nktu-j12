@@ -199,6 +199,10 @@ export const deliveryRequestService = {
     await deliveryRequestApi.completeDelivery(id, data);
   },
 
+  async deleteDeliveryRequest(id: string): Promise<void> {
+    await deliveryRequestApi.deleteDeliveryRequest(id);
+  },
+
   async updateDeliveryOrderInDay(
     assignedTo: string,
     scheduledDate: string | Date,

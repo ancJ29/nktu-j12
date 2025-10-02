@@ -8,6 +8,7 @@ import { getCustomerNameByCustomerId } from '@/utils/overview';
 
 import { PODeliveryBadge } from './PODeliveryBadge';
 import { POStatusBadge } from './POStatusBadge';
+import { POUrgentBadge } from './POUrgentBadge';
 
 type POInfoSectionProps = {
   readonly purchaseOrder: PurchaseOrder;
@@ -34,6 +35,7 @@ export function POInfoSection({ purchaseOrder, onNavigateToItemsList }: POInfoSe
               </Text>
               <POStatusBadge status={purchaseOrder.status} size="md" />
               <PODeliveryBadge isInternalDelivery={purchaseOrder.isInternalDelivery} size="md" />
+              <POUrgentBadge isUrgentPO={purchaseOrder.isUrgentPO} size="md" />
             </Group>
           </div>
 
@@ -73,7 +75,14 @@ export function POInfoSection({ purchaseOrder, onNavigateToItemsList }: POInfoSe
             <Text size="sm" fw={500} c="dimmed">
               {t('po.salesPerson')}
             </Text>
-            <Text fw={500}>{purchaseOrder.salesPerson}</Text>
+            <Text fw={500}>{purchaseOrder.salesPerson ?? '-'}</Text>
+          </div>
+
+          <div>
+            <Text size="sm" fw={500} c="dimmed">
+              {t('po.customerPONumber')}
+            </Text>
+            <Text fw={500}>{purchaseOrder.customerPONumber}</Text>
           </div>
         </Stack>
       </Grid.Col>

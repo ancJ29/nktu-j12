@@ -26,6 +26,8 @@ export type PurchaseOrder = Omit<ApiPurchaseOrder, 'deliveryRequest' | 'items'> 
   statusHistory?: POStatusHistory[];
   salesPerson?: string;
   isInternalDelivery: boolean;
+  isUrgentPO: boolean;
+  customerPONumber?: string;
   deliveryRequest?: {
     deliveryRequestId: string;
     deliveryRequestNumber?: string;
@@ -54,7 +56,9 @@ function transformApiToFrontend(
   return {
     ...apiPO,
     salesPerson,
+    isUrgentPO: apiPO.isUrgentPO ?? false,
     isInternalDelivery: apiPO.isInternalDelivery,
+    customerPONumber: apiPO.customerPONumber,
     customerId: apiPO.customerId,
     address: apiPO?.shippingAddress?.oneLineAddress,
     googleMapsUrl: apiPO?.shippingAddress?.googleMapsUrl,
@@ -147,6 +151,8 @@ export const purchaseOrderService = {
     const productMapByProductId = await overviewService.getProductOverview();
     const purchaseOrders = response.purchaseOrders
       .sort((a, b) => {
+        if (a.isUrgentPO && !b.isUrgentPO) return -1;
+        if (!a.isUrgentPO && b.isUrgentPO) return 1;
         return a.poNumber.localeCompare(b.poNumber);
       })
       .map((po) => transformApiToFrontend(po, employeeMapByEmployeeId, productMapByProductId));
@@ -190,6 +196,8 @@ export const purchaseOrderService = {
       })),
       metadata: {
         isInternalDelivery: data.isInternalDelivery,
+        customerPONumber: data.customerPONumber,
+        isUrgentPO: data.isUrgentPO,
         notes: data.notes,
         shippingAddress: {
           oneLineAddress: data.address,
@@ -229,6 +237,8 @@ export const purchaseOrderService = {
       deliveryDate: data.deliveryDate?.toISOString(),
       metadata: {
         isInternalDelivery: data.isInternalDelivery,
+        customerPONumber: data.customerPONumber,
+        isUrgentPO: data.isUrgentPO,
         notes: data.notes,
         shippingAddress: {
           oneLineAddress: data.address,
@@ -290,5 +300,9 @@ export const purchaseOrderService = {
 
   async deletePhoto(id: string, photoId: string): Promise<void> {
     await salesApi.deletePhoto(id, { photoId });
+  },
+
+  async deletePurchaseOrder(id: string): Promise<void> {
+    await salesApi.deletePurchaseOrder(id);
   },
 };

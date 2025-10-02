@@ -11,6 +11,7 @@ import {
   IconMapPin,
   IconPackage,
   IconPhoto,
+  IconTrash,
   IconTruck,
 } from '@tabler/icons-react';
 
@@ -22,6 +23,7 @@ import { useCustomers, usePermissions } from '@/stores/useAppStore';
 import { useDeliveryRequestActions } from '@/stores/useDeliveryRequestStore';
 import {
   canCompleteDeliveryRequest,
+  canDeleteDeliveryRequest,
   canDeletePhotoDeliveryRequest,
   canEditDeliveryRequest,
   canStartTransitDeliveryRequest,
@@ -40,6 +42,7 @@ type DeliveryDetailAccordionProps = {
   readonly onComplete: () => void;
   readonly onTakePhoto: () => void;
   readonly onUpdate: () => void;
+  readonly onDelete?: () => void;
 };
 
 export function DeliveryDetailAccordion({
@@ -49,6 +52,7 @@ export function DeliveryDetailAccordion({
   onComplete,
   onTakePhoto,
   onUpdate,
+  onDelete,
 }: DeliveryDetailAccordionProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -65,13 +69,21 @@ export function DeliveryDetailAccordion({
     };
   }, [deliveryRequest.status]);
 
-  const { canEdit, canStartTransit, canComplete, canTakePhoto, canDelete } = useMemo(() => {
+  const {
+    canEdit,
+    canStartTransit,
+    canComplete,
+    canTakePhoto,
+    canDeletePhoto,
+    canDeleteDelivery,
+  } = useMemo(() => {
     return {
       canEdit: canEditDeliveryRequest(permissions),
       canStartTransit: canStartTransitDeliveryRequest(permissions),
       canComplete: canCompleteDeliveryRequest(permissions),
       canTakePhoto: canTakePhotoDeliveryRequest(permissions),
-      canDelete: canDeletePhotoDeliveryRequest(permissions),
+      canDeletePhoto: canDeletePhotoDeliveryRequest(permissions),
+      canDeleteDelivery: canDeleteDeliveryRequest(permissions),
     };
   }, [permissions]);
 
@@ -253,7 +265,7 @@ export function DeliveryDetailAccordion({
               photos={deliveryRequest.photos}
               withScrollArea
               scrollAreaHeight="50vh"
-              canDelete={canDelete}
+              canDelete={canDeletePhoto}
               onDeletePhoto={handleDeletePhoto}
             />
           </Accordion.Panel>
@@ -273,14 +285,25 @@ export function DeliveryDetailAccordion({
               {t('common.photos.takePhoto')}
             </Button>
           )}
-          <Button
+          {deliveryRequest.status === 'PENDING' && (<Button
             leftSection={<IconEdit size={16} />}
             variant="outline"
             onClick={onUpdate}
             disabled={isLoading || !canEdit}
           >
             {t('common.edit')}
-          </Button>
+          </Button>)}
+          {canDeleteDelivery && onDelete && (
+            <Button
+              leftSection={<IconTrash size={16} />}
+              variant="outline"
+              color="red"
+              onClick={onDelete}
+              disabled={isLoading}
+            >
+              {t('common.delete')}
+            </Button>
+          )}
         </Group>
         <Group gap="sm">
           {canStartTransitBased && canStartTransit && (

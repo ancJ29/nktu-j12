@@ -13,6 +13,7 @@ import { formatDate } from '@/utils/time';
 
 import { PODeliveryBadge } from './PODeliveryBadge';
 import { POStatusBadge } from './POStatusBadge';
+import { POUrgentBadge } from './POUrgentBadge';
 
 type PODataTableProps = {
   readonly purchaseOrders: readonly PurchaseOrder[];
@@ -61,10 +62,19 @@ function PODataTableComponent({ purchaseOrders }: PODataTableProps) {
                 style={{
                   cursor: 'pointer',
                 }}
+                bg={po.isUrgentPO ? 'var(--mantine-color-red-1)' : undefined}
                 onClick={handleRowClick(po.id)}
               >
                 <Table.Td>
                   <Text fw={500}>{po.poNumber}</Text>
+                  {po.customerPONumber ? (
+                    <Text size="sm" c="dimmed">
+                      {' '}
+                      ({po.customerPONumber})
+                    </Text>
+                  ) : (
+                    <></>
+                  )}
                 </Table.Td>
                 <Table.Td>
                   <Group gap="sm" justify="start">
@@ -84,8 +94,11 @@ function PODataTableComponent({ purchaseOrders }: PODataTableProps) {
                   </Text>
                 </Table.Td>
                 <Table.Td>
-                  <POStatusBadge status={po.status} />
-                  <PODeliveryBadge isInternalDelivery={po.isInternalDelivery} />
+                  <Group gap="xs" m={0}>
+                    <POStatusBadge status={po.status} />
+                    <PODeliveryBadge isInternalDelivery={po.isInternalDelivery} />
+                    <POUrgentBadge isUrgentPO={po.isUrgentPO} />
+                  </Group>
                 </Table.Td>
               </Table.Tr>
             );

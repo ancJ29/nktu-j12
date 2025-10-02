@@ -78,7 +78,8 @@ export function POFormPage({ mode }: POFormPageProps) {
         shippingAddress: copyData.shippingAddress || initialValues.shippingAddress,
         notes: copyData.notes || '',
         isInternalDelivery: copyData.isInternalDelivery,
-        // Don't copy dates - use fresh dates for new PO
+        // Don't copy dates, customerPONumber - use fresh dates for new PO
+        customerPONumber: initialValues.customerPONumber || '',
         orderDate: initialValues.orderDate,
         deliveryDate: initialValues.deliveryDate,
       });
@@ -124,7 +125,9 @@ export function POFormPage({ mode }: POFormPageProps) {
               }
             : initialValues.shippingAddress,
         notes: po.notes || '',
-        isInternalDelivery: po.isInternalDelivery,
+        isInternalDelivery: po.isInternalDelivery ?? true,
+        isUrgentPO: po.isUrgentPO ?? false,
+        customerPONumber: po.customerPONumber || '',
       });
     } catch (error) {
       logError('Failed to load PO:', error, {
@@ -168,6 +171,8 @@ export function POFormPage({ mode }: POFormPageProps) {
         googleMapsUrl: values.shippingAddress?.googleMapsUrl,
         notes: values.notes,
         isInternalDelivery: values.isInternalDelivery,
+        isUrgentPO: values.isUrgentPO,
+        customerPONumber: values.customerPONumber,
       } satisfies Omit<
         PurchaseOrder,
         'id' | 'createdAt' | 'updatedAt' | 'clientId' | 'poNumber' | 'status'
@@ -181,6 +186,8 @@ export function POFormPage({ mode }: POFormPageProps) {
           status: 'NEW' as const,
           orderDate: poData.orderDate || new Date(),
           isInternalDelivery: poData.isInternalDelivery,
+          isUrgentPO: poData.isUrgentPO,
+          customerPONumber: poData.customerPONumber,
         };
         await createPurchaseOrder(newPO);
       }

@@ -89,6 +89,11 @@ export function DeliveryRequestModal({
             </Text>
             <Text size="sm" fw={500}>
               {purchaseOrder.poNumber}
+              {purchaseOrder.customerPONumber && (
+                <Text size="sm" ml="xs">
+                  ({purchaseOrder.customerPONumber})
+                </Text>
+              )}
             </Text>
           </Group>
           <Group justify="space-between">

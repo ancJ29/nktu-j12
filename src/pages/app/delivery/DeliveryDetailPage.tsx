@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo } from 'react';
 
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
-import { LoadingOverlay, Stack } from '@mantine/core';
+import { Button, Group, LoadingOverlay, Modal, Stack, Text } from '@mantine/core';
 
 import { DeliveryDetailAccordion } from '@/components/app/delivery/DeliveryDetailAccordion';
 import { DeliveryDetailTabs } from '@/components/app/delivery/DeliveryDetailTabs';
@@ -28,6 +28,7 @@ import {
 import type { UploadPhoto } from '@/types';
 import {
   canCompleteDeliveryRequest,
+  canDeleteDeliveryRequest,
   canEditDeliveryRequest,
   canStartTransitDeliveryRequest,
   canTakePhotoDeliveryRequest,
@@ -35,18 +36,20 @@ import {
 } from '@/utils/permission.utils';
 
 export function DeliveryDetailPage() {
+  const navigate = useNavigate();
   const { deliveryId } = useParams<{ deliveryId: string }>();
   const { t } = useTranslation();
   const { isMobile } = useDeviceType();
   const permissions = usePermissions();
 
-  const { canView, canEdit, canStartTransit, canComplete, canTakePhoto } = useMemo(
+  const { canView, canEdit, canStartTransit, canComplete, canTakePhoto, canDelete } = useMemo(
     () => ({
       canView: canViewDeliveryRequest(permissions),
       canEdit: canEditDeliveryRequest(permissions),
       canStartTransit: canStartTransitDeliveryRequest(permissions),
       canComplete: canCompleteDeliveryRequest(permissions),
       canTakePhoto: canTakePhotoDeliveryRequest(permissions),
+      canDelete: canDeleteDeliveryRequest(permissions),
     }),
     [permissions],
   );
@@ -64,6 +67,7 @@ export function DeliveryDetailPage() {
     completeDelivery,
     startTransit,
     uploadPhotos,
+    deleteDeliveryRequest,
   } = useDeliveryRequestActions();
 
   // Modal management
@@ -198,6 +202,32 @@ export function DeliveryDetailPage() {
     },
   );
 
+  // Delete delivery request action
+  const deleteDeliveryRequestAction = useSWRAction(
+    'delete-delivery-request',
+    async () => {
+      if (!canDelete) {
+        throw new Error(t('common.doNotHavePermissionForAction'));
+      }
+      if (!deliveryRequest) {
+        throw new Error(t('common.invalidFormData'));
+      }
+      await deleteDeliveryRequest(deliveryRequest.id);
+      closeModal('delete');
+    },
+    {
+      notifications: {
+        successTitle: t('common.success'),
+        successMessage: t('delivery.messages.deleted'),
+        errorTitle: t('common.errors.notificationTitle'),
+        errorMessage: t('delivery.messages.deleteFailed'),
+      },
+      onSuccess: () => {
+        navigate(ROUTERS.DELIVERY_MANAGEMENT);
+      },
+    },
+  );
+
   const title = deliveryRequest?.deliveryRequestNumber ?? t('delivery.detail');
 
   // Check view permission
@@ -231,6 +261,7 @@ export function DeliveryDetailPage() {
                 onTakePhoto={handleOpenModal('uploadPhotos')}
                 onUpdate={handleOpenModal('update')}
                 onStartTransit={handleOpenModal('startTransit')}
+                onDelete={handleOpenModal('delete')}
               />
             </Stack>
 
@@ -260,6 +291,28 @@ export function DeliveryDetailPage() {
               onClose={() => closeModal('update')}
               onConfirm={updateDeliveryRequestAction.trigger}
             />
+            <Modal
+              opened={modals.delete}
+              onClose={() => closeModal('delete')}
+              title={t('delivery.deleteDelivery')}
+              centered
+            >
+              <Stack>
+                <Text>{t('delivery.deleteDeliveryDescription')}</Text>
+                <Group justify="flex-end" mt="md">
+                  <Button variant="default" onClick={() => closeModal('delete')}>
+                    {t('common.cancel')}
+                  </Button>
+                  <Button
+                    color="red"
+                    onClick={() => deleteDeliveryRequestAction.trigger()}
+                    loading={deleteDeliveryRequestAction.isMutating}
+                  >
+                    {t('common.delete')}
+                  </Button>
+                </Group>
+              </Stack>
+            </Modal>
           </>
         )}
       </AppMobileLayout>
@@ -278,6 +331,7 @@ export function DeliveryDetailPage() {
             deliveryRequest={deliveryRequest}
             isLoading={isLoading}
             onUpdate={handleOpenModal('update')}
+            onDelete={handleOpenModal('delete')}
           />
           <DeliveryUpdateModal
             opened={modals.update}
@@ -285,6 +339,28 @@ export function DeliveryDetailPage() {
             onClose={() => closeModal('update')}
             onConfirm={updateDeliveryRequestAction.trigger}
           />
+          <Modal
+            opened={modals.delete}
+            onClose={() => closeModal('delete')}
+            title={t('delivery.deleteDelivery')}
+            centered
+          >
+            <Stack>
+              <Text>{t('delivery.deleteDeliveryDescription')}</Text>
+              <Group justify="flex-end" mt="md">
+                <Button variant="default" onClick={() => closeModal('delete')}>
+                  {t('common.cancel')}
+                </Button>
+                <Button
+                  color="red"
+                  onClick={() => deleteDeliveryRequestAction.trigger()}
+                  loading={deleteDeliveryRequestAction.isMutating}
+                >
+                  {t('common.delete')}
+                </Button>
+              </Group>
+            </Stack>
+          </Modal>
         </>
       ) : (
         <ResourceNotFound message={t('delivery.notFound')} />

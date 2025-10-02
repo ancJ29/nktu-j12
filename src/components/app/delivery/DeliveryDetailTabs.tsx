@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 
 import { Anchor, Button, Card, Grid, Group, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconEdit, IconMapPin } from '@tabler/icons-react';
+import { IconEdit, IconMapPin, IconTrash } from '@tabler/icons-react';
 
 import { UrgentBadge, ViewOnMap } from '@/components/common';
 import { getPODetailRoute } from '@/config/routeConfig';
@@ -12,7 +12,11 @@ import { useTranslation } from '@/hooks/useTranslation';
 import type { DeliveryRequest } from '@/services/sales';
 import { usePermissions } from '@/stores/useAppStore';
 import { useDeliveryRequestActions } from '@/stores/useDeliveryRequestStore';
-import { canDeletePhotoDeliveryRequest, canEditDeliveryRequest } from '@/utils/permission.utils';
+import {
+  canDeleteDeliveryRequest,
+  canDeletePhotoDeliveryRequest,
+  canEditDeliveryRequest,
+} from '@/utils/permission.utils';
 import { formatDate } from '@/utils/time';
 
 import { DeliveryPhotoGallery } from './DeliveryPhotoGallery';
@@ -23,19 +27,25 @@ type DeliveryDetailTabsProps = {
   readonly deliveryRequest: DeliveryRequest;
   readonly isLoading?: boolean;
   readonly onUpdate?: () => void;
+  readonly onDelete?: () => void;
 };
 
 export function DeliveryDetailTabs({
   deliveryRequest,
   isLoading: _isLoading,
   onUpdate,
+  onDelete,
 }: DeliveryDetailTabsProps) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const permissions = usePermissions();
   const { deletePhoto } = useDeliveryRequestActions();
   const canEdit = useMemo(() => canEditDeliveryRequest(permissions), [permissions]);
-  const canDelete = useMemo(() => canDeletePhotoDeliveryRequest(permissions), [permissions]);
+  const canDeletePhoto = useMemo(() => canDeletePhotoDeliveryRequest(permissions), [permissions]);
+  const canDeleteDelivery = useMemo(
+    () => canDeleteDeliveryRequest(permissions),
+    [permissions],
+  );
 
   const handleDeletePhoto = async (photoId: string) => {
     try {
@@ -65,14 +75,26 @@ export function DeliveryDetailTabs({
           {deliveryRequest.isUrgentDelivery && <UrgentBadge />}
           <DeliveryTypeBadge type={deliveryRequest.type} />
         </Group>
-        <Button
-          disabled={!canEdit}
-          leftSection={<IconEdit size={16} />}
-          variant="outline"
-          onClick={onUpdate}
-        >
-          {t('common.edit')}
-        </Button>
+        <Group gap="sm">
+          <Button
+            disabled={!canEdit}
+            leftSection={<IconEdit size={16} />}
+            variant="outline"
+            onClick={onUpdate}
+          >
+            {t('common.edit')}
+          </Button>
+          {canDeleteDelivery && onDelete && (
+            <Button
+              leftSection={<IconTrash size={16} />}
+              variant="outline"
+              color="red"
+              onClick={onDelete}
+            >
+              {t('common.delete')}
+            </Button>
+          )}
+        </Group>
       </Group>
 
       {/* Main Content */}
@@ -258,7 +280,7 @@ export function DeliveryDetailTabs({
               photos={deliveryRequest.photos}
               columns={6}
               imageHeight={120}
-              canDelete={canDelete}
+              canDelete={canDeletePhoto}
               onDeletePhoto={handleDeletePhoto}
             />
           </Card>

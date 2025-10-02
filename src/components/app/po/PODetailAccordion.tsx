@@ -32,6 +32,7 @@ type PODetailAccordionProps = {
   readonly onDeliver: () => void;
   readonly onCancel: () => void;
   readonly onRefund: () => void;
+  readonly onDelete?: () => void;
   readonly onCreateDelivery: () => void;
 };
 
@@ -46,6 +47,7 @@ export function PODetailAccordion({
   onDeliver,
   onCancel,
   onRefund,
+  onDelete,
   onCreateDelivery,
 }: PODetailAccordionProps) {
   const { t } = useTranslation();
@@ -150,6 +152,7 @@ export function PODetailAccordion({
         onDeliver={onDeliver}
         onCancel={onCancel}
         onRefund={onRefund}
+        onDelete={onDelete}
         onCreateDelivery={onCreateDelivery}
       />
     </Stack>

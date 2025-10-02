@@ -92,6 +92,10 @@ export function canDeletePhotoPurchaseOrder(permissions: Permission) {
   return Boolean(permissions.purchaseOrder.actions?.canDeletePhoto);
 }
 
+export function canDeletePurchaseOrder(permissions: Permission) {
+  return Boolean(permissions.purchaseOrder.canDelete);
+}
+
 export function canCopyPurchaseOrder(permissions: Permission) {
   return Boolean(permissions.purchaseOrder.canCreate);
 }
@@ -162,4 +166,8 @@ export function canUpdateDeliveryOrderInDay(permissions: Permission) {
 
 export function canDeletePhotoDeliveryRequest(permissions: Permission) {
   return Boolean(permissions.deliveryRequest.actions?.canDeletePhoto);
+}
+
+export function canDeleteDeliveryRequest(permissions: Permission) {
+  return Boolean(permissions.deliveryRequest.canDelete);
 }
