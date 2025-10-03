@@ -723,12 +723,12 @@
   "pwa": {
     "install": "Install",
     "installDescription": "Install this app on your device for a better experience",
-    "installTitle": "Install Credo App",
+    "installTitle": "Install CMngt App",
     "maybeLater": "Maybe later",
     "safari": {
       "dontShowAgain": "Don't show again",
-      "installDescription": "Add Credo to your home screen for quick access and offline use",
-      "installTitle": "Install Credo App",
+      "installDescription": "Add CMngt to your home screen for quick access and offline use",
+      "installTitle": "Install CMngt App",
       "ios": {
         "step1": "Tap the Share button in Safari toolbar",
         "step2": "Scroll down and tap 'Add to Home Screen'",
