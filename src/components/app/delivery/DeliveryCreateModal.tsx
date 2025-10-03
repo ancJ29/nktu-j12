@@ -22,24 +22,28 @@ import {
   IconX,
 } from '@tabler/icons-react';
 
+import { Tabs } from '@/components/common';
 import { DateInput, ModalOrDrawer } from '@/components/common';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useClientConfig, useEmployees, useVendorOptions } from '@/stores/useAppStore';
+
+import { DeliveryRequestForm } from './DeliveryRequestForm';
 
 type DeliveryCreateModalProps = {
   readonly opened: boolean;
   readonly onClose: () => void;
   readonly onConfirm: (data: {
-    type: 'RECEIVE';
+    type: 'RECEIVE' | 'DELIVERY';
     assignedTo: string;
     scheduledDate: string;
     notes?: string;
     isUrgentDelivery?: boolean;
-    vendorName: string;
-    receiveAddress: {
+    vendorName?: string;
+    receiveAddress?: {
       oneLineAddress: string;
       googleMapsUrl?: string;
     };
+    purchaseOrderId?: string;
   }) => Promise<void>;
   readonly isLoading?: boolean;
 };
@@ -54,6 +58,9 @@ export function DeliveryCreateModal({
   const employees = useEmployees();
   const clientConfig = useClientConfig();
   const vendorOptions = useVendorOptions();
+
+  // Tab state
+  const [activeTab, setActiveTab] = useState<string | null>('delivery');
 
   // Form state
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
@@ -184,140 +191,169 @@ export function DeliveryCreateModal({
           transitionProps={{ duration: 300 }}
         />
 
-        {/* Info Alert */}
-        <Alert
-          icon={<IconPackage size={20} />}
-          title={t('delivery.receiveRequestInfo')}
-          color="blue"
-          variant="light"
-        >
-          <Text size="sm">{t('delivery.receiveRequestDescription')}</Text>
-        </Alert>
+        <Tabs value={activeTab} onChange={setActiveTab}>
+          <Tabs.List>
+            <Tabs.Tab value="delivery">{t('delivery.modal.tabs.delivery')}</Tabs.Tab>
+            <Tabs.Tab value="receive">{t('delivery.modal.tabs.receive')}</Tabs.Tab>
+          </Tabs.List>
 
-        <ScrollArea style={{ maxHeight: '90vh' }}>
-          <Stack gap="md">
-            {/* Type Badge */}
-            <Group gap="xs">
-              <Text size="sm" fw={500}>
-                {t('delivery.requestType')}:
-              </Text>
-              <Group gap={4}>
-                <IconTruck size={16} />
-                <Text size="sm" c="blue" fw={600}>
-                  {t('delivery.receiveType')}
-                </Text>
-              </Group>
-            </Group>
-            {/* Vendor Input - Toggle between Select and Custom */}
-            <Stack gap="xs">
-              <Checkbox
-                label={t('delivery.useCustomVendor')}
-                checked={useCustomVendor}
-                onChange={(e) => setUseCustomVendor(e.currentTarget.checked)}
-                disabled={isLoading || isSubmitting}
-              />
+          <Tabs.Panel value="receive" pt="md">
+            {/* Info Alert */}
+            <Alert
+              icon={<IconPackage size={20} />}
+              title={t('delivery.receiveRequestInfo')}
+              color="blue"
+              variant="light"
+            >
+              <Text size="sm">{t('delivery.receiveRequestDescription')}</Text>
+            </Alert>
 
-              {useCustomVendor ? (
+            <ScrollArea style={{ maxHeight: '90vh' }}>
+              <Stack gap="md">
+                {/* Type Badge */}
+                <Group gap="xs">
+                  <Text size="sm" fw={500}>
+                    {t('delivery.requestType')}:
+                  </Text>
+                  <Group gap={4}>
+                    <IconTruck size={16} />
+                    <Text size="sm" c="blue" fw={600}>
+                      {t('delivery.receiveType')}
+                    </Text>
+                  </Group>
+                </Group>
+                {/* Vendor Input - Toggle between Select and Custom */}
+                <Stack gap="xs">
+                  <Checkbox
+                    label={t('delivery.useCustomVendor')}
+                    checked={useCustomVendor}
+                    onChange={(e) => setUseCustomVendor(e.currentTarget.checked)}
+                    disabled={isLoading || isSubmitting}
+                  />
+
+                  {useCustomVendor ? (
+                    <TextInput
+                      required
+                      label={t('delivery.vendorName')}
+                      placeholder={t('delivery.vendorNamePlaceholder')}
+                      value={customVendorName}
+                      onChange={(e) => setCustomVendorName(e.currentTarget.value)}
+                      leftSection={<IconMapPin size={16} />}
+                      disabled={isLoading || isSubmitting}
+                    />
+                  ) : (
+                    <Select
+                      required
+                      label={t('delivery.vendorName')}
+                      placeholder={t('delivery.vendorNamePlaceholder')}
+                      data={vendorOptions}
+                      value={selectedVendorId}
+                      onChange={setSelectedVendorId}
+                      searchable
+                      leftSection={<IconMapPin size={16} />}
+                      disabled={isLoading || isSubmitting}
+                    />
+                  )}
+                </Stack>
+
+                {/* Vendor Pickup Address */}
                 <TextInput
                   required
-                  label={t('delivery.vendorName')}
-                  placeholder={t('delivery.vendorNamePlaceholder')}
-                  value={customVendorName}
-                  onChange={(e) => setCustomVendorName(e.currentTarget.value)}
+                  label={t('delivery.vendorPickupAddress')}
+                  placeholder={t('delivery.vendorPickupAddressPlaceholder')}
+                  value={oneLineAddress}
+                  onChange={(e) => setOneLineAddress(e.currentTarget.value)}
                   leftSection={<IconMapPin size={16} />}
                   disabled={isLoading || isSubmitting}
                 />
-              ) : (
+
+                <TextInput
+                  label={t('common.googleMapsUrl')}
+                  placeholder={t('common.googleMapsUrlPlaceholder')}
+                  value={googleMapsUrl}
+                  onChange={(e) => setGoogleMapsUrl(e.currentTarget.value)}
+                  leftSection={<IconMapPin size={16} />}
+                  disabled={isLoading || isSubmitting}
+                />
+
+                {/* Assigned Driver */}
                 <Select
                   required
-                  label={t('delivery.vendorName')}
-                  placeholder={t('delivery.vendorNamePlaceholder')}
-                  data={vendorOptions}
-                  value={selectedVendorId}
-                  onChange={setSelectedVendorId}
+                  label={t('delivery.assignedTo')}
+                  placeholder={t('delivery.form.selectDriver')}
+                  data={employeeOptions}
+                  value={selectedEmployeeId}
+                  onChange={setSelectedEmployeeId}
                   searchable
-                  leftSection={<IconMapPin size={16} />}
+                  leftSection={<IconEdit size={16} />}
                   disabled={isLoading || isSubmitting}
                 />
-              )}
-            </Stack>
 
-            {/* Vendor Pickup Address */}
-            <TextInput
-              required
-              label={t('delivery.vendorPickupAddress')}
-              placeholder={t('delivery.vendorPickupAddressPlaceholder')}
-              value={oneLineAddress}
-              onChange={(e) => setOneLineAddress(e.currentTarget.value)}
-              leftSection={<IconMapPin size={16} />}
-              disabled={isLoading || isSubmitting}
+                {/* Scheduled Date */}
+                <DateInput
+                  required
+                  label={t('delivery.scheduledDate')}
+                  placeholder={t('delivery.form.selectDate')}
+                  value={scheduledDate}
+                  onChange={(date) => setScheduledDate(date ? new Date(date) : undefined)}
+                  minDate={new Date()}
+                  leftSection={<IconCalendar size={16} />}
+                  disabled={isLoading || isSubmitting}
+                />
+
+                {/* Notes */}
+                <Textarea
+                  label={t('common.notes')}
+                  placeholder={t('delivery.form.enterNotes')}
+                  value={notes}
+                  onChange={(e) => setNotes(e.currentTarget.value)}
+                  rows={3}
+                  disabled={isLoading || isSubmitting}
+                />
+              </Stack>
+            </ScrollArea>
+
+            {/* Action Buttons */}
+            <Group justify="flex-end" gap="sm" mt="md">
+              <Button
+                variant="light"
+                onClick={onClose}
+                disabled={isSubmitting}
+                leftSection={<IconX size={16} />}
+              >
+                {t('common.cancel')}
+              </Button>
+              <Button
+                onClick={handleSubmit}
+                loading={isSubmitting}
+                disabled={!isFormValid || isLoading}
+                leftSection={<IconPackage size={16} />}
+              >
+                {t('common.add')}
+              </Button>
+            </Group>
+          </Tabs.Panel>
+
+          <Tabs.Panel value="delivery" pt="md">
+            <DeliveryRequestForm
+              onSuccess={onClose}
+              onClose={onClose}
+              onSubmit={async (data) => {
+                // Create delivery request for each selected PO
+                for (const poId of data.purchaseOrderIds) {
+                  await onConfirm({
+                    type: 'DELIVERY',
+                    assignedTo: data.assignedTo,
+                    scheduledDate: data.scheduledDate,
+                    notes: data.notes,
+                    isUrgentDelivery: data.isUrgentDelivery,
+                    purchaseOrderId: poId,
+                  });
+                }
+              }}
             />
-
-            <TextInput
-              label={t('common.googleMapsUrl')}
-              placeholder={t('common.googleMapsUrlPlaceholder')}
-              value={googleMapsUrl}
-              onChange={(e) => setGoogleMapsUrl(e.currentTarget.value)}
-              leftSection={<IconMapPin size={16} />}
-              disabled={isLoading || isSubmitting}
-            />
-
-            {/* Assigned Driver */}
-            <Select
-              required
-              label={t('delivery.assignedTo')}
-              placeholder={t('delivery.form.selectDriver')}
-              data={employeeOptions}
-              value={selectedEmployeeId}
-              onChange={setSelectedEmployeeId}
-              searchable
-              leftSection={<IconEdit size={16} />}
-              disabled={isLoading || isSubmitting}
-            />
-
-            {/* Scheduled Date */}
-            <DateInput
-              required
-              label={t('delivery.scheduledDate')}
-              placeholder={t('delivery.form.selectDate')}
-              value={scheduledDate}
-              onChange={(date) => setScheduledDate(date ? new Date(date) : undefined)}
-              minDate={new Date()}
-              leftSection={<IconCalendar size={16} />}
-              disabled={isLoading || isSubmitting}
-            />
-
-            {/* Notes */}
-            <Textarea
-              label={t('common.notes')}
-              placeholder={t('delivery.form.enterNotes')}
-              value={notes}
-              onChange={(e) => setNotes(e.currentTarget.value)}
-              rows={3}
-              disabled={isLoading || isSubmitting}
-            />
-          </Stack>
-        </ScrollArea>
-
-        {/* Action Buttons */}
-        <Group justify="flex-end" gap="sm" mt="md">
-          <Button
-            variant="light"
-            onClick={onClose}
-            disabled={isSubmitting}
-            leftSection={<IconX size={16} />}
-          >
-            {t('common.cancel')}
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            loading={isSubmitting}
-            disabled={!isFormValid || isLoading}
-            leftSection={<IconPackage size={16} />}
-          >
-            {t('common.add')}
-          </Button>
-        </Group>
+          </Tabs.Panel>
+        </Tabs>
       </Stack>
     </ModalOrDrawer>
   );

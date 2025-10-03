@@ -123,23 +123,22 @@ export function DeliveryListPage() {
   const lastLoadTimeRef = useRef<number>(0);
 
   // Create stable filter params with useMemo to prevent unnecessary re-renders
-  const filterParams = useMemo(
-    () => ({
+  const filterParams = useMemo(() => {
+    // Filter out 'ALL' status and convert to API format
+    const validStatuses = filters.statuses.filter((s) => s !== DELIVERY_STATUS.ALL);
+
+    return {
       customerId: filters.customerId,
-      // Filter out 'all' status before passing to API
-      status:
-        filters.statuses.length === 1 && filters.statuses[0] !== DELIVERY_STATUS.ALL
-          ? filters.statuses[0]
-          : undefined,
+      statuses: validStatuses.length > 1 ? validStatuses : undefined,
+      status: validStatuses.length === 1 ? validStatuses[0] : undefined,
       assignedTo: canViewAll ? filters.assignedTo : currentEmployeeId,
       deliveryRequestNumber: debouncedSearch || undefined,
       scheduledDateFrom: filters.scheduledDateRange.start?.toISOString(),
       scheduledDateTo: filters.scheduledDateRange.end?.toISOString(),
       sortBy: 'scheduledDate' as const,
       sortOrder: 'asc' as const,
-    }),
-    [canViewAll, filters, debouncedSearch, currentEmployeeId],
-  );
+    };
+  }, [canViewAll, filters, debouncedSearch, currentEmployeeId]);
 
   // Effect to load delivery requests when filter params change with forced delay for ALL filters
   useEffect(() => {
@@ -254,16 +253,17 @@ export function DeliveryListPage() {
   const createReceiveRequestAction = useSWRAction(
     'create-receive-request',
     async (data: {
-      type: 'RECEIVE';
+      type: 'RECEIVE' | 'DELIVERY';
       assignedTo: string;
       scheduledDate: string;
       notes?: string;
       isUrgentDelivery?: boolean;
-      vendorName: string;
-      receiveAddress: {
+      vendorName?: string;
+      receiveAddress?: {
         oneLineAddress: string;
         googleMapsUrl?: string;
       };
+      purchaseOrderId?: string;
     }) => {
       await createDeliveryRequest(data);
       setCreateModalOpened(false);

@@ -34,3 +34,6 @@ export { POFilterBarDesktop } from './POFilterBarDesktop';
 export { POFilterBarMobile } from './POFilterBarMobile';
 export { POStatusDrawer } from './POStatusDrawer';
 export { PODateDrawer } from './PODateDrawer';
+export { POAdvancedFiltersPopover } from './POAdvancedFiltersPopover';
+export { POAdvancedFiltersDrawer } from './POAdvancedFiltersDrawer';
+export { POFilterPills } from './POFilterPills';

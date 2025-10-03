@@ -2,7 +2,7 @@ import { memo, useCallback } from 'react';
 
 import { useNavigate } from 'react-router';
 
-import { Group, ScrollArea, Table, Text } from '@mantine/core';
+import { Checkbox, Group, ScrollArea, Table, Text } from '@mantine/core';
 
 import { getPODetailRoute } from '@/config/routeConfig';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -26,9 +26,17 @@ type PODataTableProps = {
   readonly onDeliverPO?: (po: PurchaseOrder) => void;
   readonly onCancelPO?: (po: PurchaseOrder) => void;
   readonly onRefundPO?: (po: PurchaseOrder) => void;
+  readonly selectionMode?: boolean;
+  readonly selectedPOIds?: readonly string[];
+  readonly onSelectionChange?: (selectedIds: string[]) => void;
 };
 
-function PODataTableComponent({ purchaseOrders }: PODataTableProps) {
+function PODataTableComponent({
+  purchaseOrders,
+  selectionMode = false,
+  selectedPOIds = [],
+  onSelectionChange,
+}: PODataTableProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const customerMapByCustomerId = useCustomerMapByCustomerId();
@@ -40,11 +48,65 @@ function PODataTableComponent({ purchaseOrders }: PODataTableProps) {
     [navigate],
   );
 
+  // Selection handlers
+  const handleSelectPO = useCallback(
+    (poId: string, checked: boolean) => {
+      if (!onSelectionChange) return;
+      if (checked) {
+        onSelectionChange([...selectedPOIds, poId]);
+      } else {
+        onSelectionChange(selectedPOIds.filter((id) => id !== poId));
+      }
+    },
+    [selectedPOIds, onSelectionChange],
+  );
+
+  const handleSelectAll = useCallback(
+    (checked: boolean) => {
+      if (!onSelectionChange) return;
+      if (checked) {
+        // Only select eligible POs (READY_FOR_PICKUP + isInternalDelivery + no existing delivery)
+        const eligiblePOIds = purchaseOrders
+          .filter((po) => {
+            return po.status === 'READY_FOR_PICKUP' && po.isInternalDelivery && !po.deliveryRequest;
+          })
+          .map((po) => po.id);
+        onSelectionChange(eligiblePOIds);
+      } else {
+        onSelectionChange([]);
+      }
+    },
+    [purchaseOrders, onSelectionChange],
+  );
+
+  // Check if PO is eligible for delivery creation
+  const isPOEligible = useCallback((po: PurchaseOrder) => {
+    return po.status === 'READY_FOR_PICKUP' && po.isInternalDelivery && !po.deliveryRequest;
+  }, []);
+
+  const allEligibleSelected = purchaseOrders
+    .filter(isPOEligible)
+    .every((po) => selectedPOIds.includes(po.id));
+
+  const someEligibleSelected = purchaseOrders
+    .filter(isPOEligible)
+    .some((po) => selectedPOIds.includes(po.id));
+
   return (
     <ScrollArea>
       <Table striped highlightOnHover>
         <Table.Thead>
           <Table.Tr>
+            {selectionMode && (
+              <Table.Th style={{ width: '40px' }}>
+                <Checkbox
+                  checked={allEligibleSelected}
+                  indeterminate={someEligibleSelected && !allEligibleSelected}
+                  onChange={(e) => handleSelectAll(e.currentTarget.checked)}
+                  aria-label={t('po.selectAll')}
+                />
+              </Table.Th>
+            )}
             <Table.Th>{t('po.poNumber')}</Table.Th>
             <Table.Th>{t('common.customer')}</Table.Th>
             <Table.Th>{t('po.salesPerson')}</Table.Th>
@@ -56,6 +118,8 @@ function PODataTableComponent({ purchaseOrders }: PODataTableProps) {
         </Table.Thead>
         <Table.Tbody>
           {purchaseOrders.map((po) => {
+            const isEligible = isPOEligible(po);
+            const isSelected = selectedPOIds.includes(po.id);
             return (
               <Table.Tr
                 key={po.id}
@@ -63,8 +127,18 @@ function PODataTableComponent({ purchaseOrders }: PODataTableProps) {
                   cursor: 'pointer',
                 }}
                 bg={po.isUrgentPO ? 'var(--mantine-color-red-1)' : undefined}
-                onClick={handleRowClick(po.id)}
+                onClick={selectionMode ? undefined : handleRowClick(po.id)}
               >
+                {selectionMode && (
+                  <Table.Td onClick={(e) => e.stopPropagation()}>
+                    <Checkbox
+                      checked={isSelected}
+                      disabled={!isEligible}
+                      onChange={(e) => handleSelectPO(po.id, e.currentTarget.checked)}
+                      aria-label={t('po.selectPO', { poNumber: po.poNumber })}
+                    />
+                  </Table.Td>
+                )}
                 <Table.Td>
                   <Text fw={500}>{po.poNumber}</Text>
                   {po.customerPONumber ? (

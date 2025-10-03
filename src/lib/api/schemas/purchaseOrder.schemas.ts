@@ -108,6 +108,7 @@ export const PurchaseOrderSchema = z.object({
       status: DeliveryStatusSchema,
       deliveryPerson: optionalStringSchema,
       scheduledDate: timestampSchema,
+      photos: z.array(PhotoDataSchema).optional(),
     })
     .optional(),
 });

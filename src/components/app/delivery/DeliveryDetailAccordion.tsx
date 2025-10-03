@@ -69,23 +69,17 @@ export function DeliveryDetailAccordion({
     };
   }, [deliveryRequest.status]);
 
-  const {
-    canEdit,
-    canStartTransit,
-    canComplete,
-    canTakePhoto,
-    canDeletePhoto,
-    canDeleteDelivery,
-  } = useMemo(() => {
-    return {
-      canEdit: canEditDeliveryRequest(permissions),
-      canStartTransit: canStartTransitDeliveryRequest(permissions),
-      canComplete: canCompleteDeliveryRequest(permissions),
-      canTakePhoto: canTakePhotoDeliveryRequest(permissions),
-      canDeletePhoto: canDeletePhotoDeliveryRequest(permissions),
-      canDeleteDelivery: canDeleteDeliveryRequest(permissions),
-    };
-  }, [permissions]);
+  const { canEdit, canStartTransit, canComplete, canTakePhoto, canDeletePhoto, canDeleteDelivery } =
+    useMemo(() => {
+      return {
+        canEdit: canEditDeliveryRequest(permissions),
+        canStartTransit: canStartTransitDeliveryRequest(permissions),
+        canComplete: canCompleteDeliveryRequest(permissions),
+        canTakePhoto: canTakePhotoDeliveryRequest(permissions),
+        canDeletePhoto: canDeletePhotoDeliveryRequest(permissions),
+        canDeleteDelivery: canDeleteDeliveryRequest(permissions),
+      };
+    }, [permissions]);
 
   const handleDeletePhoto = async (photoId: string) => {
     try {
@@ -285,14 +279,16 @@ export function DeliveryDetailAccordion({
               {t('common.photos.takePhoto')}
             </Button>
           )}
-          {deliveryRequest.status === 'PENDING' && (<Button
-            leftSection={<IconEdit size={16} />}
-            variant="outline"
-            onClick={onUpdate}
-            disabled={isLoading || !canEdit}
-          >
-            {t('common.edit')}
-          </Button>)}
+          {deliveryRequest.status === 'PENDING' && (
+            <Button
+              leftSection={<IconEdit size={16} />}
+              variant="outline"
+              onClick={onUpdate}
+              disabled={isLoading || !canEdit}
+            >
+              {t('common.edit')}
+            </Button>
+          )}
           {canDeleteDelivery && onDelete && (
             <Button
               leftSection={<IconTrash size={16} />}

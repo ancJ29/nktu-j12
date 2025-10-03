@@ -9,6 +9,7 @@ import {
   type UpdatePurchaseOrderRequest,
 } from '@/lib/api/schemas/sales.schemas';
 import type { EmployeeOverview } from '@/services/client/overview';
+import type { PhotoData } from '@/types';
 
 import { overviewService } from '../client/overview';
 
@@ -35,6 +36,7 @@ export type PurchaseOrder = Omit<ApiPurchaseOrder, 'deliveryRequest' | 'items'> 
     status: DeliveryStatus;
     deliveryPerson?: string;
     scheduledDate: Date | string;
+    photos?: PhotoData[];
   };
 };
 
@@ -71,6 +73,7 @@ function transformApiToFrontend(
           isUrgentDelivery: apiPO.deliveryRequest.isUrgentDelivery,
           status: apiPO.deliveryRequest.status,
           scheduledDate: apiPO.deliveryRequest.scheduledDate,
+          photos: apiPO.deliveryRequest.photos,
         }
       : undefined,
     items: apiPO.items.map((item) => ({

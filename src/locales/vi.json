@@ -70,6 +70,7 @@
     "customerName": "Tên Khách Hàng",
     "dangerZone": "Khu Vực Nguy Hiểm",
     "darkMode": "Chế độ tối",
+    "date": "Ngày",
     "deactivate": "Khoá",
     "deactivated": "Đã Khóa {{entity}}",
     "delete": "Xóa",
@@ -100,6 +101,8 @@
       "selectCustomer": "Chọn Khách Hàng",
       "selectStatus": "Chọn Trạng Thái"
     },
+    "from": "từ",
+    "to": "đến",
     "form": {
       "email": "Email",
       "emailPlaceholder": "Nhập email",
@@ -243,7 +246,8 @@
     "assignedTo": "Người Phụ Trách",
     "completedDate": "Ngày Hoàn Thành",
     "completionNotes": "Ghi Chú Hoàn Thành",
-    "createReceiveRequest": "Tạo yêu cầu nhận hàng",
+    "createDeliveryDescription": "Tạo yêu cầu giao hàng để gửi hàng đến khách hàng",
+    "createReceiveRequest": "Tạo yêu cầu giao nhận",
     "deleteDelivery": "Xóa Phiếu Giao Hàng",
     "deleteDeliveryDescription": "Bạn có chắc chắn muốn xóa phiếu giao hàng này? Hành động này không thể hoàn tác.",
     "deliveryId": "Mã Giao Nhận",
@@ -262,8 +266,12 @@
     "form": {
       "enterNotes": "Nhập ghi chú",
       "selectAssignee": "Chọn Người Phụ Trách",
+      "selectCustomer": "Chọn Khách Hàng",
       "selectDate": "Chọn Ngày Dự Kiến",
       "selectDriver": "Chọn tài xế",
+      "selectPO": "Chọn Đơn Hàng (tùy chọn)",
+      "selectPOs": "Chọn Các Đơn Đặt Hàng",
+      "selectPOsDescription": "Chọn một hoặc nhiều đơn đặt hàng để tạo yêu cầu giao hàng",
       "urgentDeliveryDescription": "Đánh dấu đơn hàng này cần xử lý gấp"
     },
     "id": "Mã Yêu Cầu",
@@ -276,6 +284,12 @@
       "statusUpdateFailed": "Không thể cập nhật trạng thái giao nhận",
       "statusUpdated": "Cập nhật trạng thái giao nhận thành {{status}}"
     },
+    "modal": {
+      "tabs": {
+        "delivery": "Yêu Cầu Giao Hàng",
+        "receive": "Yêu Cầu Nhận Hàng"
+      }
+    },
     "noDeliveryRequestsFound": "Không có yêu cầu giao nhận",
     "noDeliveryRequestsFoundSearch": "Không tìm thấy yêu cầu giao nhận phù hợp với tìm kiếm",
     "noMoreDeliveryRequests": "Tất cả yêu cầu giao nhận đã được tải",
@@ -286,6 +300,7 @@
     "pleaseSelectAssigneeAndScheduledDate": "Vui lòng chọn người phụ trách và ngày dự kiến",
     "poNumber": "Số PO",
     "purchaseOrder": "Đơn Đặt Hàng",
+    "purchaseOrders": "Các Đơn Đặt Hàng",
     "quickActions": {
       "allDates": "Tất Cả",
       "thisMonth": "Tháng Này",
@@ -462,6 +477,9 @@
     "title": "Tính Năng Máy Tính"
   },
   "po": {
+    "actions": {
+      "loadPOs": "Tải Đơn Hàng"
+    },
     "addAndContinue": "Thêm mục và lưu",
     "addFirstItem": "Thêm Mục Đầu Tiên",
     "addItem": "Thêm Mục",
@@ -500,7 +518,10 @@
     "continueWithoutAdding": "Lưu mà không thêm",
     "country": "Quốc Gia",
     "countryPlaceholder": "Nhập tên quốc gia",
+    "bulkDeliveryModalTitle": "Tạo Yêu Cầu Giao Hàng ({{count}} đơn)",
+    "createBulkDelivery": "Tạo Giao Hàng Hàng Loạt",
     "createDeliveryRequest": "Tạo Yêu Cầu Giao Nhận",
+    "createDeliveryRequests": "Tạo {{count}} Yêu Cầu Giao Hàng",
     "createFirstPO": "Tạo Đơn Hàng Đầu Tiên",
     "createFirstPODescription": "Bắt đầu bằng việc tạo đơn hàng đầu tiên của bạn",
     "createPO": "Tạo Đơn Hàng",
@@ -564,6 +585,7 @@
     "markReadyOrderDescription": "Đánh dấu đơn hàng này sẵn sàng để lấy. Bạn có thể chỉ định địa điểm lấy hàng và gửi thông báo.",
     "markShipped": "Đánh Dấu Đã Gửi",
     "markedReady": "Đơn hàng đã sẵn sàng lấy",
+    "moreFilters": "Thêm Bộ Lọc",
     "noItemsMessage": "Chưa có mục nào được thêm. Nhấn nút bên dưới để thêm mục đầu tiên.",
     "noMorePOs": "Tất cả đơn hàng đã được tải",
     "noPOsFound": "Không tìm thấy đơn hàng nào",
@@ -585,6 +607,7 @@
     "orderTimeline": "Lịch Sử Đơn Hàng",
     "pending": "Đang Chờ",
     "pendingItemDetails": "Chi tiết mục đang chờ",
+    "photos": "Hình Ảnh Đơn Hàng",
     "pickupLocation": "Địa Điểm Lấy Hàng",
     "poCard": "Thẻ đơn hàng cho {{poNumber}}",
     "poDetails": "Chi Tiết Đơn Hàng",
@@ -618,12 +641,14 @@
     "searchCustomer": "Tìm kiếm khách hàng",
     "searchPlaceholder": "Tìm kiếm theo số PO",
     "searchProduct": "Tìm kiếm sản phẩm",
+    "selectAll": "Chọn tất cả",
     "selectCategory": "Chọn danh mục",
     "selectCustomer": "Chọn khách hàng",
     "selectDateRange": "Chọn khoảng thời gian",
     "selectDeliveryDate": "Chọn ngày giao",
     "selectEndDate": "Chọn ngày kết thúc",
     "selectOrderDate": "Chọn ngày đặt hàng",
+    "selectPO": "Chọn đơn hàng {{poNumber}}",
     "selectSalesPerson": "Chọn Nhân viên phụ trách",
     "selectStartDate": "Chọn ngày bắt đầu",
     "selectStatus": "Chọn trạng thái",
@@ -698,12 +723,12 @@
   "pwa": {
     "install": "Cài đặt",
     "installDescription": "Cài đặt ứng dụng này trên thiết bị của bạn để có trải nghiệm tốt hơn",
-    "installTitle": "Cài đặt CMngt App",
+    "installTitle": "Cài đặt Credo App",
     "maybeLater": "Để sau",
     "safari": {
       "dontShowAgain": "Không hiện lại",
-      "installDescription": "Thêm CMngt vào màn hình chính để truy cập nhanh và sử dụng ngoại tuyến",
-      "installTitle": "Cài đặt CMngt App",
+      "installDescription": "Thêm Credo vào màn hình chính để truy cập nhanh và sử dụng ngoại tuyến",
+      "installTitle": "Cài đặt Credo App",
       "ios": {
         "step1": "Nhấn nút Chia sẻ trên thanh công cụ Safari",
         "step2": "Cuộn xuống và nhấn 'Thêm vào Màn hình chính'",

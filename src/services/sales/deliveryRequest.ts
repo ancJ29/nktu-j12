@@ -10,8 +10,6 @@ import {
 } from '@/lib/api/schemas/deliveryRequest.schemas';
 import type { CustomerOverview, EmployeeOverview } from '@/services/client/overview';
 import type { Address, PhotoData } from '@/types';
-import { startOfDay } from '@/utils/time';
-import { endOfDay } from '@/utils/time';
 
 import { overviewService } from '../client/overview';
 
@@ -74,6 +72,7 @@ function transformApiToFrontend(
 // Filter parameters for delivery requests
 export type DeliveryRequestFilterParams = {
   status?: DeliveryStatus;
+  statuses?: DeliveryStatus[];
   assignedTo?: string;
   scheduledDateFrom?: string | Date;
   scheduledDateTo?: string | Date;
@@ -102,6 +101,7 @@ export const deliveryRequestService = {
     const apiParams = filters
       ? {
           status: filters.status,
+          statuses: filters.statuses,
           assignedTo: filters.assignedTo,
           scheduledDateFrom:
             filters.scheduledDateFrom instanceof Date
@@ -205,18 +205,14 @@ export const deliveryRequestService = {
 
   async updateDeliveryOrderInDay(
     assignedTo: string,
-    scheduledDate: string | Date,
     orderedDeliveryRequestIds: string[],
   ): Promise<void> {
     const sortOrder = orderedDeliveryRequestIds.map((id, index) => ({
       id,
       deliveryOrderInDay: index + 1,
     }));
-    const date = scheduledDate instanceof Date ? scheduledDate : new Date(scheduledDate);
     await deliveryRequestApi.updateDeliveryOrderInDay({
       assignedTo: assignedTo,
-      startOfDay: startOfDay(date).toISOString(),
-      endOfDay: endOfDay(date).toISOString(),
       sortOrder,
     });
   },

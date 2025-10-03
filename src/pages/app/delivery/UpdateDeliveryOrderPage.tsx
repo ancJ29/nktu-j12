@@ -129,7 +129,6 @@ export function UpdateDeliveryOrderPage() {
       }
       await updateDeliveryOrderInDay(
         selectedAssignee,
-        selectedDate,
         deliveryRequests.map((dr) => dr.id),
       );
     },

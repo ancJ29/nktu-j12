@@ -30,6 +30,7 @@ export class DeliveryRequestApi extends BaseApiClient {
 
   async getDeliveryRequests(params?: {
     status?: DeliveryStatus;
+    statuses?: DeliveryStatus[];
     assignedTo?: string;
     scheduledDate?: string;
     scheduledDateFrom?: string;
@@ -43,6 +44,11 @@ export class DeliveryRequestApi extends BaseApiClient {
   }): Promise<GetDeliveryRequestsResponse> {
     const queryParams = new URLSearchParams();
     if (params?.status) queryParams.append('status', params.status);
+    if (params?.statuses) {
+      params.statuses.forEach((status) => {
+        queryParams.append('statuses', status);
+      });
+    }
     if (params?.assignedTo) queryParams.append('assignedTo', params.assignedTo);
     if (params?.scheduledDate) queryParams.append('scheduledDate', params.scheduledDate);
     if (params?.scheduledDateFrom)

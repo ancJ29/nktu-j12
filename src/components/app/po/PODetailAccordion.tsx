@@ -124,7 +124,9 @@ export function PODetailAccordion({
         )}
 
         {/* Photos Accordion */}
-        {purchaseOrder.photos && purchaseOrder.photos.length > 0 && (
+        {((purchaseOrder.photos && purchaseOrder.photos.length > 0) ||
+          (purchaseOrder.deliveryRequest?.photos &&
+            purchaseOrder.deliveryRequest.photos.length > 0)) && (
           <Accordion.Item value="photos">
             <Accordion.Control icon={<IconPhoto size={16} />}>
               {t('delivery.photos')}
@@ -132,6 +134,7 @@ export function PODetailAccordion({
             <Accordion.Panel>
               <POPhotoGallery
                 photos={purchaseOrder.photos}
+                deliveryPhotos={purchaseOrder.deliveryRequest?.photos}
                 withScrollArea
                 scrollAreaHeight="30vh"
                 canDelete={canDelete}

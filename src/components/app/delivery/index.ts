@@ -1,3 +1,4 @@
+export { BulkDeliveryModal } from './BulkDeliveryModal';
 export { DeliveryCard } from './DeliveryCard';
 export { DeliveryCreateModal } from './DeliveryCreateModal';
 export { DeliveryGridCard } from './DeliveryGridCard';

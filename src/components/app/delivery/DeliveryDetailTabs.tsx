@@ -42,10 +42,7 @@ export function DeliveryDetailTabs({
   const { deletePhoto } = useDeliveryRequestActions();
   const canEdit = useMemo(() => canEditDeliveryRequest(permissions), [permissions]);
   const canDeletePhoto = useMemo(() => canDeletePhotoDeliveryRequest(permissions), [permissions]);
-  const canDeleteDelivery = useMemo(
-    () => canDeleteDeliveryRequest(permissions),
-    [permissions],
-  );
+  const canDeleteDelivery = useMemo(() => canDeleteDeliveryRequest(permissions), [permissions]);
 
   const handleDeletePhoto = async (photoId: string) => {
     try {

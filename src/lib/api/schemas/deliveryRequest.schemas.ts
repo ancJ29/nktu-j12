@@ -101,8 +101,6 @@ export const CompleteDeliverySchema = z.object({
 
 export const UpdateDeliveryOrderInDaySchema = z.object({
   assignedTo: idSchema,
-  startOfDay: stringSchema,
-  endOfDay: stringSchema,
   sortOrder: z.array(
     z.object({
       id: idSchema,

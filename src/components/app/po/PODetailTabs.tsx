@@ -170,6 +170,7 @@ export function PODetailTabs({
       <Tabs.Panel value="photos" pt="xl">
         <POPhotoGallery
           photos={purchaseOrder.photos}
+          deliveryPhotos={purchaseOrder.deliveryRequest?.photos}
           columns={2}
           withScrollArea
           scrollAreaHeight="65vh"
