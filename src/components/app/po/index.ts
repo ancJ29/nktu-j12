@@ -8,6 +8,7 @@ export { PONumber } from './PONumber';
 export { POListSkeleton } from './POListSkeleton';
 export { POForm } from './POForm';
 export { POFormActions } from './POFormActions';
+export { POFormAttachmentsSection } from './POFormAttachmentsSection';
 export { POItemsEditor } from './POItemsEditor';
 export { POCustomerAndSalesSelection } from './POCustomerAndSalesSelection';
 export { POAdditionalInfo } from './POAdditionalInfo';

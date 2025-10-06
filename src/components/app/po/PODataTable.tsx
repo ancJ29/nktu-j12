@@ -107,6 +107,7 @@ function PODataTableComponent({
                 />
               </Table.Th>
             )}
+            <Table.Th>#</Table.Th>
             <Table.Th>{t('po.poNumber')}</Table.Th>
             <Table.Th>{t('common.customer')}</Table.Th>
             <Table.Th>{t('po.salesPerson')}</Table.Th>
@@ -117,7 +118,7 @@ function PODataTableComponent({
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {purchaseOrders.map((po) => {
+          {purchaseOrders.map((po, index) => {
             const isEligible = isPOEligible(po);
             const isSelected = selectedPOIds.includes(po.id);
             return (
@@ -139,6 +140,9 @@ function PODataTableComponent({
                     />
                   </Table.Td>
                 )}
+                <Table.Td>
+                  <Text fw={500}>{index + 1}</Text>
+                </Table.Td>
                 <Table.Td>
                   <Text fw={500}>{po.poNumber}</Text>
                   {po.customerPONumber ? (

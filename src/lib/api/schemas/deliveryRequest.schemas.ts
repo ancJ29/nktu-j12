@@ -10,7 +10,7 @@ import {
   optionalStringSchema,
   optionalTimestampSchema,
   paginationSchema,
-  PhotoDataSchema,
+  S3DataSchema,
   stringSchema,
   timestampSchema,
   UploadPhotoSchema,
@@ -42,7 +42,7 @@ export const DeliveryRequestSchema = z.object({
       customerId: idSchema,
     })
     .optional(),
-  photos: z.array(PhotoDataSchema).optional(),
+  photos: z.array(S3DataSchema).optional(),
   deliveryAddress: AddressSchema.optional(),
   vendorName: optionalStringSchema,
   receiveAddress: AddressSchema.optional(),

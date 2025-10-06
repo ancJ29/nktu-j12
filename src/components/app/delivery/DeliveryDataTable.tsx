@@ -34,6 +34,7 @@ function DeliveryDataTableComponent({ deliveryRequests }: DeliveryDataTableProps
       <Table striped highlightOnHover>
         <Table.Thead>
           <Table.Tr>
+            <Table.Th>#</Table.Th>
             <Table.Th>{t('delivery.id')}</Table.Th>
             <Table.Th>
               {t('common.customer')}
@@ -47,7 +48,7 @@ function DeliveryDataTableComponent({ deliveryRequests }: DeliveryDataTableProps
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {deliveryRequests.map((delivery) => {
+          {deliveryRequests.map((delivery, index) => {
             return (
               <Table.Tr
                 key={delivery.id}
@@ -59,6 +60,9 @@ function DeliveryDataTableComponent({ deliveryRequests }: DeliveryDataTableProps
                 }}
                 onClick={handleRowClick(delivery.id)}
               >
+                <Table.Td>
+                  <Text fw={500}>{index + 1}</Text>
+                </Table.Td>
                 <Table.Td>
                   <Text fw={500}>{delivery.deliveryRequestNumber}</Text>
                 </Table.Td>

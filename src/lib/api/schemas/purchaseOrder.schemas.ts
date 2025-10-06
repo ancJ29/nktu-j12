@@ -12,7 +12,7 @@ import {
   optionalStringSchema,
   optionalTimestampSchema,
   paginationSchema,
-  PhotoDataSchema,
+  S3DataSchema,
   stringSchema,
   timestampSchema,
   UploadPhotoSchema,
@@ -27,6 +27,7 @@ const POUpsertMetadataSchema = z.object({
   isInternalDelivery: optionalBooleanSchema,
   isUrgentPO: optionalBooleanSchema,
   customerPONumber: optionalStringSchema,
+  attachments: z.array(UploadPhotoSchema),
 });
 
 // PO Item schemas
@@ -98,7 +99,7 @@ export const PurchaseOrderSchema = z.object({
   items: z.array(POItemSchema),
   shippingAddress: AddressSchema.optional(),
   statusHistory: z.array(POStatusHistorySchema).optional(),
-  photos: z.array(PhotoDataSchema).optional(),
+  photos: z.array(S3DataSchema).optional(),
   deliveryRequest: z
     .object({
       deliveryRequestId: idSchema,
@@ -108,7 +109,7 @@ export const PurchaseOrderSchema = z.object({
       status: DeliveryStatusSchema,
       deliveryPerson: optionalStringSchema,
       scheduledDate: timestampSchema,
-      photos: z.array(PhotoDataSchema).optional(),
+      photos: z.array(S3DataSchema).optional(),
     })
     .optional(),
 });
@@ -119,7 +120,7 @@ export const CreatePurchaseOrderRequestSchema = z.object({
   salesId: optionalIdSchema,
   orderDate: backEndTimestampSchema,
   deliveryDate: optionalBackEndTimestampSchema,
-  items: z.array(UpsertPOItemSchema).min(1),
+  items: z.array(UpsertPOItemSchema),
   metadata: POUpsertMetadataSchema,
 });
 

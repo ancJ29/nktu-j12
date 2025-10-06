@@ -43,7 +43,13 @@ export function POAdvancedFiltersPopover({
   }, [employees]);
 
   return (
-    <Popover position="bottom-start" shadow="md" withArrow>
+    <Popover
+      position="bottom-start"
+      shadow="md"
+      withArrow
+      closeOnClickOutside={false}
+      trapFocus={false}
+    >
       <Popover.Target>
         <Button variant="light" leftSection={<IconAdjustments size={16} />}>
           {t('po.moreFilters')}

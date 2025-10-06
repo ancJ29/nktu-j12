@@ -25,6 +25,7 @@ import type { PurchaseOrder } from '@/services/sales/purchaseOrder';
 import { useCustomers, usePermissions } from '@/stores/useAppStore';
 import { usePOActions, usePOError, usePOLoading } from '@/stores/usePOStore';
 import { logError } from '@/utils/logger';
+import { uploadToS3 } from '@/utils/mediaUpload';
 import { canCreatePurchaseOrder, canEditPurchaseOrder } from '@/utils/permission.utils';
 import { isPOLocked } from '@/utils/purchaseOrder';
 
@@ -160,6 +161,21 @@ export function POFormPage({ mode }: POFormPageProps) {
         throw new Error(t('po.customerNotFound'));
       }
 
+      // Upload attachments to S3 if any
+      const uploadedAttachments =
+        values.attachments && values.attachments.length > 0
+          ? await Promise.all(
+              values.attachments.map((file) =>
+                uploadToS3(file, {
+                  fileName: file.name,
+                  fileType: file.type,
+                  purpose: 'PURCHASE_ORDER_DOCUMENT',
+                  prefix: 'purchase-order',
+                }),
+              ),
+            )
+          : [];
+
       // Prepare PO data
       const poData = {
         customerId: values.customerId,
@@ -173,10 +189,12 @@ export function POFormPage({ mode }: POFormPageProps) {
         isInternalDelivery: values.isInternalDelivery,
         isUrgentPO: values.isUrgentPO,
         customerPONumber: values.customerPONumber,
-      } satisfies Omit<
-        PurchaseOrder,
-        'id' | 'createdAt' | 'updatedAt' | 'clientId' | 'poNumber' | 'status'
-      >;
+        photos: uploadedAttachments.map(({ publicUrl, key }) => ({
+          publicUrl,
+          key,
+          caption: undefined,
+        })),
+      };
       setIsLoadingPO(true);
       if (isEditMode && id) {
         await updatePurchaseOrder(id, poData);

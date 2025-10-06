@@ -16,6 +16,7 @@ export type POFormValues = {
   isUrgentPO: boolean;
   shippingAddress?: Address;
   notes?: string;
+  attachments?: File[];
 };
 
 type UsePOFormOptions = {
@@ -43,12 +44,7 @@ export function usePOForm({ isEditMode }: UsePOFormOptions) {
   const validation = useMemo(
     () => ({
       customerId: validators.required(t('po.customerRequired')),
-      items: (value: POItem[]) => {
-        if (!value || value.length === 0) {
-          return t('po.itemsRequired');
-        }
-        return null;
-      },
+      // Items are optional - PO can be created without items
       // No validation for address fields - all are optional
     }),
     [t, validators],

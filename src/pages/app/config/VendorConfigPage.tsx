@@ -263,6 +263,8 @@ export function VendorConfigPage() {
       {/* Data Table */}
       <Paper withBorder shadow="md" p="md" radius="md">
         <DataTable
+          withIndex
+          indexStart={(paginationState.currentPage - 1) * paginationState.pageSize + 1}
           data={paginatedVendors as Vendor[]}
           emptyMessage={t('common.noDataFound')}
           onRowClick={openEditModal}

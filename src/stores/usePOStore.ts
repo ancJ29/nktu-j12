@@ -15,6 +15,13 @@ import { getErrorMessage } from '@/utils/errorUtils';
 
 import { useAppStore } from './useAppStore';
 
+// Type for uploading photos during PO creation/update
+type POUploadPhoto = {
+  publicUrl: string;
+  key: string;
+  caption?: string;
+};
+
 type POState = {
   // PO data
   purchaseOrders: PurchaseOrder[];
@@ -63,14 +70,21 @@ type POState = {
   resetPagination: () => void;
   loadPO: (id: string) => Promise<void>;
   createPO: (
-    po: Omit<PurchaseOrder, 'id' | 'createdAt' | 'updatedAt' | 'clientId' | 'poNumber'>,
+    po: Omit<
+      PurchaseOrder,
+      'id' | 'createdAt' | 'updatedAt' | 'clientId' | 'poNumber' | 'photos'
+    > & {
+      photos?: POUploadPhoto[];
+    },
   ) => Promise<void>;
   updatePO: (
     id: string,
     data: Omit<
       PurchaseOrder,
-      'id' | 'createdAt' | 'updatedAt' | 'clientId' | 'poNumber' | 'status'
-    >,
+      'id' | 'createdAt' | 'updatedAt' | 'clientId' | 'poNumber' | 'status' | 'photos'
+    > & {
+      photos?: POUploadPhoto[];
+    },
   ) => Promise<void>;
   confirmPO: (id: string) => Promise<void>;
   processPO: (id: string) => Promise<void>;
@@ -307,6 +321,7 @@ export const usePOStore = create<POState>()(
             notes: poData.notes,
             orderDate: poData.orderDate,
             deliveryDate: poData.deliveryDate,
+            photos: poData.photos,
           };
 
           // Call service and get created PO (ignore response, we'll refresh)
@@ -340,10 +355,9 @@ export const usePOStore = create<POState>()(
         const previousPO = state.purchaseOrders.find((po) => po.id === id);
         const previousCurrentPO = state.currentPO;
 
-        // Apply optimistic update
-        get()._optimisticUpdate(id, {
-          ...data,
-        });
+        // Apply optimistic update (exclude photos since they'll be updated after force reload)
+        const { photos, ...updateData } = data;
+        get()._optimisticUpdate(id, updateData);
         set({ isLoading: true, error: undefined });
 
         try {
