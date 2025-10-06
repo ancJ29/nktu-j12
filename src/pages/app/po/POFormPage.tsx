@@ -169,7 +169,7 @@ export function POFormPage({ mode }: POFormPageProps) {
                 uploadToS3(file, {
                   fileName: file.name,
                   fileType: file.type,
-                  purpose: 'PURCHASE_ORDER_DOCUMENT',
+                  purpose: 'PURCHASE_ORDER_ATTACHMENT',
                   prefix: 'purchase-order',
                 }),
               ),
