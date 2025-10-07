@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 
-import { ActionIcon, Group, Image, Modal } from '@mantine/core';
-import { IconMinus, IconPlus } from '@tabler/icons-react';
+import { ActionIcon, Group, Image, Modal, Stack } from '@mantine/core';
+import { IconArrowDown, IconArrowLeft, IconArrowRight, IconArrowUp, IconMinus, IconPlus } from '@tabler/icons-react';
 import { useDeviceType } from '@/hooks/useDeviceType';
 
 type ImageZoomModalProps = {
@@ -103,6 +103,24 @@ export function ImageZoomModal({ opened, onClose, imageUrl, imageAlt }: ImageZoo
     }
   };
 
+  // Pan controls for mobile
+  const PAN_STEP = 50;
+  const handlePanUp = () => {
+    setPosition((prev) => ({ ...prev, y: prev.y + PAN_STEP }));
+  };
+
+  const handlePanDown = () => {
+    setPosition((prev) => ({ ...prev, y: prev.y - PAN_STEP }));
+  };
+
+  const handlePanLeft = () => {
+    setPosition((prev) => ({ ...prev, x: prev.x + PAN_STEP }));
+  };
+
+  const handlePanRight = () => {
+    setPosition((prev) => ({ ...prev, x: prev.x - PAN_STEP }));
+  };
+
   return (
     <Modal
       opened={opened}
@@ -129,36 +147,93 @@ export function ImageZoomModal({ opened, onClose, imageUrl, imageAlt }: ImageZoo
       }}
     >
       {isMobile && (
-        <Group
-          gap="xs"
-          style={{
-            position: 'absolute',
-            bottom: 20,
-            right: 20,
-            zIndex: 1000,
-          }}
-        >
-          <ActionIcon
-            size="lg"
-            variant="filled"
-            color="dark"
-            onClick={handleZoomOut}
-            disabled={scale <= 1}
-            aria-label="Zoom out"
+        <>
+          {/* Zoom controls */}
+          <Group
+            gap="xs"
+            style={{
+              position: 'absolute',
+              bottom: 20,
+              right: 20,
+              zIndex: 1000,
+            }}
           >
-            <IconMinus size={20} />
-          </ActionIcon>
-          <ActionIcon
-            size="lg"
-            variant="filled"
-            color="dark"
-            onClick={handleZoomIn}
-            disabled={scale >= 5}
-            aria-label="Zoom in"
-          >
-            <IconPlus size={20} />
-          </ActionIcon>
-        </Group>
+            <ActionIcon
+              size="lg"
+              variant="filled"
+              color="dark"
+              onClick={handleZoomOut}
+              disabled={scale <= 1}
+              aria-label="Zoom out"
+            >
+              <IconMinus size={20} />
+            </ActionIcon>
+            <ActionIcon
+              size="lg"
+              variant="filled"
+              color="dark"
+              onClick={handleZoomIn}
+              disabled={scale >= 5}
+              aria-label="Zoom in"
+            >
+              <IconPlus size={20} />
+            </ActionIcon>
+          </Group>
+
+          {/* Pan controls - only show when zoomed */}
+          {scale > 1 && (
+            <Stack
+              gap={4}
+              style={{
+                position: 'absolute',
+                bottom: 20,
+                left: 20,
+                zIndex: 1000,
+              }}
+            >
+              <Group gap={4} justify="center">
+                <ActionIcon
+                  size="md"
+                  variant="filled"
+                  color="dark"
+                  onClick={handlePanUp}
+                  aria-label="Pan up"
+                >
+                  <IconArrowUp size={16} />
+                </ActionIcon>
+              </Group>
+              <Group gap={4}>
+                <ActionIcon
+                  size="md"
+                  variant="filled"
+                  color="dark"
+                  onClick={handlePanLeft}
+                  aria-label="Pan left"
+                >
+                  <IconArrowLeft size={16} />
+                </ActionIcon>
+                <ActionIcon
+                  size="md"
+                  variant="filled"
+                  color="dark"
+                  onClick={handlePanDown}
+                  aria-label="Pan down"
+                >
+                  <IconArrowDown size={16} />
+                </ActionIcon>
+                <ActionIcon
+                  size="md"
+                  variant="filled"
+                  color="dark"
+                  onClick={handlePanRight}
+                  aria-label="Pan right"
+                >
+                  <IconArrowRight size={16} />
+                </ActionIcon>
+              </Group>
+            </Stack>
+          )}
+        </>
       )}
       <div
         ref={imageRef}
