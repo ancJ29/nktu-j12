@@ -67,6 +67,31 @@ export function ImageZoomModal({ opened, onClose, imageUrl, imageAlt }: ImageZoo
     }
   };
 
+  // Mobile: Touch pan/drag when zoomed
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (isMobile && scale > 1 && e.touches.length === 1) {
+      setIsDragging(true);
+      const touch = e.touches[0];
+      setDragStart({ x: touch.clientX - position.x, y: touch.clientY - position.y });
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (isMobile && isDragging && scale > 1 && e.touches.length === 1) {
+      const touch = e.touches[0];
+      setPosition({
+        x: touch.clientX - dragStart.x,
+        y: touch.clientY - dragStart.y,
+      });
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (isMobile) {
+      setIsDragging(false);
+    }
+  };
+
   const handleZoomIn = () => {
     setScale((prev) => Math.min(prev + 0.5, 5));
   };
@@ -141,6 +166,9 @@ export function ImageZoomModal({ opened, onClose, imageUrl, imageAlt }: ImageZoo
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
         style={{
           transform: `scale(${scale}) translate(${position.x / scale}px, ${position.y / scale}px)`,
           transition: isDragging ? 'none' : 'transform 0.1s ease-out',
