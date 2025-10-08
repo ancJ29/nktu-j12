@@ -39,7 +39,7 @@ export const DeliveryRequestSchema = z.object({
     .object({
       poId: idSchema,
       poNumber: stringSchema,
-      customerId: idSchema,
+      customerId: idSchema.optional(),
     })
     .optional(),
   photos: z.array(S3DataSchema).optional(),
