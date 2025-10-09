@@ -45,10 +45,16 @@ export function POAdvancedFiltersDrawer({
   // Local state for pending filter changes
   const [pendingCustomerId, setPendingCustomerId] = useState<string | undefined>(customerId);
   const [pendingSalesId, setPendingSalesId] = useState<string | undefined>(salesId);
-  const [pendingOrderDateStart, setPendingOrderDateStart] = useState<Date | undefined>(orderDateStart);
+  const [pendingOrderDateStart, setPendingOrderDateStart] = useState<Date | undefined>(
+    orderDateStart,
+  );
   const [pendingOrderDateEnd, setPendingOrderDateEnd] = useState<Date | undefined>(orderDateEnd);
-  const [pendingDeliveryDateStart, setPendingDeliveryDateStart] = useState<Date | undefined>(deliveryDateStart);
-  const [pendingDeliveryDateEnd, setPendingDeliveryDateEnd] = useState<Date | undefined>(deliveryDateEnd);
+  const [pendingDeliveryDateStart, setPendingDeliveryDateStart] = useState<Date | undefined>(
+    deliveryDateStart,
+  );
+  const [pendingDeliveryDateEnd, setPendingDeliveryDateEnd] = useState<Date | undefined>(
+    deliveryDateEnd,
+  );
 
   // Sync local state when drawer opens or external filters change
   useEffect(() => {
@@ -60,7 +66,15 @@ export function POAdvancedFiltersDrawer({
       setPendingDeliveryDateStart(deliveryDateStart);
       setPendingDeliveryDateEnd(deliveryDateEnd);
     }
-  }, [opened, customerId, salesId, orderDateStart, orderDateEnd, deliveryDateStart, deliveryDateEnd]);
+  }, [
+    opened,
+    customerId,
+    salesId,
+    orderDateStart,
+    orderDateEnd,
+    deliveryDateStart,
+    deliveryDateEnd,
+  ]);
 
   // Employee options for sales filter
   const employeeOptions = useMemo(() => {

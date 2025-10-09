@@ -40,7 +40,6 @@ export function POStatusDrawer({
       { value: PO_STATUS.NEW, label: t('po.status.NEW') },
       { value: PO_STATUS.CONFIRMED, label: t('po.status.CONFIRMED') },
       { value: PO_STATUS.PROCESSING, label: t('po.status.PROCESSING') },
-      { value: PO_STATUS.READY_FOR_PICKUP, label: t('po.status.READY_FOR_PICKUP') },
       { value: PO_STATUS.SHIPPED, label: t('po.status.SHIPPED') },
       { value: PO_STATUS.DELIVERED, label: t('po.status.DELIVERED') },
       { value: PO_STATUS.CANCELLED, label: t('po.status.CANCELLED') },

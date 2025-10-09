@@ -91,7 +91,11 @@ export function POFilterBarMobile({
 
         <Button
           size="xs"
-          variant={customerId || salesId || hasOrderDateFilter || hasDeliveryDateFilter ? 'filled' : 'light'}
+          variant={
+            customerId || salesId || hasOrderDateFilter || hasDeliveryDateFilter
+              ? 'filled'
+              : 'light'
+          }
           rightSection={<IconChevronDown size={16} />}
           onClick={onAdvancedFiltersClick}
           style={{ flex: 1 }}

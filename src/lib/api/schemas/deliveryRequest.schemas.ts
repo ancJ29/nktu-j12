@@ -19,7 +19,7 @@ import {
 // ========== Delivery Request Schemas ==========
 
 // Delivery Status enum
-export const DeliveryStatusSchema = z.enum(['PENDING', 'IN_TRANSIT', 'COMPLETED']);
+export const DeliveryStatusSchema = z.enum(['DRAFT', 'PENDING', 'IN_TRANSIT', 'COMPLETED']);
 export type DeliveryStatus = z.infer<typeof DeliveryStatusSchema>;
 
 // Delivery Request base schema
