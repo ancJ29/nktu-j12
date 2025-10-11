@@ -37,13 +37,16 @@ export function HomePage() {
   const currentUser = useMe();
 
   // Permission checks
-  const { canViewAllPO, canViewAllDR, canViewMyPO, canViewMyDR } = useMemo(
+  const { canViewPO, canViewDR, canViewWarehouse, canViewAllPO, canViewAllDR, canViewMyPO, canViewMyDR } = useMemo(
     () => {
       const canViewAllDR = canViewAllDeliveryRequest(permissions);
       const canViewMyDR = canViewDeliveryRequest(permissions);
       const canViewAllPO = canViewAllPurchaseOrder(permissions);
       const canViewMyPO = canViewPurchaseOrder(permissions);
       return {
+        canViewPO: canViewAllPO || canViewMyPO,
+        canViewDR: canViewAllDR || canViewMyDR,
+        canViewWarehouse: canViewAllPO || canViewMyPO,
         canViewAllPO,
         canViewAllDR,
         canViewMyDR,
@@ -54,9 +57,18 @@ export function HomePage() {
   );
 
   // Collapsible state for mobile sections
-  const [salesOpen, setSalesOpen] = useState(true);
-  const [deliveryOpen, setDeliveryOpen] = useState(true);
-  const [warehouseOpen, setWarehouseOpen] = useState(true);
+  const [salesOpen, setSalesOpen] = useState(false);
+  const [deliveryOpen, setDeliveryOpen] = useState(false);
+  const [warehouseOpen, setWarehouseOpen] = useState(false);
+
+  useEffect(() => {
+    if (canViewPO) {
+      setSalesOpen(true);
+    }
+    if (canViewDR && !canViewPO) {
+      setDeliveryOpen(true);
+    }
+  }, [canViewPO, canViewDR]);
 
   // Data state
   const [activePOs, setActivePOs] = useState<PurchaseOrder[]>([]);
@@ -150,7 +162,7 @@ export function HomePage() {
         <Container fluid m="xs" px={0}>
           <Stack gap="xs">
             {/* Sales Section */}
-            <Card shadow="sm" padding="lg">
+            {canViewPO && (<Card shadow="sm" padding="lg">
               <Group
                 justify="space-between"
                 mb="md"
@@ -223,10 +235,10 @@ export function HomePage() {
                   )}
                 </Stack>
               </Collapse>
-            </Card>
+            </Card>)}
 
             {/* Delivery Section */}
-            <Card shadow="sm" padding="lg">
+            {canViewDR && (<Card shadow="sm" padding="lg">
               <Group
                 justify="space-between"
                 mb="md"
@@ -309,10 +321,10 @@ export function HomePage() {
                   )}
                 </Stack>
               </Collapse>
-            </Card>
+            </Card>)}
 
             {/* Warehouse Section */}
-            <Card shadow="sm" padding="lg">
+            {canViewWarehouse && (<Card shadow="sm" padding="lg">
               <Group
                 justify="space-between"
                 mb="md"
@@ -385,7 +397,7 @@ export function HomePage() {
                   )}
                 </Stack>
               </Collapse>
-            </Card>
+            </Card>)}
           </Stack>
         </Container>
       </AppMobileLayout>
