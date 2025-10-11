@@ -326,7 +326,7 @@ export const usePOStore = create<POState>()(
             notes: poData.notes,
             orderDate: poData.orderDate,
             deliveryDate: poData.deliveryDate,
-            photos: poData.photos,
+            attachments: poData.attachments,
           };
 
           // Call service and get created PO (ignore response, we'll refresh)
@@ -347,7 +347,6 @@ export const usePOStore = create<POState>()(
 
       async updatePO(id, data) {
         const state = get();
-
         // Check if action is already pending
         if (state.pendingActions.has(id)) {
           return;

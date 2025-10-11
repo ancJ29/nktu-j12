@@ -203,7 +203,7 @@ export function POFormPage({ mode }: POFormPageProps) {
         isUrgentPO: values.isUrgentPO,
         customerPONumber: values.customerPONumber,
         poTags: values.poTags,
-        photos: uploadedAttachments.map(({ publicUrl, key }) => ({
+        attachments: uploadedAttachments.map(({ publicUrl, key }) => ({
           publicUrl,
           key,
           caption: undefined,
@@ -211,7 +211,13 @@ export function POFormPage({ mode }: POFormPageProps) {
       };
       setIsLoadingPO(true);
       if (isEditMode && id) {
-        await updatePurchaseOrder(id, poData);
+        await updatePurchaseOrder(id, {
+          ...poData,
+          attachments: [
+            ...(poData.attachments ?? []),
+            ...(currentPO?.attachments ?? []),
+          ],
+        });
       } else {
         const newPO = {
           ...poData,

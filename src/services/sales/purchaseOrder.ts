@@ -43,13 +43,6 @@ export type PurchaseOrder = Omit<ApiPurchaseOrder, 'deliveryRequest' | 'items'> 
   };
 };
 
-// Type for creating/updating PO - uses simplified photo structure for upload
-type POUploadPhoto = {
-  publicUrl: string;
-  key: string;
-  caption?: string;
-};
-
 /**
  * Transform API PurchaseOrder to Frontend PurchaseOrder
  */
@@ -214,9 +207,7 @@ export const purchaseOrderService = {
     data: Omit<
       PurchaseOrder,
       'id' | 'status' | 'createdAt' | 'updatedAt' | 'clientId' | 'poNumber' | 'photos'
-    > & {
-      photos?: POUploadPhoto[];
-    },
+    >,
   ): Promise<void> {
     const createRequest: CreatePurchaseOrderRequest = {
       customerId: data.isPersonalCustomer ? undefined : data.customerId,
@@ -247,7 +238,7 @@ export const purchaseOrderService = {
           oneLineAddress: data.address,
           googleMapsUrl: data.googleMapsUrl,
         },
-        attachments: data.photos ?? [],
+        attachments: data.attachments ?? [],
       },
     };
 
@@ -259,9 +250,7 @@ export const purchaseOrderService = {
     data: Omit<
       PurchaseOrder,
       'id' | 'createdAt' | 'updatedAt' | 'clientId' | 'poNumber' | 'status' | 'photos'
-    > & {
-      photos?: POUploadPhoto[];
-    },
+    >,
   ): Promise<void> {
     if (!data.items) {
       throw new Error('Items are required');
@@ -294,7 +283,7 @@ export const purchaseOrderService = {
           oneLineAddress: data.address,
           googleMapsUrl: data.googleMapsUrl,
         },
-        attachments: data.photos ?? [],
+        attachments: data.attachments ?? [],
       },
     };
 
