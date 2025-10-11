@@ -78,7 +78,7 @@ export function POAccordionInfoPanel({
           </Text>
           <Group gap="xs">
             <POStatusBadge status={purchaseOrder.status} size="sm" />
-            <PODeliveryBadge isInternalDelivery={!purchaseOrder.isInternalDelivery} />
+            <PODeliveryBadge isInternalDelivery={purchaseOrder.isInternalDelivery} />
             <POUrgentBadge isUrgentPO={purchaseOrder.isUrgentPO} />
           </Group>
         </Grid.Col>

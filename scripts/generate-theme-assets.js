@@ -25,9 +25,9 @@ const THEME_COLOR_HEX = process.env.VITE_APP_THEME_COLOR || '324e71';
 const THEME_COLOR = `#${THEME_COLOR_HEX}`;
 
 // Get app branding from environment
-const APP_NAME = process.env.VITE_APP_NAME || 'CMngt';
-const APP_SHORT_NAME = process.env.VITE_APP_SHORT_NAME || 'CMngt';
-const APP_DESCRIPTION = process.env.VITE_APP_DESCRIPTION || 'CMngt Progressive Web Application';
+const APP_NAME = process.env.VITE_APP_NAME || 'Credo';
+const APP_SHORT_NAME = process.env.VITE_APP_SHORT_NAME || 'Credo';
+const APP_DESCRIPTION = process.env.VITE_APP_DESCRIPTION || 'Credo Progressive Web Application';
 
 console.log(`🎨 Generating theme assets with color: ${THEME_COLOR}`);
 console.log(`📱 App name: ${APP_NAME}`);

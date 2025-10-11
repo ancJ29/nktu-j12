@@ -37,7 +37,6 @@
     "typeMessage": "Nhập tin nhắn..."
   },
   "common": {
-    "noPermission": "-",
     "actions": "",
     "activate": "Kích Hoạt",
     "activated": "Đã Kích Hoạt {{entity}}",
@@ -136,6 +135,7 @@
     "navigation": "Điều Hướng",
     "next": "Tiếp theo",
     "noDataFound": "Không tìm thấy dữ liệu",
+    "noPermission": "-",
     "notScheduled": "Not scheduled",
     "notes": "Ghi Chú",
     "orClickToSelect": "hoặc nhấn để chọn",
@@ -312,6 +312,7 @@
     "quickActions": {
       "allDates": "Tất Cả",
       "customRange": "Tùy Chọn Ngày",
+      "nextWeek": "Tuần Sau",
       "thisMonth": "Tháng Này",
       "thisWeek": "Tuần Này",
       "title": "Chọn Nhanh",
@@ -480,7 +481,7 @@
         "poNumber": "Mã Đơn Hàng",
         "status": "Trạng Thái"
       },
-      "sectionTitle": "Đơn Hàng Đang Xử Lý"
+      "sectionTitle": "Đơn Hàng Mới / Đang Xử Lý"
     },
     "title": "Trang Chủ",
     "warehouse": {
@@ -495,7 +496,7 @@
         "poNumber": "Mã Đơn Hàng",
         "status": "Trạng Thái"
       },
-      "sectionTitle": "Hàng Đợi Xử Lý"
+      "sectionTitle": "Hàng chờ giao"
     }
   },
   "mobileOnly": {
@@ -785,12 +786,12 @@
   "pwa": {
     "install": "Cài đặt",
     "installDescription": "Cài đặt ứng dụng này trên thiết bị của bạn để có trải nghiệm tốt hơn",
-    "installTitle": "Cài đặt CMngt App",
+    "installTitle": "Cài đặt Credo App",
     "maybeLater": "Để sau",
     "safari": {
       "dontShowAgain": "Không hiện lại",
-      "installDescription": "Thêm CMngt vào màn hình chính để truy cập nhanh và sử dụng ngoại tuyến",
-      "installTitle": "Cài đặt CMngt App",
+      "installDescription": "Thêm Credo vào màn hình chính để truy cập nhanh và sử dụng ngoại tuyến",
+      "installTitle": "Cài đặt Credo App",
       "ios": {
         "step1": "Nhấn nút Chia sẻ trên thanh công cụ Safari",
         "step2": "Cuộn xuống và nhấn 'Thêm vào Màn hình chính'",

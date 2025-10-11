@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { useNavigate } from 'react-router';
 
-import { Badge, Box, Card, Group, type MantineStyleProp, Text } from '@mantine/core';
+import { Box, Card, Group, type MantineStyleProp, Text } from '@mantine/core';
 
 import { getPODetailRoute } from '@/config/routeConfig';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -116,12 +116,6 @@ export function POCard({ purchaseOrder, style, className }: POCardProps) {
             </Group>
           )}
 
-          <Group gap="xs">
-            <Badge size="sm" variant="light" color="gray">
-              {purchaseOrder.items.length} {t('po.itemsCount')}
-            </Badge>
-          </Group>
-
           {purchaseOrder.deliveryRequest && (
             <>
               <Group gap="lg">
@@ -152,16 +146,6 @@ export function POCard({ purchaseOrder, style, className }: POCardProps) {
           <POUrgentBadge isUrgentPO={purchaseOrder.isUrgentPO} />
           <POStatusBadge status={purchaseOrder.status} />
           <PODeliveryBadge isInternalDelivery={purchaseOrder.isInternalDelivery} />
-          {purchaseOrder.salesPerson && (
-            <Badge size="sm" variant="light" color="blue">
-              {purchaseOrder.salesPerson}
-            </Badge>
-          )}
-          {purchaseOrder.deliveryRequest?.deliveryPerson && (
-            <Badge size="sm" variant="light" color="green">
-              {purchaseOrder.deliveryRequest.deliveryPerson}
-            </Badge>
-          )}
         </Group>
       </Group>
     </Card>

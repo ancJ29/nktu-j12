@@ -5,6 +5,8 @@ import { useNavigate, useParams } from 'react-router';
 import { Affix, Button, Group, LoadingOverlay, ScrollArea, Stack } from '@mantine/core';
 import { IconCamera, IconCopy, IconEdit, IconInfoCircle, IconMessage } from '@tabler/icons-react';
 
+import { MOBILE_FORM_ACTIONS_Z_INDEX } from '@/constants/po.constants';
+
 import {
   DeliveryRequestModal,
   PODetailAccordion,
@@ -102,13 +104,13 @@ export function PODetailPage() {
     [closeModal],
   );
 
-  const handleEdit = () => {
+  const handleEdit = useCallback(() => {
     if (purchaseOrder && isPOEditable(purchaseOrder) && canEdit) {
       navigate(getPOEditRoute(purchaseOrder.id));
     }
-  };
+  }, [purchaseOrder, canEdit, navigate]);
 
-  const handleCopy = () => {
+  const handleCopy = useCallback(() => {
     if (purchaseOrder && canCreate) {
       // Navigate to create page with PO data as state
       navigate(ROUTERS.PO_ADD, {
@@ -132,67 +134,67 @@ export function PODetailPage() {
         },
       });
     }
-  };
+  }, [purchaseOrder, canCreate, navigate]);
 
-  const handleConfirm = () => {
+  const handleConfirm = useCallback(() => {
     if (purchaseOrder) {
       handlers.handleConfirm(purchaseOrder);
     }
-  };
+  }, [purchaseOrder, handlers]);
 
-  const handleProcess = () => {
+  const handleProcess = useCallback(() => {
     if (purchaseOrder) {
       handlers.handleProcess(purchaseOrder);
     }
-  };
+  }, [purchaseOrder, handlers]);
 
-  const handleMarkReady = () => {
+  const handleMarkReady = useCallback(() => {
     if (purchaseOrder) {
       handlers.handleMarkReady(purchaseOrder);
     }
-  };
+  }, [purchaseOrder, handlers]);
 
-  const handleShip = () => {
+  const handleShip = useCallback(() => {
     if (purchaseOrder) {
       handlers.handleShip(purchaseOrder);
     }
-  };
+  }, [purchaseOrder, handlers]);
 
-  const handleDeliver = () => {
+  const handleDeliver = useCallback(() => {
     if (purchaseOrder) {
       handlers.handleDeliver(purchaseOrder);
     }
-  };
+  }, [purchaseOrder, handlers]);
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     if (purchaseOrder) {
       handlers.handleCancel(purchaseOrder);
     }
-  };
+  }, [purchaseOrder, handlers]);
 
-  const handleRefund = () => {
+  const handleRefund = useCallback(() => {
     if (purchaseOrder) {
       handlers.handleRefund(purchaseOrder);
     }
-  };
+  }, [purchaseOrder, handlers]);
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     if (purchaseOrder) {
       handlers.handleDelete(purchaseOrder);
     }
-  };
+  }, [purchaseOrder, handlers]);
 
-  const handleCreateDelivery = () => {
+  const handleCreateDelivery = useCallback(() => {
     if (purchaseOrder) {
       setDeliveryModalOpened(true);
     }
-  };
+  }, [purchaseOrder]);
 
-  const handleTakePhoto = () => {
+  const handleTakePhoto = useCallback(() => {
     if (purchaseOrder) {
       handlers.handleTakePhoto(purchaseOrder);
     }
-  };
+  }, [purchaseOrder, handlers]);
 
   const confirmPOAction = useSWRAction(
     'confirm-po',
@@ -633,7 +635,7 @@ export function PODetailPage() {
           </Tabs>
         </Stack>
         {!modals.uploadPhotosModalOpened && mobileTabValue === 'info' && (
-          <Affix w="100%" position={{ bottom: 0 }} m="0" bg="white">
+          <Affix w="100%" position={{ bottom: 0 }} m="0" bg="white" zIndex={MOBILE_FORM_ACTIONS_Z_INDEX}>
             <Group justify="end" m="sm">
               {canTakePhoto && (
                 <Button
@@ -664,6 +666,7 @@ export function PODetailPage() {
             </Group>
           </Affix>
         )}
+        {modalComponents}
       </AppMobileLayout>
     );
   }

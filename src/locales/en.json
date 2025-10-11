@@ -37,7 +37,6 @@
     "typeMessage": "Type a message..."
   },
   "common": {
-    "noPermission": "You don't have permission to view this page / section",
     "actions": "Actions",
     "activate": "Activate",
     "activated": "{{entity}} Activated",
@@ -136,6 +135,7 @@
     "navigation": "Navigation",
     "next": "Next",
     "noDataFound": "No data found",
+    "noPermission": "You don't have permission to view this page / section",
     "notScheduled": "Not scheduled",
     "notes": "Notes",
     "orClickToSelect": "or click to select",
@@ -312,6 +312,7 @@
     "quickActions": {
       "allDates": "All Dates",
       "customRange": "Custom Range",
+      "nextWeek": "Next Week",
       "thisMonth": "This Month",
       "thisWeek": "This Week",
       "title": "Quick Actions",
@@ -785,12 +786,12 @@
   "pwa": {
     "install": "Install",
     "installDescription": "Install this app on your device for a better experience",
-    "installTitle": "Install CMngt App",
+    "installTitle": "Install Credo App",
     "maybeLater": "Maybe later",
     "safari": {
       "dontShowAgain": "Don't show again",
-      "installDescription": "Add CMngt to your home screen for quick access and offline use",
-      "installTitle": "Install CMngt App",
+      "installDescription": "Add Credo to your home screen for quick access and offline use",
+      "installTitle": "Install Credo App",
       "ios": {
         "step1": "Tap the Share button in Safari toolbar",
         "step2": "Scroll down and tap 'Add to Home Screen'",

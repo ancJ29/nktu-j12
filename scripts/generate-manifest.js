@@ -13,9 +13,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Read environment variables with defaults
-const APP_NAME = process.env.VITE_APP_NAME || 'CMngt';
-const APP_SHORT_NAME = process.env.VITE_APP_SHORT_NAME || 'CMngt';
-const APP_DESCRIPTION = process.env.VITE_APP_DESCRIPTION || 'CMngt Progressive Web Application';
+const APP_NAME = process.env.VITE_APP_NAME || 'Credo';
+const APP_SHORT_NAME = process.env.VITE_APP_SHORT_NAME || 'Credo';
+const APP_DESCRIPTION = process.env.VITE_APP_DESCRIPTION || 'Credo Progressive Web Application';
 
 const manifest = {
   name: `${APP_NAME} App`,
