@@ -265,7 +265,7 @@ export function HomePage() {
                       {t('delivery.noDeliveryRequestsFound')}
                     </Text>
                   ) : (
-                        filteredTodayDeliveries.map((deliveryRequest) => (
+                    filteredTodayDeliveries.map((deliveryRequest) => (
                       <Card
                         key={deliveryRequest.id}
                         padding="sm"
@@ -279,19 +279,30 @@ export function HomePage() {
                           <Stack gap={4}>
                             <Group gap="xs">
                               <Text fw={500}>{deliveryRequest.deliveryRequestNumber}</Text>
-                              {deliveryRequest.isUrgentDelivery && <UrgentBadge size="xs" />}
                             </Group>
-                            <Text size="sm">
-                              {deliveryRequest.deliveryPerson ?? '-'}
-                            </Text>
-                            <Text size="sm" c="dimmed">
-                              {new Date(deliveryRequest.scheduledDate).toLocaleTimeString('en-US', {
-                                hour: '2-digit',
-                                minute: '2-digit',
-                              })}
-                            </Text>
+                            <Group gap="xs">
+                              <Text size="sm" c="dimmed">
+                                {deliveryRequest.customerName ? t('common.customer') : t('common.vendor')}:
+                              </Text>
+                              <Text size="sm">
+                                {deliveryRequest.customerName || deliveryRequest.vendorName || '-'}
+                              </Text>
+                            </Group>
+                            <Group gap="xs">
+                              <Text size="sm" c="dimmed">
+                                {t('delivery.assignedTo')}:
+                              </Text>
+                              <Text size="sm">
+                                {deliveryRequest.deliveryPerson ?? '-'}
+                              </Text>
+                            </Group>
+
                           </Stack>
-                          <DeliveryStatusBadge status={deliveryRequest.status} />
+                          <Group gap="xs">
+                            {deliveryRequest.isUrgentDelivery && <UrgentBadge size="xs" />}
+                            <DeliveryStatusBadge status={deliveryRequest.status} />
+                            <DeliveryTypeBadge type={deliveryRequest.type} size="xs" />
+                          </Group>
                         </Group>
                       </Card>
                     ))
@@ -491,12 +502,12 @@ export function HomePage() {
                   <Table.Tr>
                     <Table.Td colSpan={4}>
                       <Text c="dimmed" ta="center">
-                          {t('delivery.noDeliveryRequestsFound')}
+                        {t('delivery.noDeliveryRequestsFound')}
                       </Text>
                     </Table.Td>
                   </Table.Tr>
                 ) : (
-                      filteredTodayDeliveries.map((deliveryRequest) => (
+                  filteredTodayDeliveries.map((deliveryRequest) => (
                     <Table.Tr
                       key={deliveryRequest.id}
                       style={{ cursor: 'pointer' }}

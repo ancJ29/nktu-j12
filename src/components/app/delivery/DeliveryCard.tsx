@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { useNavigate } from 'react-router';
 
-import { Badge, Box, Card, Group, type MantineStyleProp, Text } from '@mantine/core';
+import { Box, Card, Group, type MantineStyleProp, Text } from '@mantine/core';
 
 import { UrgentBadge } from '@/components/common';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -122,11 +122,6 @@ export function DeliveryCard({ deliveryRequest, style, className }: DeliveryCard
           <Group gap="xs" wrap="wrap" justify="flex-end">
             {deliveryRequest.isUrgentDelivery && <UrgentBadge size="xs" />}
             <DeliveryStatusBadge status={deliveryRequest.status} />
-            {deliveryRequest.deliveryPerson && (
-              <Badge size="sm" variant="light" color="green">
-                {deliveryRequest.deliveryPerson}
-              </Badge>
-            )}
           </Group>
         </div>
       </Group>
