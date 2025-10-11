@@ -786,12 +786,12 @@
   "pwa": {
     "install": "Cài đặt",
     "installDescription": "Cài đặt ứng dụng này trên thiết bị của bạn để có trải nghiệm tốt hơn",
-    "installTitle": "Cài đặt Credo App",
+    "installTitle": "Cài đặt CMngt App",
     "maybeLater": "Để sau",
     "safari": {
       "dontShowAgain": "Không hiện lại",
-      "installDescription": "Thêm Credo vào màn hình chính để truy cập nhanh và sử dụng ngoại tuyến",
-      "installTitle": "Cài đặt Credo App",
+      "installDescription": "Thêm CMngt vào màn hình chính để truy cập nhanh và sử dụng ngoại tuyến",
+      "installTitle": "Cài đặt CMngt App",
       "ios": {
         "step1": "Nhấn nút Chia sẻ trên thanh công cụ Safari",
         "step2": "Cuộn xuống và nhấn 'Thêm vào Màn hình chính'",
