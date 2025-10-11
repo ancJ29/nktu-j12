@@ -17,7 +17,7 @@ import {
 } from '@mantine/core';
 import { IconChevronDown, IconChevronUp } from '@tabler/icons-react';
 
-import { AppDesktopLayout, AppMobileLayout, AppPageTitle, UrgentBadge } from '@/components/common';
+import { AppDesktopLayout, AppMobileLayout, UrgentBadge } from '@/components/common';
 import { DeliveryStatusBadge } from '@/components/app/delivery/DeliveryStatusBadge';
 import { POStatusBadge } from '@/components/app/po/POStatusBadge';
 import { getDeliveryDetailRoute, getPODetailRoute, ROUTERS } from '@/config/routeConfig';
@@ -27,6 +27,7 @@ import type { DeliveryRequest, PurchaseOrder } from '@/services/sales';
 import { homeService } from '@/services/sales';
 import { useMe, usePermissions } from '@/stores/useAppStore';
 import { canViewAllDeliveryRequest, canViewAllPurchaseOrder, canViewDeliveryRequest, canViewPurchaseOrder } from '@/utils/permission.utils';
+import { DeliveryTypeBadge } from '@/components/app/delivery/DeliveryTypeBadge';
 
 export function HomePage() {
   const { isMobile } = useDeviceType();
@@ -115,7 +116,7 @@ export function HomePage() {
       return todayDeliveries;
     }
     if (canViewMyDR && currentUser?.employee?.id) {
-      return todayDeliveries.filter((dr) => dr.assignedTo === currentUser.employee?.id);
+      return todayDeliveries.filter((deliveryRequest) => deliveryRequest.assignedTo === currentUser.employee?.id);
     }
     return [];
   }, [todayDeliveries, canViewAllDR, canViewMyDR, currentUser?.employee?.id]);
@@ -264,33 +265,33 @@ export function HomePage() {
                       {t('delivery.noDeliveryRequestsFound')}
                     </Text>
                   ) : (
-                    filteredTodayDeliveries.map((dr) => (
+                        filteredTodayDeliveries.map((deliveryRequest) => (
                       <Card
-                        key={dr.id}
+                        key={deliveryRequest.id}
                         padding="sm"
                         withBorder
                         style={{ cursor: 'pointer' }}
                         onClick={() => {
-                          handleDRClick(dr.id);
+                          handleDRClick(deliveryRequest.id);
                         }}
                       >
                         <Group justify="space-between">
                           <Stack gap={4}>
                             <Group gap="xs">
-                              <Text fw={500}>{dr.deliveryRequestNumber}</Text>
-                              {dr.isUrgentDelivery && <UrgentBadge size="xs" />}
+                              <Text fw={500}>{deliveryRequest.deliveryRequestNumber}</Text>
+                              {deliveryRequest.isUrgentDelivery && <UrgentBadge size="xs" />}
                             </Group>
                             <Text size="sm">
-                              {dr.deliveryPerson ?? '-'}
+                              {deliveryRequest.deliveryPerson ?? '-'}
                             </Text>
                             <Text size="sm" c="dimmed">
-                              {new Date(dr.scheduledDate).toLocaleTimeString('en-US', {
+                              {new Date(deliveryRequest.scheduledDate).toLocaleTimeString('en-US', {
                                 hour: '2-digit',
                                 minute: '2-digit',
                               })}
                             </Text>
                           </Stack>
-                          <DeliveryStatusBadge status={dr.status} />
+                          <DeliveryStatusBadge status={deliveryRequest.status} />
                         </Group>
                       </Card>
                     ))
@@ -384,8 +385,6 @@ export function HomePage() {
     <AppDesktopLayout isLoading={isLoading} error={error} clearError={clearError}>
       <Container fluid px="xl">
         <Stack gap="xl">
-          <AppPageTitle title={t('home.title')} />
-
           {/* Sales Section */}
           <Card shadow="sm" padding="lg">
             <Group justify="space-between" mb="md">
@@ -477,7 +476,6 @@ export function HomePage() {
                   <Table.Th>{t('home.delivery.columns.customer')}</Table.Th>
                   <Table.Th>{t('delivery.assignedTo')}</Table.Th>
                   <Table.Th>{t('home.delivery.columns.status')}</Table.Th>
-                  <Table.Th>{t('home.delivery.columns.scheduled')}</Table.Th>
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>
@@ -493,35 +491,32 @@ export function HomePage() {
                   <Table.Tr>
                     <Table.Td colSpan={4}>
                       <Text c="dimmed" ta="center">
-                        {t('delivery.noDeliveryRequestsFound')}
+                          {t('delivery.noDeliveryRequestsFound')}
                       </Text>
                     </Table.Td>
                   </Table.Tr>
                 ) : (
-                  filteredTodayDeliveries.map((dr) => (
+                      filteredTodayDeliveries.map((deliveryRequest) => (
                     <Table.Tr
-                      key={dr.id}
+                      key={deliveryRequest.id}
                       style={{ cursor: 'pointer' }}
                       onClick={() => {
-                        handleDRClick(dr.id);
+                        handleDRClick(deliveryRequest.id);
                       }}
                     >
                       <Table.Td>
                         <Group gap="xs">
-                          <Text fw={500}>{dr.deliveryRequestNumber}</Text>
-                          {dr.isUrgentDelivery && <UrgentBadge size="xs" />}
+                          <Text fw={500}>{deliveryRequest.deliveryRequestNumber}</Text>
                         </Group>
                       </Table.Td>
-                      <Table.Td>{dr.customerName ?? '-'}</Table.Td>
-                      <Table.Td>{dr.deliveryPerson ?? '-'}</Table.Td>
+                      <Table.Td><Text fw={400}>{deliveryRequest.customerName || deliveryRequest.vendorName}</Text></Table.Td>
+                      <Table.Td>{deliveryRequest.deliveryPerson ?? '-'}</Table.Td>
                       <Table.Td>
-                        <DeliveryStatusBadge status={dr.status} />
-                      </Table.Td>
-                      <Table.Td>
-                        {new Date(dr.scheduledDate).toLocaleTimeString('en-US', {
-                          hour: '2-digit',
-                          minute: '2-digit',
-                        })}
+                        <Group gap="xs">
+                          {deliveryRequest.isUrgentDelivery && <UrgentBadge size="xs" />}
+                          <DeliveryTypeBadge type={deliveryRequest.type} size="xs" />
+                          <DeliveryStatusBadge status={deliveryRequest.status} />
+                        </Group>
                       </Table.Td>
                     </Table.Tr>
                   ))
