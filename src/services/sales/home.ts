@@ -93,7 +93,7 @@ export const homeService = {
     const employeeMapByEmployeeId = await overviewService.getEmployeeOverview();
 
     return purchaseOrders
-      .filter((po) => po.status === 'NEW' || po.status === 'CONFIRMED')
+      .filter((po) => po.status !== 'READY_FOR_PICKUP')
       .map((po) => {
         const transformed = transformPOApiToFrontend(po, employeeMapByEmployeeId);
         // Add customer name from overview
@@ -147,7 +147,7 @@ export const homeService = {
     const employeeMapByEmployeeId = await overviewService.getEmployeeOverview();
 
     return purchaseOrders
-      .filter((po) => ['CONFIRMED', 'PROCESSING', 'READY_FOR_PICKUP'].includes(po.status))
+      .filter((po) => ['READY_FOR_PICKUP'].includes(po.status))
       .map((po) => {
         const transformed = transformPOApiToFrontend(po, employeeMapByEmployeeId);
         // Add customer name from overview

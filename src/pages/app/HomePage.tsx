@@ -173,7 +173,7 @@ export function HomePage() {
               >
                 <Group gap="xs">
                   <Title
-                    order={3}
+                    order={5}
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate(ROUTERS.PO_MANAGEMENT);
@@ -249,7 +249,7 @@ export function HomePage() {
               >
                 <Group gap="xs">
                   <Title
-                    order={3}
+                    order={5}
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate(ROUTERS.DELIVERY_MANAGEMENT);
@@ -335,7 +335,7 @@ export function HomePage() {
               >
                 <Group gap="xs">
                   <Title
-                    order={3}
+                    order={5}
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate(ROUTERS.PO_MANAGEMENT);
