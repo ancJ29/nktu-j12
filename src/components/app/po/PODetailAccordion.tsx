@@ -34,6 +34,8 @@ type PODetailAccordionProps = {
   readonly onRefund: () => void;
   readonly onDelete?: () => void;
   readonly onCreateDelivery: () => void;
+  readonly onDeleteAttachment?: (attachmentKey: string) => void;
+  readonly isDeleting?: boolean;
 };
 
 export function PODetailAccordion({
@@ -49,6 +51,8 @@ export function PODetailAccordion({
   onRefund,
   onDelete,
   onCreateDelivery,
+  onDeleteAttachment,
+  isDeleting,
 }: PODetailAccordionProps) {
   const { t } = useTranslation();
   const permissions = usePermissions();
@@ -83,6 +87,8 @@ export function PODetailAccordion({
               purchaseOrder={purchaseOrder}
               isLoading={isLoading}
               onEdit={onEdit}
+              onDeleteAttachment={onDeleteAttachment}
+              isDeleting={isDeleting}
             />
           </Accordion.Panel>
         </Accordion.Item>

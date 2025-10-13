@@ -34,12 +34,16 @@ type POAccordionInfoPanelProps = {
   readonly purchaseOrder: PurchaseOrder;
   readonly isLoading: boolean;
   readonly onEdit: () => void;
+  readonly onDeleteAttachment?: (attachmentKey: string) => void;
+  readonly isDeleting?: boolean;
 };
 
 export function POAccordionInfoPanel({
   purchaseOrder,
   isLoading,
   onEdit,
+  onDeleteAttachment,
+  isDeleting,
 }: POAccordionInfoPanelProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -147,7 +151,7 @@ export function POAccordionInfoPanel({
         value={purchaseOrder.notes ?? ''}
       />
 
-      <POAttachmentsSection attachments={purchaseOrder.attachments} />
+      <POAttachmentsSection attachments={purchaseOrder.attachments} onDeleteAttachment={onDeleteAttachment} isDeleting={isDeleting} />
 
       {notes.deliveryNotes && (
         <div>

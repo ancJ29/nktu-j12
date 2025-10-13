@@ -63,6 +63,7 @@ export function PODetailPage() {
     cancelPurchaseOrder,
     refundPurchaseOrder,
     deletePurchaseOrder,
+    updatePurchaseOrder,
     clearError,
   } = usePOActions();
 
@@ -417,6 +418,59 @@ export function PODetailPage() {
     },
   );
 
+  const deleteAttachmentAction = useSWRAction(
+    'delete-attachment',
+    async (data?: { attachmentKey: string }) => {
+      if (!canEdit) {
+        throw new Error(t('common.doNotHavePermissionForAction'));
+      }
+      if (!purchaseOrder || !data?.attachmentKey) {
+        throw new Error(t('common.invalidFormData'));
+      }
+      const filteredAttachments = (purchaseOrder.attachments || []).filter(
+        (att) => att.key !== data.attachmentKey,
+      );
+      await updatePurchaseOrder(purchaseOrder.id, {
+        customerId: purchaseOrder.customerId,
+        customerName: purchaseOrder.customerName,
+        salesId: purchaseOrder.salesId,
+        items: purchaseOrder.items,
+        orderDate: purchaseOrder.orderDate,
+        deliveryDate: purchaseOrder.deliveryDate,
+        address: purchaseOrder.address,
+        googleMapsUrl: purchaseOrder.googleMapsUrl,
+        notes: purchaseOrder.notes,
+        isInternalDelivery: purchaseOrder.isInternalDelivery,
+        isPersonalCustomer: purchaseOrder.isPersonalCustomer,
+        personalCustomerName: purchaseOrder.personalCustomerName,
+        isUrgentPO: purchaseOrder.isUrgentPO,
+        customerPONumber: purchaseOrder.customerPONumber,
+        poTags: purchaseOrder.poTags,
+        attachments: filteredAttachments,
+      });
+    },
+    {
+      notifications: {
+        successTitle: t('common.success'),
+        successMessage: t('po.attachmentDeleted'),
+        errorTitle: t('common.errors.notificationTitle'),
+        errorMessage: t('po.attachmentDeleteFailed'),
+      },
+      onSuccess: async () => {
+        if (poId) {
+          await loadPO(poId);
+        }
+      },
+    },
+  );
+
+  const handleDeleteAttachment = useCallback(
+    (attachmentKey: string) => {
+      void deleteAttachmentAction.trigger({ attachmentKey });
+    },
+    [deleteAttachmentAction],
+  );
+
   const createDeliveryAction = useSWRAction<
     | { assignedTo: string; scheduledDate: string; notes?: string; isUrgentDelivery?: boolean }
     | undefined
@@ -626,6 +680,8 @@ export function PODetailPage() {
                 onRefund={handleRefund}
                 onDelete={handleDelete}
                 onCreateDelivery={handleCreateDelivery}
+                onDeleteAttachment={handleDeleteAttachment}
+                isDeleting={deleteAttachmentAction.isMutating}
               />
             </Tabs.Panel>
 
@@ -723,6 +779,8 @@ export function PODetailPage() {
             onRefund={handleRefund}
             onDelete={handleDelete}
             onCreateDelivery={handleCreateDelivery}
+            onDeleteAttachment={handleDeleteAttachment}
+            isDeleting={deleteAttachmentAction.isMutating}
           />
         </POErrorBoundary>
       ) : (

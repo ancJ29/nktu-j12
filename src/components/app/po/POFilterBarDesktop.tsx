@@ -129,7 +129,7 @@ export function POFilterBarDesktop({
         searchable
         placeholder={t('po.selectCustomer')}
         data={customerOptions}
-        value={customerId || ''}
+        value={customerId ?? null}
         style={{ flex: 1, minWidth: 150, borderRadius: '5px' }}
         onChange={(value) => onCustomerChange(value || undefined)}
         label={t('common.customer')}

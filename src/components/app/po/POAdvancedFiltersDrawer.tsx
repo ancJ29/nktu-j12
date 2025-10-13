@@ -109,7 +109,7 @@ export function POAdvancedFiltersDrawer({
           label={t('common.customer')}
           placeholder={t('po.selectCustomer')}
           data={customerOptions}
-          value={pendingCustomerId || ''}
+          value={pendingCustomerId ?? null}
           onChange={(value) => setPendingCustomerId(value || undefined)}
         />
 
@@ -121,7 +121,7 @@ export function POAdvancedFiltersDrawer({
             label={t('po.salesPerson')}
             placeholder={t('po.selectSalesPerson')}
             data={employeeOptions}
-            value={pendingSalesId || ''}
+            value={pendingSalesId ?? null}
             onChange={(value) => setPendingSalesId(value || undefined)}
           />
         )}

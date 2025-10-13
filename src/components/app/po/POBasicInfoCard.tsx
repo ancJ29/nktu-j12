@@ -21,9 +21,11 @@ import { POStatusHistorySection } from './POStatusHistorySection';
 type POBasicInfoCardProps = {
   readonly purchaseOrder: PurchaseOrder;
   readonly onNavigateToItemsList?: () => void;
+  readonly onDeleteAttachment?: (attachmentKey: string) => void;
+  readonly isDeleting?: boolean;
 };
 
-export function POBasicInfoCard({ purchaseOrder, onNavigateToItemsList }: POBasicInfoCardProps) {
+export function POBasicInfoCard({ purchaseOrder, onNavigateToItemsList, onDeleteAttachment, isDeleting }: POBasicInfoCardProps) {
   const { t } = useTranslation();
   const notes = useMemo(() => {
     return {
@@ -44,7 +46,7 @@ export function POBasicInfoCard({ purchaseOrder, onNavigateToItemsList }: POBasi
         <Divider />
         <PODatesSection purchaseOrder={purchaseOrder} />
         <Divider />
-        <POAttachmentsSection attachments={purchaseOrder.attachments} />
+        <POAttachmentsSection attachments={purchaseOrder.attachments} onDeleteAttachment={onDeleteAttachment} isDeleting={isDeleting} />
         {purchaseOrder.attachments && purchaseOrder.attachments.length > 0 && <Divider />}
         <Grid>
           <Grid.Col span={{ base: 12, md: 6 }}>

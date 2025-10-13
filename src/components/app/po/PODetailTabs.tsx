@@ -40,6 +40,8 @@ type PODetailTabsProps = {
   readonly onRefund: () => void;
   readonly onDelete?: () => void;
   readonly onCreateDelivery?: () => void;
+  readonly onDeleteAttachment?: (attachmentKey: string) => void;
+  readonly isDeleting?: boolean;
 };
 
 export function PODetailTabs({
@@ -54,6 +56,8 @@ export function PODetailTabs({
   onRefund,
   onDelete,
   onCreateDelivery,
+  onDeleteAttachment,
+  isDeleting,
 }: PODetailTabsProps) {
   const { t } = useTranslation();
   const permissions = usePermissions();
@@ -154,6 +158,8 @@ export function PODetailTabs({
               onNavigateToItemsList={() => {
                 setValue('items');
               }}
+              onDeleteAttachment={onDeleteAttachment}
+              isDeleting={isDeleting}
             />
           </POErrorBoundary>
         </Stack>

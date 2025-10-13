@@ -85,14 +85,11 @@ export function DeliveryFilterBarDesktop({
         ? employees.filter((employee) => assigneeIds.includes(employee.id))
         : employees;
 
-    return [
-      { value: '', label: t('delivery.filters.selectAssignee') },
-      ...filteredEmployees.map((employee) => ({
-        value: employee.id,
-        label: employee.fullName,
-      })),
-    ];
-  }, [employees, clientConfig.features?.deliveryRequest, t]);
+    return filteredEmployees.map((employee) => ({
+      value: employee.id,
+      label: employee.fullName,
+    }));
+  }, [employees, clientConfig.features?.deliveryRequest]);
 
   // Status options for MultiSelect
   const statusOptions = useMemo(
@@ -146,7 +143,7 @@ export function DeliveryFilterBarDesktop({
         searchable
         placeholder={t('common.filters.selectCustomer')}
         data={customerOptions}
-        value={customerId || ''}
+        value={customerId ?? null}
         style={{ flex: 1, minWidth: 150 }}
         onChange={(value) => onCustomerChange(value || undefined)}
         label={t('common.customer') as string}
@@ -158,7 +155,7 @@ export function DeliveryFilterBarDesktop({
         searchable
         placeholder={t('delivery.filters.selectAssignee')}
         data={employeeOptions}
-        value={assignedTo || ''}
+        value={assignedTo ?? null}
         style={{ flex: 1, minWidth: 150 }}
         onChange={(value) => onAssignedToChange(value || undefined)}
         label={t('delivery.assignedTo') as string}

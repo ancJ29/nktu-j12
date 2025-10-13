@@ -66,7 +66,7 @@ export function POAdvancedFiltersPopover({
               label={t('po.salesPerson')}
               placeholder={t('po.selectSalesPerson')}
               data={employeeOptions}
-              value={salesId || ''}
+              value={salesId ?? null}
               onChange={(value) => onSalesIdChange(value || undefined)}
             />
           )}

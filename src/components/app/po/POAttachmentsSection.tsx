@@ -1,9 +1,10 @@
 import { useState } from 'react';
 
 import { ActionIcon, Box, Card, Group, Image, Modal, SimpleGrid, Stack, Text } from '@mantine/core';
-import { IconDownload, IconFile, IconPaperclip } from '@tabler/icons-react';
+import { IconDownload, IconFile, IconPaperclip, IconTrash } from '@tabler/icons-react';
 
 import { useTranslation } from '@/hooks/useTranslation';
+import { confirmAction } from '@/utils/modals';
 
 type AttachmentData = {
   readonly publicUrl: string;
@@ -13,9 +14,11 @@ type AttachmentData = {
 
 type POAttachmentsSectionProps = {
   readonly attachments?: AttachmentData[];
+  readonly onDeleteAttachment?: (attachmentKey: string) => void;
+  readonly isDeleting?: boolean;
 };
 
-export function POAttachmentsSection({ attachments = [] }: POAttachmentsSectionProps) {
+export function POAttachmentsSection({ attachments = [], onDeleteAttachment, isDeleting }: POAttachmentsSectionProps) {
   const { t } = useTranslation();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
@@ -44,6 +47,21 @@ export function POAttachmentsSection({ attachments = [] }: POAttachmentsSectionP
     return imageExtensions.some((ext) => lowerUrl.includes(ext));
   };
 
+  const handleDelete = (attachmentKey: string, fileName: string) => {
+    if (!onDeleteAttachment) return;
+
+    confirmAction({
+      title: t('po.deleteAttachment'),
+      message: t('po.deleteAttachmentConfirm', { fileName }),
+      confirmLabel: t('common.delete'),
+      cancelLabel: t('common.cancel'),
+      confirmColor: 'red',
+      onConfirm: () => {
+        onDeleteAttachment(attachmentKey);
+      },
+    });
+  };
+
   return (
     <>
       <Stack gap="xs">
@@ -66,14 +84,27 @@ export function POAttachmentsSection({ attachments = [] }: POAttachmentsSectionP
                       <Text size="sm" truncate title={fileName} style={{ flex: 1 }}>
                         {fileName}
                       </Text>
-                      <ActionIcon
-                        variant="subtle"
-                        color="blue"
-                        onClick={() => handleDownload(attachment.publicUrl, fileName)}
-                        aria-label={t('common.download')}
-                      >
-                        <IconDownload size={16} />
-                      </ActionIcon>
+                      <Group gap="xs">
+                        <ActionIcon
+                          variant="subtle"
+                          color="blue"
+                          onClick={() => handleDownload(attachment.publicUrl, fileName)}
+                          aria-label={t('common.download')}
+                        >
+                          <IconDownload size={16} />
+                        </ActionIcon>
+                        {onDeleteAttachment && (
+                          <ActionIcon
+                            variant="subtle"
+                            color="red"
+                            onClick={() => handleDelete(attachment.key, fileName)}
+                            aria-label={t('common.delete')}
+                            disabled={isDeleting}
+                          >
+                            <IconTrash size={16} />
+                          </ActionIcon>
+                        )}
+                      </Group>
                     </Group>
                     <Image
                       src={attachment.publicUrl}
@@ -111,14 +142,27 @@ export function POAttachmentsSection({ attachments = [] }: POAttachmentsSectionP
                       )}
                     </Box>
                   </Group>
-                  <ActionIcon
-                    variant="subtle"
-                    color="blue"
-                    onClick={() => handleDownload(attachment.publicUrl, fileName)}
-                    aria-label={t('common.download')}
-                  >
-                    <IconDownload size={16} />
-                  </ActionIcon>
+                  <Group gap="xs">
+                    <ActionIcon
+                      variant="subtle"
+                      color="blue"
+                      onClick={() => handleDownload(attachment.publicUrl, fileName)}
+                      aria-label={t('common.download')}
+                    >
+                      <IconDownload size={16} />
+                    </ActionIcon>
+                    {onDeleteAttachment && (
+                      <ActionIcon
+                        variant="subtle"
+                        color="red"
+                        onClick={() => handleDelete(attachment.key, fileName)}
+                        aria-label={t('common.delete')}
+                        disabled={isDeleting}
+                      >
+                        <IconTrash size={16} />
+                      </ActionIcon>
+                    )}
+                  </Group>
                 </Group>
               </Card>
             );
