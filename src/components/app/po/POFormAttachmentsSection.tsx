@@ -1,10 +1,13 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { ActionIcon, Box, Button, Card, Group, Stack, Text } from '@mantine/core';
-import { IconFile, IconPaperclip, IconTrash, IconUpload } from '@tabler/icons-react';
+import { IconCamera, IconFile, IconPaperclip, IconTrash, IconUpload } from '@tabler/icons-react';
 
 import type { POFormValues } from '@/hooks/usePOForm';
+import { useDeviceType } from '@/hooks/useDeviceType';
 import { useTranslation } from '@/hooks/useTranslation';
+
+import { ScreenshotCropModal } from './ScreenshotCropModal';
 
 import type { UseFormReturnType } from '@mantine/form';
 
@@ -28,7 +31,12 @@ export function POFormAttachmentsSection({
   isLoading = false,
 }: POFormAttachmentsSectionProps) {
   const { t } = useTranslation();
+  const { isDesktop } = useDeviceType();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Screenshot modal state
+  const [modalOpened, setModalOpened] = useState(false);
+  const [screenshotSrc, setScreenshotSrc] = useState<string | null>(null);
 
   const handleFileInputClick = () => {
     fileInputRef.current?.click();
@@ -81,6 +89,26 @@ export function POFormAttachmentsSection({
     );
   };
 
+  const handleOpenModal = () => {
+    setModalOpened(true);
+  };
+
+  const handleApplyCrop = (croppedFile: File) => {
+    const currentFiles = form.values.attachments ?? [];
+    form.setFieldValue('attachments', [...currentFiles, croppedFile]);
+    setModalOpened(false);
+    setScreenshotSrc(null);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpened(false);
+    setScreenshotSrc(null);
+  };
+
+  const handleImagePaste = (dataUrl: string) => {
+    setScreenshotSrc(dataUrl);
+  };
+
   const formatFileSize = (bytes: number): string => {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -116,15 +144,28 @@ export function POFormAttachmentsSection({
           style={{ display: 'none' }}
         />
 
-        {/* Upload Button */}
-        <Button
-          variant="light"
-          leftSection={<IconUpload size={16} />}
-          onClick={handleFileInputClick}
-          disabled={isLoading}
-        >
-          {t('po.selectFiles')}
-        </Button>
+        {/* Upload Buttons */}
+        <Group gap="sm">
+          <Button
+            variant="light"
+            leftSection={<IconUpload size={16} />}
+            onClick={handleFileInputClick}
+            disabled={isLoading}
+          >
+            {t('po.selectFiles')}
+          </Button>
+
+          {isDesktop && (
+            <Button
+              variant="light"
+              leftSection={<IconCamera size={16} />}
+              onClick={handleOpenModal}
+              disabled={isLoading}
+            >
+              {t('po.captureScreenshot')}
+            </Button>
+          )}
+        </Group>
 
         {/* Selected Files List */}
         {attachments.length > 0 && (
@@ -161,6 +202,15 @@ export function POFormAttachmentsSection({
           </Stack>
         )}
       </Stack>
+
+      {/* Screenshot Crop Modal */}
+      <ScreenshotCropModal
+        opened={modalOpened}
+        imageSrc={screenshotSrc}
+        onClose={handleCloseModal}
+        onApply={handleApplyCrop}
+        onImagePaste={handleImagePaste}
+      />
     </Card>
   );
 }
