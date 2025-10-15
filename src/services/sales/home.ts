@@ -118,15 +118,7 @@ export const homeService = {
     const customerMapByCustomerId = await overviewService.getCustomerOverview();
     const employeeMapByEmployeeId = await overviewService.getEmployeeOverview();
 
-    return deliveryRequests
-      .filter((dr) => {
-        const scheduledDate = new Date(dr.scheduledDate);
-        scheduledDate.setHours(0, 0, 0, 0);
-        const isToday = scheduledDate.getTime() === today.getTime();
-        const isPendingOrTransit = dr.status === 'PENDING' || dr.status === 'IN_TRANSIT';
-        return isToday && isPendingOrTransit;
-      })
-      .map((dr) => {
+    return deliveryRequests.map((dr) => {
         const transformed = transformDRApiToFrontend(dr, employeeMapByEmployeeId);
         // Add customer name from overview
         const customerId = dr.purchaseOrder?.customerId;

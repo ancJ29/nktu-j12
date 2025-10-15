@@ -94,11 +94,9 @@ export function HomePage() {
       try {
         setIsLoading(true);
         setError(undefined);
-        const [activePOsData, todayDeliveriesData, processingQueueData] = await Promise.all([
-          homeService.getActivePurchaseOrders(),
-          homeService.getTodayDeliveryRequests(),
-          homeService.getProcessingQueue(),
-        ]);
+        const activePOsData = await homeService.getActivePurchaseOrders();
+        const todayDeliveriesData = await homeService.getTodayDeliveryRequests();
+        const processingQueueData = await homeService.getProcessingQueue();
         setActivePOs(activePOsData);
         setTodayDeliveries(todayDeliveriesData);
         setProcessingQueue(processingQueueData);
