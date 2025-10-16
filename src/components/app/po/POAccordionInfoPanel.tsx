@@ -151,7 +151,11 @@ export function POAccordionInfoPanel({
         value={purchaseOrder.notes ?? ''}
       />
 
-      <POAttachmentsSection attachments={purchaseOrder.attachments} onDeleteAttachment={onDeleteAttachment} isDeleting={isDeleting} />
+      <POAttachmentsSection
+        attachments={purchaseOrder.attachments}
+        onDeleteAttachment={onDeleteAttachment}
+        isDeleting={isDeleting}
+      />
 
       {notes.deliveryNotes && (
         <div>

@@ -119,14 +119,14 @@ export const homeService = {
     const employeeMapByEmployeeId = await overviewService.getEmployeeOverview();
 
     return deliveryRequests.map((dr) => {
-        const transformed = transformDRApiToFrontend(dr, employeeMapByEmployeeId);
-        // Add customer name from overview
-        const customerId = dr.purchaseOrder?.customerId;
-        if (customerId) {
-          transformed.customerName = customerMapByCustomerId.get(customerId)?.name ?? '';
-        }
-        return transformed;
-      });
+      const transformed = transformDRApiToFrontend(dr, employeeMapByEmployeeId);
+      // Add customer name from overview
+      const customerId = dr.purchaseOrder?.customerId;
+      if (customerId) {
+        transformed.customerName = customerMapByCustomerId.get(customerId)?.name ?? '';
+      }
+      return transformed;
+    });
   },
 
   /**

@@ -419,104 +419,104 @@ export function DeliveryListPage() {
       <DeliveryErrorBoundary componentName="DeliveryListPage">
         <Container fluid px="xl">
           <Group justify="space-between" mb="lg">
-          <AppPageTitle title={t('delivery.title')} />
-          <Group gap="sm">
-            <Button
-              leftSection={<IconSortAscending size={16} />}
-              variant="light"
-              onClick={() => navigate(ROUTERS.DELIVERY_UPDATE_ORDER)}
-              disabled={!canUpdateOrderInDay}
-            >
-              {t('delivery.actions.arrangeDeliveryOrder')}
-            </Button>
-            <Button
-              leftSection={<IconPackage size={16} />}
-              onClick={() => setCreateModalOpened(true)}
-              disabled={!canCreate}
-            >
-              {t('delivery.createReceiveRequest')}
-            </Button>
-            <SwitchView viewMode={viewMode} setViewMode={setViewMode} />
-          </Group>
-        </Group>
-
-        {/* Desktop Filter Controls */}
-        <DeliveryFilterBarDesktop
-          searchQuery={filters.searchQuery}
-          customerId={filters.customerId}
-          assignedTo={canViewAll ? filters.assignedTo : currentEmployeeId}
-          selectedStatuses={filters.statuses}
-          scheduledDateStart={filters.scheduledDateRange.start}
-          scheduledDateEnd={filters.scheduledDateRange.end}
-          hasActiveFilters={hasActiveFilters}
-          onSearchChange={filterHandlers.setSearchQuery}
-          onCustomerChange={filterHandlers.setCustomerId}
-          onAssignedToChange={(assignedTo) => {
-            filterHandlers.setAssignedTo(canViewAll ? assignedTo : currentEmployeeId);
-          }}
-          onStatusesChange={filterHandlers.setStatuses}
-          onScheduledDateChange={filterHandlers.setScheduledDateRange}
-          onClearFilters={filterHandlers.resetFilters}
-        />
-
-        {/* Content Area */}
-        <BlankState
-          {...blankStateProps}
-          // Note: Delivery requests are created from PO pages, not directly
-        />
-
-        {/* Data Display */}
-        {(deliveryRequests.length > 0 || isLoading || isFilterLoading) && (
-          <>
-            {(isLoading || isFilterLoading) && deliveryRequests.length === 0 ? (
-              <DeliveryListSkeleton viewMode={viewMode} count={10} />
-            ) : isTableView ? (
-              <DeliveryDataTable
-                deliveryRequests={deliveryRequests}
-                isLoading={isLoading || isFilterLoading}
-              />
-            ) : (
-              <SimpleGrid
-                cols={{ base: 1, md: 2, lg: 3 }}
-                spacing="lg"
-                style={{ opacity: isFilterLoading ? 0.5 : 1 }}
+            <AppPageTitle title={t('delivery.title')} />
+            <Group gap="sm">
+              <Button
+                leftSection={<IconSortAscending size={16} />}
+                variant="light"
+                onClick={() => navigate(ROUTERS.DELIVERY_UPDATE_ORDER)}
+                disabled={!canUpdateOrderInDay}
               >
-                {deliveryRequests.map((dr) => (
-                  <DeliveryGridCard key={dr.id} deliveryRequest={dr} />
-                ))}
-              </SimpleGrid>
-            )}
+                {t('delivery.actions.arrangeDeliveryOrder')}
+              </Button>
+              <Button
+                leftSection={<IconPackage size={16} />}
+                onClick={() => setCreateModalOpened(true)}
+                disabled={!canCreate}
+              >
+                {t('delivery.createReceiveRequest')}
+              </Button>
+              <SwitchView viewMode={viewMode} setViewMode={setViewMode} />
+            </Group>
+          </Group>
 
-            {/* Loading more indicator */}
-            {isLoadingMore && (
-              <Center py="md">
-                <Loader size="sm" />
-                <Text ml="xs" size="sm" c="dimmed">
-                  {t('common.loadingMore')}
-                </Text>
-              </Center>
-            )}
+          {/* Desktop Filter Controls */}
+          <DeliveryFilterBarDesktop
+            searchQuery={filters.searchQuery}
+            customerId={filters.customerId}
+            assignedTo={canViewAll ? filters.assignedTo : currentEmployeeId}
+            selectedStatuses={filters.statuses}
+            scheduledDateStart={filters.scheduledDateRange.start}
+            scheduledDateEnd={filters.scheduledDateRange.end}
+            hasActiveFilters={hasActiveFilters}
+            onSearchChange={filterHandlers.setSearchQuery}
+            onCustomerChange={filterHandlers.setCustomerId}
+            onAssignedToChange={(assignedTo) => {
+              filterHandlers.setAssignedTo(canViewAll ? assignedTo : currentEmployeeId);
+            }}
+            onStatusesChange={filterHandlers.setStatuses}
+            onScheduledDateChange={filterHandlers.setScheduledDateRange}
+            onClearFilters={filterHandlers.resetFilters}
+          />
 
-            {/* End of list message */}
-            {!hasMoreDeliveryRequests && deliveryRequests.length > 0 && (
-              <Center py="md">
-                <Text size="sm" c="dimmed">
-                  {t('delivery.noMoreDeliveryRequests')}
-                </Text>
-              </Center>
-            )}
-          </>
-        )}
+          {/* Content Area */}
+          <BlankState
+            {...blankStateProps}
+            // Note: Delivery requests are created from PO pages, not directly
+          />
 
-        {/* Note: Desktop now uses inline controls in DeliveryFilterBarDesktop, no drawers needed */}
+          {/* Data Display */}
+          {(deliveryRequests.length > 0 || isLoading || isFilterLoading) && (
+            <>
+              {(isLoading || isFilterLoading) && deliveryRequests.length === 0 ? (
+                <DeliveryListSkeleton viewMode={viewMode} count={10} />
+              ) : isTableView ? (
+                <DeliveryDataTable
+                  deliveryRequests={deliveryRequests}
+                  isLoading={isLoading || isFilterLoading}
+                />
+              ) : (
+                <SimpleGrid
+                  cols={{ base: 1, md: 2, lg: 3 }}
+                  spacing="lg"
+                  style={{ opacity: isFilterLoading ? 0.5 : 1 }}
+                >
+                  {deliveryRequests.map((dr) => (
+                    <DeliveryGridCard key={dr.id} deliveryRequest={dr} />
+                  ))}
+                </SimpleGrid>
+              )}
 
-        {/* Create Receive Request Modal */}
-        <DeliveryCreateModal
-          opened={createModalOpened}
-          onClose={() => setCreateModalOpened(false)}
-          onConfirm={createReceiveRequestAction.trigger}
-          isLoading={createReceiveRequestAction.isMutating}
-        />
+              {/* Loading more indicator */}
+              {isLoadingMore && (
+                <Center py="md">
+                  <Loader size="sm" />
+                  <Text ml="xs" size="sm" c="dimmed">
+                    {t('common.loadingMore')}
+                  </Text>
+                </Center>
+              )}
+
+              {/* End of list message */}
+              {!hasMoreDeliveryRequests && deliveryRequests.length > 0 && (
+                <Center py="md">
+                  <Text size="sm" c="dimmed">
+                    {t('delivery.noMoreDeliveryRequests')}
+                  </Text>
+                </Center>
+              )}
+            </>
+          )}
+
+          {/* Note: Desktop now uses inline controls in DeliveryFilterBarDesktop, no drawers needed */}
+
+          {/* Create Receive Request Modal */}
+          <DeliveryCreateModal
+            opened={createModalOpened}
+            onClose={() => setCreateModalOpened(false)}
+            onConfirm={createReceiveRequestAction.trigger}
+            isLoading={createReceiveRequestAction.isMutating}
+          />
         </Container>
       </DeliveryErrorBoundary>
     </AppDesktopLayout>

@@ -18,7 +18,11 @@ type POAttachmentsSectionProps = {
   readonly isDeleting?: boolean;
 };
 
-export function POAttachmentsSection({ attachments = [], onDeleteAttachment, isDeleting }: POAttachmentsSectionProps) {
+export function POAttachmentsSection({
+  attachments = [],
+  onDeleteAttachment,
+  isDeleting,
+}: POAttachmentsSectionProps) {
   const { t } = useTranslation();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 

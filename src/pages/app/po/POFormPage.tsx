@@ -213,10 +213,7 @@ export function POFormPage({ mode }: POFormPageProps) {
       if (isEditMode && id) {
         await updatePurchaseOrder(id, {
           ...poData,
-          attachments: [
-            ...(poData.attachments ?? []),
-            ...(currentPO?.attachments ?? []),
-          ],
+          attachments: [...(poData.attachments ?? []), ...(currentPO?.attachments ?? [])],
         });
       } else {
         const newPO = {

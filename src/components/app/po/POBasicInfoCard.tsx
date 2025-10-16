@@ -25,7 +25,12 @@ type POBasicInfoCardProps = {
   readonly isDeleting?: boolean;
 };
 
-export function POBasicInfoCard({ purchaseOrder, onNavigateToItemsList, onDeleteAttachment, isDeleting }: POBasicInfoCardProps) {
+export function POBasicInfoCard({
+  purchaseOrder,
+  onNavigateToItemsList,
+  onDeleteAttachment,
+  isDeleting,
+}: POBasicInfoCardProps) {
   const { t } = useTranslation();
   const notes = useMemo(() => {
     return {
@@ -46,7 +51,11 @@ export function POBasicInfoCard({ purchaseOrder, onNavigateToItemsList, onDelete
         <Divider />
         <PODatesSection purchaseOrder={purchaseOrder} />
         <Divider />
-        <POAttachmentsSection attachments={purchaseOrder.attachments} onDeleteAttachment={onDeleteAttachment} isDeleting={isDeleting} />
+        <POAttachmentsSection
+          attachments={purchaseOrder.attachments}
+          onDeleteAttachment={onDeleteAttachment}
+          isDeleting={isDeleting}
+        />
         {purchaseOrder.attachments && purchaseOrder.attachments.length > 0 && <Divider />}
         <Grid>
           <Grid.Col span={{ base: 12, md: 6 }}>

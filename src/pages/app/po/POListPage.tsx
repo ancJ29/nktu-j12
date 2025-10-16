@@ -414,147 +414,147 @@ export function POListPage() {
       <POErrorBoundary componentName="POListPage">
         <Container fluid px="xl">
           <Group justify="space-between" mb="lg">
-          <AppPageTitle title={t('po.title')} />
-          <Group gap="sm">
-            <SwitchView viewMode={viewMode} setViewMode={setViewMode} />
-            {isTableView && !selectionMode && (
+            <AppPageTitle title={t('po.title')} />
+            <Group gap="sm">
+              <SwitchView viewMode={viewMode} setViewMode={setViewMode} />
+              {isTableView && !selectionMode && (
+                <Button
+                  variant="light"
+                  leftSection={<IconTruck size={16} />}
+                  onClick={() => setSelectionMode(true)}
+                  disabled={!canCreate}
+                >
+                  {t('po.createBulkDelivery')}
+                </Button>
+              )}
+              {isTableView && selectionMode && (
+                <Button
+                  leftSection={<IconTruck size={16} />}
+                  onClick={openDeliveryModal}
+                  disabled={selectedPOIds.length === 0}
+                >
+                  {t('po.createDeliveryRequests', { count: selectedPOIds.length })}
+                </Button>
+              )}
               <Button
-                variant="light"
-                leftSection={<IconTruck size={16} />}
-                onClick={() => setSelectionMode(true)}
+                leftSection={<IconPlus size={16} />}
+                onClick={handleNavigateToAdd}
                 disabled={!canCreate}
               >
-                {t('po.createBulkDelivery')}
+                {t('po.addPO')}
               </Button>
-            )}
-            {isTableView && selectionMode && (
-              <Button
-                leftSection={<IconTruck size={16} />}
-                onClick={openDeliveryModal}
-                disabled={selectedPOIds.length === 0}
-              >
-                {t('po.createDeliveryRequests', { count: selectedPOIds.length })}
-              </Button>
-            )}
-            <Button
-              leftSection={<IconPlus size={16} />}
-              onClick={handleNavigateToAdd}
-              disabled={!canCreate}
-            >
-              {t('po.addPO')}
-            </Button>
+            </Group>
           </Group>
-        </Group>
 
-        {/* Desktop Filter Controls */}
-        <POFilterBarDesktop
-          searchQuery={filters.searchQuery}
-          customerId={filters.customerId}
-          salesId={filters.salesId}
-          selectedStatuses={filters.statuses}
-          orderDateStart={filters.orderDateRange.start}
-          orderDateEnd={filters.orderDateRange.end}
-          deliveryDateStart={filters.deliveryDateRange.start}
-          deliveryDateEnd={filters.deliveryDateRange.end}
-          hasActiveFilters={hasActiveFilters}
-          onSearchChange={filterHandlers.setSearchQuery}
-          onCustomerChange={filterHandlers.setCustomerId}
-          onSalesIdChange={filterHandlers.setSalesId}
-          onStatusesChange={filterHandlers.setStatuses}
-          onOrderDateChange={filterHandlers.setOrderDateRange}
-          onDeliveryDateChange={filterHandlers.setDeliveryDateRange}
-          onClearFilters={filterHandlers.resetFilters}
-        />
+          {/* Desktop Filter Controls */}
+          <POFilterBarDesktop
+            searchQuery={filters.searchQuery}
+            customerId={filters.customerId}
+            salesId={filters.salesId}
+            selectedStatuses={filters.statuses}
+            orderDateStart={filters.orderDateRange.start}
+            orderDateEnd={filters.orderDateRange.end}
+            deliveryDateStart={filters.deliveryDateRange.start}
+            deliveryDateEnd={filters.deliveryDateRange.end}
+            hasActiveFilters={hasActiveFilters}
+            onSearchChange={filterHandlers.setSearchQuery}
+            onCustomerChange={filterHandlers.setCustomerId}
+            onSalesIdChange={filterHandlers.setSalesId}
+            onStatusesChange={filterHandlers.setStatuses}
+            onOrderDateChange={filterHandlers.setOrderDateRange}
+            onDeliveryDateChange={filterHandlers.setDeliveryDateRange}
+            onClearFilters={filterHandlers.resetFilters}
+          />
 
-        {/* Active Filter Pills */}
-        <POFilterPills
-          customerId={filters.customerId}
-          salesId={filters.salesId}
-          selectedStatuses={filters.statuses}
-          orderDateStart={filters.orderDateRange.start}
-          orderDateEnd={filters.orderDateRange.end}
-          deliveryDateStart={filters.deliveryDateRange.start}
-          deliveryDateEnd={filters.deliveryDateRange.end}
-          onRemoveCustomer={() => filterHandlers.setCustomerId(undefined)}
-          onRemoveSalesId={() => filterHandlers.setSalesId(undefined)}
-          onRemoveStatus={filterHandlers.toggleStatus}
-          onRemoveOrderDate={() => filterHandlers.setOrderDateRange(undefined, undefined)}
-          onRemoveDeliveryDate={() => filterHandlers.setDeliveryDateRange(undefined, undefined)}
-        />
+          {/* Active Filter Pills */}
+          <POFilterPills
+            customerId={filters.customerId}
+            salesId={filters.salesId}
+            selectedStatuses={filters.statuses}
+            orderDateStart={filters.orderDateRange.start}
+            orderDateEnd={filters.orderDateRange.end}
+            deliveryDateStart={filters.deliveryDateRange.start}
+            deliveryDateEnd={filters.deliveryDateRange.end}
+            onRemoveCustomer={() => filterHandlers.setCustomerId(undefined)}
+            onRemoveSalesId={() => filterHandlers.setSalesId(undefined)}
+            onRemoveStatus={filterHandlers.toggleStatus}
+            onRemoveOrderDate={() => filterHandlers.setOrderDateRange(undefined, undefined)}
+            onRemoveDeliveryDate={() => filterHandlers.setDeliveryDateRange(undefined, undefined)}
+          />
 
-        {/* Content Area */}
-        <BlankState
-          {...blankStateProps}
-          button={
-            hasActiveFilters
-              ? undefined
-              : {
-                  label: t('po.createFirstPO'),
-                  onClick: handleNavigateToAdd,
-                  disabled: !canCreate,
-                }
-          }
-        />
+          {/* Content Area */}
+          <BlankState
+            {...blankStateProps}
+            button={
+              hasActiveFilters
+                ? undefined
+                : {
+                    label: t('po.createFirstPO'),
+                    onClick: handleNavigateToAdd,
+                    disabled: !canCreate,
+                  }
+            }
+          />
 
-        {/* Data Display */}
-        {(purchaseOrders.length > 0 || isLoading || isFilterLoading) && (
-          <>
-            {(isLoading || isFilterLoading) && purchaseOrders.length === 0 ? (
-              <POListSkeleton viewMode={viewMode} count={10} />
-            ) : isTableView ? (
-              <PODataTable
-                noAction={isLoading || isFilterLoading}
-                isLoading={isLoading || isFilterLoading}
-                purchaseOrders={purchaseOrders}
-                selectionMode={selectionMode}
-                selectedPOIds={selectedPOIds}
-                onSelectionChange={setSelectedPOIds}
-              />
-            ) : (
-              <SimpleGrid
-                cols={{ base: 1, md: 2, lg: 3 }}
-                spacing="lg"
-                style={{ opacity: isFilterLoading ? 0.5 : 1 }}
-              >
-                {purchaseOrders.map((po) => (
-                  <POGridCard key={po.id} purchaseOrder={po} />
-                ))}
-              </SimpleGrid>
-            )}
+          {/* Data Display */}
+          {(purchaseOrders.length > 0 || isLoading || isFilterLoading) && (
+            <>
+              {(isLoading || isFilterLoading) && purchaseOrders.length === 0 ? (
+                <POListSkeleton viewMode={viewMode} count={10} />
+              ) : isTableView ? (
+                <PODataTable
+                  noAction={isLoading || isFilterLoading}
+                  isLoading={isLoading || isFilterLoading}
+                  purchaseOrders={purchaseOrders}
+                  selectionMode={selectionMode}
+                  selectedPOIds={selectedPOIds}
+                  onSelectionChange={setSelectedPOIds}
+                />
+              ) : (
+                <SimpleGrid
+                  cols={{ base: 1, md: 2, lg: 3 }}
+                  spacing="lg"
+                  style={{ opacity: isFilterLoading ? 0.5 : 1 }}
+                >
+                  {purchaseOrders.map((po) => (
+                    <POGridCard key={po.id} purchaseOrder={po} />
+                  ))}
+                </SimpleGrid>
+              )}
 
-            {/* Loading more indicator */}
-            {isLoadingMore && (
-              <Center py="md">
-                <Loader size="sm" />
-                <Text ml="xs" size="sm" c="dimmed">
-                  {t('common.loadingMore')}
-                </Text>
-              </Center>
-            )}
+              {/* Loading more indicator */}
+              {isLoadingMore && (
+                <Center py="md">
+                  <Loader size="sm" />
+                  <Text ml="xs" size="sm" c="dimmed">
+                    {t('common.loadingMore')}
+                  </Text>
+                </Center>
+              )}
 
-            {/* End of list message */}
-            {!hasMorePOs && purchaseOrders.length > 0 && (
-              <Center py="md">
-                <Text size="sm" c="dimmed">
-                  {t('po.noMorePOs')}
-                </Text>
-              </Center>
-            )}
-          </>
-        )}
+              {/* End of list message */}
+              {!hasMorePOs && purchaseOrders.length > 0 && (
+                <Center py="md">
+                  <Text size="sm" c="dimmed">
+                    {t('po.noMorePOs')}
+                  </Text>
+                </Center>
+              )}
+            </>
+          )}
 
-        {/* Bulk Delivery Creation Modal */}
-        <BulkDeliveryModal
-          opened={deliveryModalOpened}
-          onClose={() => {
-            closeDeliveryModal();
-            setSelectionMode(false);
-            setSelectedPOIds([]);
-          }}
-          selectedCount={selectedPOIds.length}
-          onSubmit={createBulkDeliveryAction.trigger}
-          isLoading={createBulkDeliveryAction.isMutating}
-        />
+          {/* Bulk Delivery Creation Modal */}
+          <BulkDeliveryModal
+            opened={deliveryModalOpened}
+            onClose={() => {
+              closeDeliveryModal();
+              setSelectionMode(false);
+              setSelectedPOIds([]);
+            }}
+            selectedCount={selectedPOIds.length}
+            onSubmit={createBulkDeliveryAction.trigger}
+            isLoading={createBulkDeliveryAction.isMutating}
+          />
         </Container>
       </POErrorBoundary>
     </AppDesktopLayout>

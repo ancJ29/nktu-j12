@@ -5,8 +5,6 @@ import { useNavigate, useParams } from 'react-router';
 import { Affix, Button, Group, LoadingOverlay, ScrollArea, Stack } from '@mantine/core';
 import { IconCamera, IconCopy, IconEdit, IconInfoCircle, IconMessage } from '@tabler/icons-react';
 
-import { MOBILE_FORM_ACTIONS_Z_INDEX } from '@/constants/po.constants';
-
 import {
   DeliveryRequestModal,
   PODetailAccordion,
@@ -21,6 +19,7 @@ import { AppPageTitle, PermissionDeniedPage, Tabs } from '@/components/common';
 import { AppDesktopLayout, AppMobileLayout } from '@/components/common';
 import { ResourceNotFound } from '@/components/common/layouts/ResourceNotFound';
 import { getPOEditRoute, ROUTERS } from '@/config/routeConfig';
+import { MOBILE_FORM_ACTIONS_Z_INDEX } from '@/constants/po.constants';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { usePOModals } from '@/hooks/usePOModals';
 import { useSWRAction } from '@/hooks/useSWRAction';
@@ -691,7 +690,13 @@ export function PODetailPage() {
           </Tabs>
         </Stack>
         {!modals.uploadPhotosModalOpened && mobileTabValue === 'info' && (
-          <Affix w="100%" position={{ bottom: 0 }} m="0" bg="white" zIndex={MOBILE_FORM_ACTIONS_Z_INDEX}>
+          <Affix
+            w="100%"
+            position={{ bottom: 0 }}
+            m="0"
+            bg="white"
+            zIndex={MOBILE_FORM_ACTIONS_Z_INDEX}
+          >
             <Group justify="end" m="sm">
               {canTakePhoto && (
                 <Button
