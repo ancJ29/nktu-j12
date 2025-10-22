@@ -6,7 +6,7 @@ import { Anchor, Button, Card, Grid, Group, ScrollArea, Stack, Text } from '@man
 import { notifications } from '@mantine/notifications';
 import { IconEdit, IconInfoCircle, IconMapPin, IconMessage, IconTrash } from '@tabler/icons-react';
 
-import { ChatPanel, Tabs, UrgentBadge, ViewOnMap } from '@/components/common';
+import { ChatPanel, NewMessageBadge, Tabs, UrgentBadge, ViewOnMap } from '@/components/common';
 import { getPODetailRoute } from '@/config/routeConfig';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { DeliveryRequest } from '@/services/sales';
@@ -76,6 +76,7 @@ export function DeliveryDetailTabs({
           </Tabs.Tab>
           <Tabs.Tab value="communication" leftSection={<IconMessage size={16} />}>
             {t('po.communicationLog')}
+            <NewMessageBadge hasNewMessage={deliveryRequest.hasNewMessage} />
           </Tabs.Tab>
         </Tabs.List>
       </ScrollArea>

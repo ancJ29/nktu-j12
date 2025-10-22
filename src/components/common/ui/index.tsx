@@ -16,6 +16,7 @@ export { DateInput } from './DateInput';
 export { DatePickerInput } from './DatePickerInput';
 export { Drawer } from './Drawer';
 export { InfoField } from './InfoField';
+export { NewMessageBadge } from './NewMessageBadge';
 export { SearchBar } from './SearchBar';
 export { SelectableCard } from './SelectableCard';
 export { SwitchView } from './SwitchView';

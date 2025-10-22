@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router';
 
 import { Box, Card, Group, type MantineStyleProp, Text } from '@mantine/core';
 
+import { NewMessageBadge } from '@/components/common';
 import { getPODetailRoute } from '@/config/routeConfig';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { PurchaseOrder } from '@/services/sales/purchaseOrder';
@@ -53,6 +54,7 @@ export function POCard({ purchaseOrder, style, className }: POCardProps) {
         <Box>
           <Text fw={500} size="sm">
             {purchaseOrder.poNumber}
+            <NewMessageBadge hasNewMessage={purchaseOrder.hasNewMessage} />
           </Text>
           <Group gap="lg">
             <Text size="xs" c="dimmed">

@@ -10,6 +10,7 @@ import {
 } from '@/lib/api/schemas/sales.schemas';
 import type { EmployeeOverview } from '@/services/client/overview';
 import type { PhotoData } from '@/types';
+import { isNewMessage } from '@/utils/message';
 
 import { overviewService } from '../client/overview';
 
@@ -25,6 +26,7 @@ export type PurchaseOrder = Omit<ApiPurchaseOrder, 'deliveryRequest' | 'items'> 
   address?: string;
   customerName: string;
   googleMapsUrl?: string;
+  hasNewMessage?: boolean;
   statusHistory?: POStatusHistory[];
   salesPerson?: string;
   isInternalDelivery: boolean;
@@ -67,8 +69,10 @@ function transformApiToFrontend(
   if (apiPO.isPersonalCustomer) {
     customerName = apiPO.personalCustomerName || '';
   }
+
   return {
     ...apiPO,
+    hasNewMessage: isNewMessage('PO', apiPO.id, apiPO.lastMessageAt),
     salesPerson,
     isUrgentPO: apiPO.isUrgentPO ?? false,
     isInternalDelivery: apiPO.isInternalDelivery,

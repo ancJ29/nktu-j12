@@ -32,6 +32,7 @@ export const DeliveryRequestSchema = z.object({
   assignedTo: optionalIdSchema,
   scheduledDate: timestampSchema,
   completedDate: optionalTimestampSchema,
+  lastMessageAt: optionalTimestampSchema,
   type: DeliveryRequestTypeSchema,
   isUrgentDelivery: optionalBooleanSchema,
   deliveryOrderInDay: optionalNumberSchema,

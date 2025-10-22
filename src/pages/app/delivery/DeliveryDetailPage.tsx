@@ -10,7 +10,13 @@ import { DeliveryDetailTabs } from '@/components/app/delivery/DeliveryDetailTabs
 import { DeliveryPhotoUpload } from '@/components/app/delivery/DeliveryPhotoUpload';
 import { DeliveryStatusDrawer } from '@/components/app/delivery/DeliveryStatusDrawer';
 import { DeliveryUpdateModal } from '@/components/app/delivery/DeliveryUpdateModal';
-import { AppDesktopLayout, AppMobileLayout, ChatPanel, Tabs } from '@/components/common';
+import {
+  AppDesktopLayout,
+  AppMobileLayout,
+  ChatPanel,
+  NewMessageBadge,
+  Tabs,
+} from '@/components/common';
 import { AppPageTitle } from '@/components/common';
 import { PermissionDeniedPage } from '@/components/common/layouts/PermissionDeniedPage';
 import { ResourceNotFound } from '@/components/common/layouts/ResourceNotFound';
@@ -269,6 +275,7 @@ export function DeliveryDetailPage() {
                     </Tabs.Tab>
                     <Tabs.Tab value="communication" leftSection={<IconMessage size={16} />}>
                       {t('po.communicationLog')}
+                      <NewMessageBadge hasNewMessage={deliveryRequest.hasNewMessage} />
                     </Tabs.Tab>
                   </Tabs.List>
                 </ScrollArea>

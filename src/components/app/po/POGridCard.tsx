@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router';
 
 import { Group, Stack, Text } from '@mantine/core';
 
-import { SelectableCard } from '@/components/common';
+import { NewMessageBadge, SelectableCard } from '@/components/common';
 import { getPODetailRoute } from '@/config/routeConfig';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { PurchaseOrder } from '@/services/sales/purchaseOrder';
@@ -42,6 +42,7 @@ export function POGridCard({ purchaseOrder }: POGridCardProps) {
         <Group justify="space-between" align="flex-start">
           <Text fw={500} size="lg">
             {purchaseOrder.poNumber}
+            <NewMessageBadge hasNewMessage={purchaseOrder.hasNewMessage} />
           </Text>
           <Stack gap="xs" mt="xs" w="100%">
             <Group justify="space-between" w="100%">

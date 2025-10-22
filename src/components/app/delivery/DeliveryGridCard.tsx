@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router';
 
 import { Group, Stack, Text } from '@mantine/core';
 
-import { SelectableCard, UrgentBadge } from '@/components/common';
+import { NewMessageBadge, SelectableCard, UrgentBadge } from '@/components/common';
 import { getDeliveryDetailRoute } from '@/config/routeConfig';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { DeliveryRequest } from '@/services/sales';
@@ -44,6 +44,7 @@ export function DeliveryGridCard({ deliveryRequest }: DeliveryGridCardProps) {
           <div>
             <Text fw={500} size="lg">
               {deliveryRequest.deliveryRequestNumber}
+              <NewMessageBadge hasNewMessage={deliveryRequest.hasNewMessage} />
             </Text>
             <Stack gap="xs" mt="xs">
               <Text size="sm" c="dimmed">

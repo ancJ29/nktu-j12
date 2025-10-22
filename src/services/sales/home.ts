@@ -2,6 +2,7 @@ import { nktuOverviewApi } from '@/lib/api';
 import type { DeliveryRequest as ApiDeliveryRequest } from '@/lib/api/schemas/deliveryRequest.schemas';
 import type { PurchaseOrder as ApiPurchaseOrder } from '@/lib/api/schemas/purchaseOrder.schemas';
 import type { EmployeeOverview } from '@/services/client/overview';
+import { isNewMessage } from '@/utils/message';
 
 import { overviewService } from '../client/overview';
 
@@ -26,6 +27,7 @@ function transformPOApiToFrontend(
 
   return {
     ...apiPO,
+    hasNewMessage: isNewMessage('PO', apiPO.id, apiPO.lastMessageAt),
     salesPerson,
     isUrgentPO: apiPO.isUrgentPO ?? false,
     isInternalDelivery: apiPO.isInternalDelivery,
@@ -63,6 +65,7 @@ function transformDRApiToFrontend(
 
   return {
     ...apiDR,
+    hasNewMessage: isNewMessage('DR', apiDR.id, apiDR.lastMessageAt),
     deliveryPerson,
     isReceive: apiDR.type === 'RECEIVE',
     isDelivery: apiDR.type === 'DELIVERY',

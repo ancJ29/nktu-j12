@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 
 import { Group, ScrollArea, Table, Text } from '@mantine/core';
 
-import { UrgentBadge } from '@/components/common';
+import { NewMessageBadge, UrgentBadge } from '@/components/common';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { DeliveryRequest } from '@/services/sales';
 import { formatDate, formatDateTime } from '@/utils/time';
@@ -64,7 +64,10 @@ function DeliveryDataTableComponent({ deliveryRequests }: DeliveryDataTableProps
                   <Text fw={500}>{index + 1}</Text>
                 </Table.Td>
                 <Table.Td>
-                  <Text fw={500}>{delivery.deliveryRequestNumber}</Text>
+                  <Text fw={500}>
+                    {delivery.deliveryRequestNumber}
+                    <NewMessageBadge hasNewMessage={delivery.hasNewMessage} />
+                  </Text>
                 </Table.Td>
                 <Table.Td>
                   <Group gap="sm" justify="start">

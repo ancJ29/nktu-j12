@@ -14,7 +14,7 @@ import {
   POPhotoUpload,
   POStatusModal,
 } from '@/components/app/po';
-import { ChatPanel } from '@/components/common';
+import { ChatPanel, NewMessageBadge } from '@/components/common';
 import { AppPageTitle, PermissionDeniedPage, Tabs } from '@/components/common';
 import { AppDesktopLayout, AppMobileLayout } from '@/components/common';
 import { ResourceNotFound } from '@/components/common/layouts/ResourceNotFound';
@@ -661,6 +661,7 @@ export function PODetailPage() {
                 </Tabs.Tab>
                 <Tabs.Tab value="communication" leftSection={<IconMessage size={16} />}>
                   {t('po.communicationLog')}
+                  <NewMessageBadge hasNewMessage={purchaseOrder.hasNewMessage} />
                 </Tabs.Tab>
               </Tabs.List>
             </ScrollArea>

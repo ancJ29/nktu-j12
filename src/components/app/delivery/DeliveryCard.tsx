@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router';
 
 import { Box, Card, Group, type MantineStyleProp, Text } from '@mantine/core';
 
-import { UrgentBadge } from '@/components/common';
+import { NewMessageBadge, UrgentBadge } from '@/components/common';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { DeliveryRequest } from '@/services/sales';
 import { formatDate } from '@/utils/time';
@@ -51,6 +51,7 @@ export function DeliveryCard({ deliveryRequest, style, className }: DeliveryCard
         <Box style={{ flex: 1 }}>
           <Text fw="bold" size="sm">
             {deliveryRequest.deliveryRequestNumber}
+            <NewMessageBadge hasNewMessage={deliveryRequest.hasNewMessage} />
           </Text>
           <Group gap="xs">
             <Text size="sm" c="dimmed">

@@ -14,7 +14,7 @@ import {
   IconTruck,
 } from '@tabler/icons-react';
 
-import { ChatPanel, ComingSoonCard, Tabs } from '@/components/common';
+import { ChatPanel, ComingSoonCard, NewMessageBadge, Tabs } from '@/components/common';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { PurchaseOrder } from '@/services/sales/purchaseOrder';
 import { usePermissions } from '@/stores/useAppStore';
@@ -133,6 +133,7 @@ export function PODetailTabs({
           </Tabs.Tab> */}
           <Tabs.Tab value="communication" leftSection={<IconMessage size={16} />}>
             {t('po.communicationLog')}
+            <NewMessageBadge hasNewMessage={purchaseOrder.hasNewMessage} />
           </Tabs.Tab>
         </Tabs.List>
       </ScrollArea>

@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router';
 
 import { Checkbox, Group, ScrollArea, Table, Text } from '@mantine/core';
 
+import { NewMessageBadge } from '@/components/common';
 import { getPODetailRoute } from '@/config/routeConfig';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { PurchaseOrder } from '@/services/sales/purchaseOrder';
@@ -142,7 +143,10 @@ function PODataTableComponent({
                   <Text fw={500}>{index + 1}</Text>
                 </Table.Td>
                 <Table.Td>
-                  <Text fw={500}>{po.poNumber}</Text>
+                  <Text fw={500}>
+                    {po.poNumber}
+                    <NewMessageBadge hasNewMessage={po.hasNewMessage} />
+                  </Text>
                   {po.customerPONumber ? (
                     <Text size="sm" c="dimmed">
                       {' '}

@@ -14,6 +14,7 @@ export {
   DatePickerInput,
   Drawer,
   InfoField,
+  NewMessageBadge,
   SearchBar,
   SelectableCard,
   SwitchView,

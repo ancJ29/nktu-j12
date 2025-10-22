@@ -10,6 +10,7 @@ import {
 } from '@/lib/api/schemas/deliveryRequest.schemas';
 import type { CustomerOverview, EmployeeOverview } from '@/services/client/overview';
 import type { Address, PhotoData } from '@/types';
+import { isNewMessage } from '@/utils/message';
 
 import { overviewService } from '../client/overview';
 
@@ -28,6 +29,7 @@ export type DeliveryRequest = Omit<ApiDeliveryRequest, 'metadata'> & {
   isUrgentDelivery?: boolean;
   type: DeliveryRequestType;
   deliveryRequestNumber: string;
+  hasNewMessage?: boolean;
   purchaseOrderNumber?: string | undefined;
   purchaseOrderId?: string | undefined;
   customerName?: string | undefined;
@@ -55,6 +57,7 @@ function transformApiToFrontend(
   return {
     ...rest,
     deliveryPerson,
+    hasNewMessage: isNewMessage('DR', apiDR.id, apiDR.lastMessageAt),
     isReceive: apiDR.type === 'RECEIVE',
     isDelivery: apiDR.type === 'DELIVERY',
     isUrgentDelivery: apiDR?.isUrgentDelivery ?? false,

@@ -95,6 +95,7 @@ export const PurchaseOrderSchema = z.object({
   orderDate: timestampSchema,
   deliveryDate: optionalTimestampSchema,
   isInternalDelivery: booleanSchema,
+  lastMessageAt: optionalTimestampSchema,
   isUrgentPO: optionalBooleanSchema,
   isPersonalCustomer: optionalBooleanSchema,
   personalCustomerName: optionalStringSchema,

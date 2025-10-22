@@ -7,6 +7,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { chatService, type Message } from '@/services/chat/chat';
 import { useMe } from '@/stores/useAppStore';
 import { isDevelopment } from '@/utils/env';
+import { logLastAccessed } from '@/utils/message';
 import { formatDateTime } from '@/utils/time';
 
 type ChatPanelProps = {
@@ -33,6 +34,9 @@ export function ChatPanel({ targetId, type }: ChatPanelProps) {
         }
         const messages = await chatService.getChatHistory({ type, targetId });
         setMessages(messages);
+        if (messages.length > 0) {
+          void logLastAccessed(type, targetId, messages);
+        }
       } catch (error) {
         if (isDevelopment) {
           console.error('Failed to load chat history:', error);
@@ -83,6 +87,7 @@ export function ChatPanel({ targetId, type }: ChatPanelProps) {
       });
       setMessages((prev) => [...prev, message]);
       setNewMessage('');
+      void logLastAccessed(type, targetId, [message]);
     } catch (error) {
       if (isDevelopment) {
         console.error('Failed to send message:', error);

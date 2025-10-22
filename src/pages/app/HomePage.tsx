@@ -20,7 +20,12 @@ import { IconChevronRight } from '@tabler/icons-react';
 import { DeliveryStatusBadge } from '@/components/app/delivery/DeliveryStatusBadge';
 import { DeliveryTypeBadge } from '@/components/app/delivery/DeliveryTypeBadge';
 import { POStatusBadge } from '@/components/app/po/POStatusBadge';
-import { AppDesktopLayout, AppMobileLayout, UrgentBadge } from '@/components/common';
+import {
+  AppDesktopLayout,
+  AppMobileLayout,
+  NewMessageBadge,
+  UrgentBadge,
+} from '@/components/common';
 import { getDeliveryDetailRoute, getPODetailRoute, ROUTERS } from '@/config/routeConfig';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -91,6 +96,7 @@ export function HomePage() {
     return (
       <Text size="sm" fw={500}>
         {po.poNumber}
+        <NewMessageBadge hasNewMessage={po.hasNewMessage} />
         {po.customerPONumber && (
           <Text size="sm" ml="xs">
             ({po.customerPONumber})
@@ -308,7 +314,12 @@ export function HomePage() {
                             <Group justify="space-between">
                               <Stack gap={4}>
                                 <Group gap="xs">
-                                  <Text fw={500}>{deliveryRequest.deliveryRequestNumber}</Text>
+                                  <Text fw={500}>
+                                    {deliveryRequest.deliveryRequestNumber}
+                                    <NewMessageBadge
+                                      hasNewMessage={deliveryRequest.hasNewMessage}
+                                    />
+                                  </Text>
                                 </Group>
                                 <Group gap="xs">
                                   <Text size="sm" c="dimmed">
@@ -566,7 +577,10 @@ export function HomePage() {
                       >
                         <Table.Td>
                           <Group gap="xs">
-                            <Text fw={500}>{deliveryRequest.deliveryRequestNumber}</Text>
+                            <Text fw={500}>
+                              {deliveryRequest.deliveryRequestNumber}
+                              <NewMessageBadge hasNewMessage={deliveryRequest.hasNewMessage} />
+                            </Text>
                           </Group>
                         </Table.Td>
                         <Table.Td>
