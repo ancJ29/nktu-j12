@@ -37,6 +37,9 @@
     "typeMessage": "Nhập tin nhắn..."
   },
   "common": {
+    "viewInFullScreen": "Mở rộng",
+    "address": "Địa chỉ",
+    "addressPlaceholder": "Địa chỉ",
     "actions": "",
     "activate": "Kích Hoạt",
     "activated": "Đã Kích Hoạt {{entity}}",
@@ -227,7 +230,6 @@
     "zoomOut": "Thu nhỏ"
   },
   "customer": {
-    "address": "Địa Chỉ",
     "addressPlaceholder": "Địa chỉ",
     "bulkImport": "Nhập Hàng Loạt",
     "company": "Công Ty",

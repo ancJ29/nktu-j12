@@ -142,8 +142,8 @@ export function CustomerFormModal({
               />
 
               <TextInput
-                label={t('customer.address')}
-                placeholder={t('customer.addressPlaceholder')}
+                label={t('common.address')}
+                placeholder={t('common.addressPlaceholder')}
                 error={form.errors.address}
                 disabled={isLoading}
                 {...form.getInputProps('address')}

@@ -37,6 +37,9 @@
     "typeMessage": "Type a message..."
   },
   "common": {
+    "viewInFullScreen": "View in Full Screen",
+    "address": "Address",
+    "addressPlaceholder": "Address",
     "actions": "Actions",
     "activate": "Activate",
     "activated": "{{entity}} Activated",
@@ -227,8 +230,6 @@
     "zoomOut": "Zoom Out"
   },
   "customer": {
-    "address": "Address",
-    "addressPlaceholder": "Address",
     "bulkImport": "Bulk Import",
     "company": "Company",
     "companyPlaceholder": "Company Name",

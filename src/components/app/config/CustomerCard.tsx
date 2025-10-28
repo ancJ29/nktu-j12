@@ -34,7 +34,7 @@ export function CustomerCard({ customer, style, className }: CustomerCardProps) 
           </Group>
 
           <Text size="xs" c="dimmed">
-            {t('customer.address')}:
+            {t('common.address')}:
           </Text>
           <Group gap="xs" wrap="nowrap">
             <Text size="xs" fw={500}>
