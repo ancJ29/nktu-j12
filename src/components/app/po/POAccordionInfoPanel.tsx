@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { useNavigate } from 'react-router';
 
-import { Anchor, Box, Button, Grid, Group, Stack, Text } from '@mantine/core';
+import { Anchor, Box, Button, Divider, Grid, Group, Stack, Text } from '@mantine/core';
 import { IconEdit, IconTruckDelivery, IconUser } from '@tabler/icons-react';
 
 import { InfoField } from '@/components/common';
@@ -217,6 +217,64 @@ export function POAccordionInfoPanel({
               }
               layout="horizontal"
               value={formatDate(purchaseOrder.deliveryRequest.scheduledDate)}
+              icon={IconIdentifiers.CALENDAR}
+            />
+          </Stack>
+        </div>
+      )}
+
+      {purchaseOrder.goodsReturnRequest && (
+        <div>
+          <Divider />
+          <Text size="xs" fw={500} c="red" mb={4} mt="md">
+            <IconTruckDelivery size={14} style={{ verticalAlign: 'middle' }} />{' '}
+            {t('common.entity.goodsReturnRequest')}
+          </Text>
+          <Stack gap="xs">
+            <Group gap="xs">
+              <Text size="xs" c="dimmed">
+                {t('delivery.id')}:
+              </Text>
+              <Anchor
+                size="sm"
+                c="red"
+                fw="bold"
+                onClick={() => {
+                  const deliveryRequestId = purchaseOrder.goodsReturnRequest?.goodsReturnRequestId || '-';
+                  navigate(getDeliveryDetailRoute(deliveryRequestId));
+                }}
+              >
+                {purchaseOrder.goodsReturnRequest.goodsReturnRequestNumber}
+              </Anchor>
+            </Group>
+            <Group gap="xs">
+              <Text size="xs" c="dimmed">
+                {t('delivery.status')}:
+              </Text>
+              <DeliveryStatusBadge status={purchaseOrder.goodsReturnRequest.status} />
+            </Group>
+            <InfoField
+              label={
+                <Text size="xs" c="dimmed">
+                  {t('delivery.assignedTo')}:
+                </Text>
+              }
+              layout="horizontal"
+              value={
+                <Group gap={4}>
+                  <IconUser size={14} color="var(--mantine-color-gray-6)" />
+                  <Text size="sm">{purchaseOrder.goodsReturnRequest.assignedTo}</Text>
+                </Group>
+              }
+            />
+            <InfoField
+              label={
+                <Text size="xs" c="dimmed">
+                  {t('delivery.scheduledDate')}:
+                </Text>
+              }
+              layout="horizontal"
+              value={formatDate(purchaseOrder.goodsReturnRequest.scheduledDate)}
               icon={IconIdentifiers.CALENDAR}
             />
           </Stack>

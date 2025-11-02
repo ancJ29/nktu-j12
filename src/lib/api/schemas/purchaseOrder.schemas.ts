@@ -108,6 +108,15 @@ export const PurchaseOrderSchema = z.object({
   shippingAddress: AddressSchema.optional(),
   statusHistory: z.array(POStatusHistorySchema).optional(),
   photos: z.array(S3DataSchema).optional(),
+  goodsReturnRequest: z.object({
+    goodsReturnRequestId: idSchema,
+    goodsReturnRequestNumber: stringSchema,
+    assignedTo: optionalIdSchema,
+    status: DeliveryStatusSchema,
+    scheduledDate: timestampSchema,
+    completedDate: optionalTimestampSchema,
+    photos: z.array(S3DataSchema).optional(),
+  }).optional(),
   deliveryRequest: z
     .object({
       deliveryRequestId: idSchema,

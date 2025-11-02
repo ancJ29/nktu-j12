@@ -256,7 +256,7 @@ export function DeliveryListPage() {
   const createReceiveRequestAction = useSWRAction(
     'create-receive-request',
     async (data: {
-      type: 'RECEIVE' | 'DELIVERY';
+      type: 'RECEIVE' | 'DELIVERY' | 'GOODS_RETURN';
       assignedTo: string;
       scheduledDate: string;
       notes?: string;
@@ -267,6 +267,11 @@ export function DeliveryListPage() {
         googleMapsUrl?: string;
       };
       purchaseOrderId?: string;
+      customerId?: string;
+      returnAddress?: {
+        oneLineAddress: string;
+        googleMapsUrl?: string;
+      };
     }) => {
       await createDeliveryRequest(data);
       setCreateModalOpened(false);

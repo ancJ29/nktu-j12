@@ -175,8 +175,6 @@ export class SalesApi extends BaseApiClient {
     deliveryDateTo?: string;
     cursor?: string;
     limit?: number;
-    sortBy?: 'createdAt' | 'orderDate' | 'poNumber' | 'updatedAt';
-    sortOrder?: 'asc' | 'desc';
   }): Promise<GetPurchaseOrdersResponse> {
     const queryParams = new URLSearchParams();
     if (params?.salesId) queryParams.append('salesId', params.salesId);
@@ -194,8 +192,6 @@ export class SalesApi extends BaseApiClient {
     if (params?.deliveryDateTo) queryParams.append('deliveryDateTo', params.deliveryDateTo);
     if (params?.cursor) queryParams.append('cursor', params.cursor);
     if (params?.limit) queryParams.append('limit', String(params.limit));
-    if (params?.sortBy) queryParams.append('sortBy', params.sortBy);
-    if (params?.sortOrder) queryParams.append('sortOrder', params.sortOrder);
 
     // Use default limit from swagger (20) or specified limit, max 1000
     if (!params?.limit) queryParams.append('limit', '20');

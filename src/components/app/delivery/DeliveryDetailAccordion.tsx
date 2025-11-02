@@ -138,7 +138,7 @@ export function DeliveryDetailAccordion({
           value: deliveryRequest.customerName,
         },
         {
-          hidden: deliveryRequest.isDelivery,
+          hidden: deliveryRequest.isDelivery || deliveryRequest.isGoodsReturn,
           label: t('common.vendor'),
           value: deliveryRequest.vendorName,
         },
@@ -234,7 +234,7 @@ export function DeliveryDetailAccordion({
         )}
 
         {/* Receiving Address */}
-        {deliveryRequest.isReceive && (
+        {(deliveryRequest.isReceive || deliveryRequest.isGoodsReturn) && (
           <Accordion.Item value="address">
             <Accordion.Control icon={<IconMapPin size={20} />}>
               <Group justify="start" align="center" gap="sm">

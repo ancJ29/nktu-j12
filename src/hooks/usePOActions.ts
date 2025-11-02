@@ -36,6 +36,7 @@ export type POActionConfig = {
     | 'refund'
     | 'delete'
     | 'createDelivery'
+    | 'createGoodsReturn'
     | 'toggleInternalDelivery';
   readonly color: ButtonProps['color'];
   readonly variant?: ButtonProps['variant'];
@@ -83,6 +84,7 @@ export type UsePOActionsProps = {
     readonly onRefund: () => void;
     readonly onDelete: () => void;
     readonly onCreateDelivery?: () => void;
+    readonly onCreateGoodsReturn?: () => void;
   };
   readonly options?: POActionsOptions;
 };
@@ -291,7 +293,20 @@ export function usePOActions({
       }
 
       case 'DELIVERED': {
-        actions.push(createRefundAction());
+        actions.push(
+          {
+            key: 'create-goods-return',
+            action: 'createGoodsReturn',
+            color: 'red',
+            variant: 'filled',
+            icon: IconTruck,
+            translationKey: 'delivery.createGoodsReturnRequest',
+            onClick: callbacks.onCreateGoodsReturn ?? (() => {}),
+            isDisabled: !canShip,
+            showCondition: true,
+          },
+          createRefundAction(),
+        );
         break;
       }
 

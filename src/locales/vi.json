@@ -37,15 +37,14 @@
     "typeMessage": "Nhập tin nhắn..."
   },
   "common": {
-    "viewInFullScreen": "Mở rộng",
-    "address": "Địa chỉ",
-    "addressPlaceholder": "Địa chỉ",
     "actions": "",
     "activate": "Kích Hoạt",
     "activated": "Đã Kích Hoạt {{entity}}",
     "active": "Hoạt động",
     "add": "Thêm",
     "addFailed": "Không thể thêm {{entity}}",
+    "address": "Địa chỉ",
+    "addressPlaceholder": "Địa chỉ",
     "apply": "Áp dụng",
     "backToPreviousPage": "Quay lại trang trước",
     "bulkImport": {
@@ -91,6 +90,7 @@
       "customer": "Khách Hàng",
       "deliveryRequest": "Yêu Cầu Giao Nhận",
       "employee": "Nhân Viên",
+      "goodsReturnRequest": "Yêu Cầu Trả Hàng",
       "product": "Sản Phẩm",
       "vendor": "Nhà Cung Cấp"
     },
@@ -225,12 +225,12 @@
     "updatedAt": "Ngày Cập Nhật",
     "urgent": "Gấp",
     "vendor": "Nhà cung cấp",
+    "viewInFullScreen": "Mở rộng",
     "viewOnMap": "Xem trên Google Maps",
     "zoomIn": "Phóng to",
     "zoomOut": "Thu nhỏ"
   },
   "customer": {
-    "addressPlaceholder": "Địa chỉ",
     "bulkImport": "Nhập Hàng Loạt",
     "company": "Công Ty",
     "companyPlaceholder": "Tên công ty",
@@ -258,6 +258,7 @@
     "completedDate": "Ngày Hoàn Thành",
     "completionNotes": "Ghi Chú Hoàn Thành",
     "createDeliveryDescription": "Tạo yêu cầu giao hàng để gửi hàng đến khách hàng",
+    "createGoodsReturnRequest": "Tạo Yêu Cầu Trả Hàng",
     "createReceiveRequest": "Tạo yêu cầu giao nhận",
     "deleteDelivery": "Xóa Phiếu Giao Hàng",
     "deleteDeliveryDescription": "Bạn có chắc chắn muốn xóa phiếu giao hàng này? Hành động này không thể hoàn tác.",
@@ -278,15 +279,21 @@
     },
     "form": {
       "enterNotes": "Nhập ghi chú",
+      "enterPONumber": "Nhập số PO",
+      "noPOsAvailable": "Không có PO nào cho khách hàng này",
       "selectAssignee": "Chọn Người Phụ Trách",
       "selectCustomer": "Chọn Khách Hàng",
+      "selectCustomerFirst": "Chọn khách hàng trước",
       "selectDate": "Chọn Ngày Dự Kiến",
       "selectDriver": "Chọn tài xế",
       "selectPO": "Chọn Đơn Hàng (tùy chọn)",
+      "selectPONumber": "Chọn số PO",
       "selectPOs": "Chọn Các Đơn Đặt Hàng",
       "selectPOsDescription": "Chọn một hoặc nhiều đơn đặt hàng để tạo yêu cầu giao hàng",
       "urgentDeliveryDescription": "Đánh dấu đơn hàng này cần xử lý gấp"
     },
+    "goodsReturnDescription": "Tạo yêu cầu lấy hàng trả về từ khách hàng",
+    "goodsReturnInfo": "Yêu Cầu Trả Hàng",
     "id": "Mã Yêu Cầu",
     "messages": {
       "completeFailed": "Không thể hoàn thành",
@@ -300,6 +307,7 @@
     "modal": {
       "tabs": {
         "delivery": "Yêu Cầu Giao Hàng",
+        "goodsReturn": "Yêu Cầu Trả Hàng",
         "receive": "Yêu Cầu Nhận Hàng"
       }
     },
@@ -329,6 +337,9 @@
     "receivedBy": "Người Nhận",
     "receivedByDescription": "Tên người đã nhận hàng",
     "requestType": "Loại yêu cầu",
+    "returnAddress": "Địa Chỉ Trả Hàng",
+    "returnAddressDescription": "Tùy chọn - mặc định là địa chỉ khách hàng nếu không chỉ định",
+    "returnAddressPlaceholder": "Nhập địa chỉ trả hàng của khách hàng",
     "scheduledDate": "Ngày Dự Kiến",
     "status": "Trạng Thái",
     "statuses": {
@@ -342,6 +353,7 @@
     "transitNotesDescription": "Ghi chú tùy chọn về việc bắt đầu vận chuyển",
     "types": {
       "delivery": "Giao Hàng",
+      "goodsReturn": "Trả Hàng",
       "receive": "Nhận Hàng"
     },
     "updateDeliveryRequest": "Cập nhật yêu cầu giao hàng",

@@ -34,6 +34,15 @@ export type PurchaseOrder = Omit<ApiPurchaseOrder, 'deliveryRequest' | 'items'> 
   personalCustomerName?: string;
   isUrgentPO: boolean;
   customerPONumber?: string;
+  goodsReturnRequest?: {
+    goodsReturnRequestId: string;
+    goodsReturnRequestNumber?: string;
+    assignedTo?: string;
+    status: DeliveryStatus;
+    scheduledDate: Date | string;
+    completedDate?: Date | string;
+    photos?: PhotoData[];
+  };
   deliveryRequest?: {
     deliveryRequestId: string;
     deliveryRequestNumber?: string;
@@ -60,6 +69,10 @@ function transformApiToFrontend(
   const deliveryRequest = apiPO?.deliveryRequest;
   const deliveryPerson = deliveryRequest?.assignedTo
     ? employeeMapByEmployeeId.get(deliveryRequest.assignedTo)?.fullName
+    : undefined;
+  const goodsReturnRequest = apiPO?.goodsReturnRequest;
+  const goodsReturnPerson = goodsReturnRequest?.assignedTo
+    ? employeeMapByEmployeeId.get(goodsReturnRequest.assignedTo)?.fullName
     : undefined;
   let customerName = '';
 
@@ -95,6 +108,17 @@ function transformApiToFrontend(
           photos: apiPO.deliveryRequest.photos,
         }
       : undefined,
+    goodsReturnRequest: goodsReturnRequest
+      ? {
+          goodsReturnRequestId: goodsReturnRequest.goodsReturnRequestId,
+          goodsReturnRequestNumber: goodsReturnRequest.goodsReturnRequestNumber,
+          assignedTo: goodsReturnPerson,
+          status: goodsReturnRequest.status,
+          scheduledDate: goodsReturnRequest.scheduledDate,
+          completedDate: goodsReturnRequest.completedDate,
+          photos: goodsReturnRequest.photos,
+        }
+      : undefined,
     items: apiPO.items.map((item) => ({
       ...item,
       deliveryPerson: 'TODO',
@@ -118,8 +142,6 @@ export type POFilterParams = {
   deliveryDateTo?: string | Date;
   cursor?: string;
   limit?: number;
-  sortBy?: 'createdAt' | 'orderDate' | 'poNumber' | 'updatedAt';
-  sortOrder?: 'asc' | 'desc';
 };
 
 export const purchaseOrderService = {
@@ -163,8 +185,6 @@ export const purchaseOrderService = {
               : filters.deliveryDateTo,
           cursor: filters.cursor,
           limit: filters.limit,
-          sortBy: filters.sortBy,
-          sortOrder: filters.sortOrder,
         }
       : undefined;
 
@@ -176,7 +196,7 @@ export const purchaseOrderService = {
       .sort((a, b) => {
         if (a.isUrgentPO && !b.isUrgentPO) return -1;
         if (!a.isUrgentPO && b.isUrgentPO) return 1;
-        return a.poNumber.localeCompare(b.poNumber);
+        return b.orderDate.getTime() - a.orderDate.getTime();
       })
       .map((po) =>
         transformApiToFrontend(

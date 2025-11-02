@@ -15,6 +15,7 @@ import {
 import { POAttachmentsSection } from './POAttachmentsSection';
 import { PODatesSection } from './PODatesSection';
 import { PODeliverySection } from './PODeliverySection';
+import { POGoodReturnSection } from './POGoodReturnSection';
 import { POInfoSection } from './POInfoSection';
 import { POStatusHistorySection } from './POStatusHistorySection';
 
@@ -81,6 +82,7 @@ export function POBasicInfoCard({
         <Divider />
         <SimpleGrid cols={{ base: 1, md: 2 }}>
           <PODeliverySection purchaseOrder={purchaseOrder} />
+          <POGoodReturnSection purchaseOrder={purchaseOrder} />
 
           {notes.shippingInfo && (
             <div>

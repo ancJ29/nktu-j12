@@ -69,7 +69,7 @@ export function DeliveryCard({ deliveryRequest, style, className }: DeliveryCard
               </Text>
             </Group>
           )}
-          {deliveryRequest.isDelivery ? (
+          {(deliveryRequest.isDelivery || deliveryRequest.isGoodsReturn) ? (
             <Group gap="sm">
               <Text size="sm" c="dimmed">
                 {t('common.customer')}:

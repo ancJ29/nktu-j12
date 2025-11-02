@@ -26,6 +26,7 @@ export type {
 export type DeliveryRequest = Omit<ApiDeliveryRequest, 'metadata'> & {
   isReceive: boolean;
   isDelivery: boolean;
+  isGoodsReturn: boolean;
   isUrgentDelivery?: boolean;
   type: DeliveryRequestType;
   deliveryRequestNumber: string;
@@ -54,11 +55,15 @@ function transformApiToFrontend(
 
   const employee = apiDR.assignedTo ? employeeMapByEmployeeId.get(apiDR.assignedTo) : undefined;
   const deliveryPerson = employee?.fullName ?? '';
+  const isGoodsReturn = apiDR.type === 'GOODS_RETURN';
+  const receiveAddress = isGoodsReturn ? apiDR.deliveryAddress : apiDR.receiveAddress;
+  const deliveryAddress = isGoodsReturn ? {} : apiDR.deliveryAddress;
   return {
     ...rest,
     deliveryPerson,
     hasNewMessage: isNewMessage('DR', apiDR.id, apiDR.lastMessageAt),
     isReceive: apiDR.type === 'RECEIVE',
+    isGoodsReturn: apiDR.type === 'GOODS_RETURN',
     isDelivery: apiDR.type === 'DELIVERY',
     isUrgentDelivery: apiDR?.isUrgentDelivery ?? false,
     type: apiDR.type,
@@ -67,8 +72,8 @@ function transformApiToFrontend(
     customerName,
     customerId: apiDR?.purchaseOrder?.customerId,
     photos: apiDR.photos ?? [],
-    deliveryAddress: apiDR.deliveryAddress ?? {},
-    receiveAddress: apiDR.receiveAddress ?? {},
+    deliveryAddress: deliveryAddress ?? {},
+    receiveAddress: receiveAddress ?? {},
   };
 }
 

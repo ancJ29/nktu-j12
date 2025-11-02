@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router';
 import { Affix, Button, Group, LoadingOverlay, ScrollArea, Stack } from '@mantine/core';
 import { IconCamera, IconCopy, IconEdit, IconInfoCircle, IconMessage } from '@tabler/icons-react';
 
+import { GoodsReturnCreateModal } from '@/components/app/po/GoodsReturnCreateModal';
 import {
   DeliveryRequestModal,
   PODetailAccordion,
@@ -79,8 +80,9 @@ export function PODetailPage() {
   const { modals, selectedPO, closeModal, handlers } = usePOModals();
   const { uploadPhotos } = usePOActions();
 
-  // Delivery modal state
+  // Delivery and Goods Return modal states
   const [deliveryModalOpened, setDeliveryModalOpened] = useState(false);
+  const [goodsReturnModalOpened, setGoodsReturnModalOpened] = useState(false);
 
   // Mobile tabs state
   const [mobileTabValue, setMobileTabValue] = useState<'info' | 'communication'>('info');
@@ -187,6 +189,12 @@ export function PODetailPage() {
   const handleCreateDelivery = useCallback(() => {
     if (purchaseOrder) {
       setDeliveryModalOpened(true);
+    }
+  }, [purchaseOrder]);
+
+  const handleCreateGoodsReturn = useCallback(() => {
+    if (purchaseOrder) {
+      setGoodsReturnModalOpened(true);
     }
   }, [purchaseOrder]);
 
@@ -471,7 +479,12 @@ export function PODetailPage() {
   );
 
   const createDeliveryAction = useSWRAction<
-    | { assignedTo: string; scheduledDate: string; notes?: string; isUrgentDelivery?: boolean }
+    | {
+        assignedTo: string;
+        scheduledDate: string;
+        notes?: string;
+        isUrgentDelivery?: boolean;
+      }
     | undefined
   >(
     'create-delivery-request',
@@ -485,6 +498,8 @@ export function PODetailPage() {
       if (!data || !purchaseOrder) {
         throw new Error(t('common.invalidFormData'));
       }
+
+      // Create DELIVERY request for current PO
       await createDeliveryRequest({
         purchaseOrderId: purchaseOrder.id,
         assignedTo: data.assignedTo,
@@ -507,6 +522,53 @@ export function PODetailPage() {
           void (await loadPO(poId));
         }
         setDeliveryModalOpened(false);
+        navigate(ROUTERS.DELIVERY_MANAGEMENT);
+      },
+    },
+  );
+
+  const createGoodsReturnAction = useSWRAction<
+    | {
+        assignedTo: string;
+        scheduledDate: string;
+        notes: string;
+      }
+    | undefined
+  >(
+    'create-goods-return-request',
+    async (data) => {
+      if (!canShipPurchaseOrder(permissions)) {
+        throw new Error(t('common.doNotHavePermissionForAction'));
+      }
+      if (!canCreate) {
+        throw new Error(t('common.doNotHavePermissionForAction'));
+      }
+      if (!data || !purchaseOrder) {
+        throw new Error(t('common.invalidFormData'));
+      }
+
+      // Create GOODS_RETURN request for current PO
+      await createDeliveryRequest({
+        type: 'GOODS_RETURN',
+        assignedTo: data.assignedTo,
+        scheduledDate: data.scheduledDate,
+        notes: data.notes,
+        purchaseOrderId: purchaseOrder.id,
+      });
+    },
+    {
+      notifications: {
+        successTitle: t('common.success'),
+        successMessage: t('delivery.createGoodsReturnRequest'),
+        errorTitle: t('common.errors.notificationTitle'),
+        errorMessage: t('po.deliveryRequestCreateFailed'),
+      },
+      onSuccess: async () => {
+        if (poId) {
+          // Reload PO
+          void (await loadPO(poId));
+        }
+        setGoodsReturnModalOpened(false);
         navigate(ROUTERS.DELIVERY_MANAGEMENT);
       },
     },
@@ -598,6 +660,13 @@ export function PODetailPage() {
         onClose={() => setDeliveryModalOpened(false)}
         onConfirm={createDeliveryAction.trigger}
       />
+      <GoodsReturnCreateModal
+        opened={goodsReturnModalOpened}
+        purchaseOrder={purchaseOrder}
+        isLoading={createGoodsReturnAction.isMutating}
+        onClose={() => setGoodsReturnModalOpened(false)}
+        onConfirm={createGoodsReturnAction.trigger}
+      />
       <POPhotoUpload
         opened={modals.uploadPhotosModalOpened}
         onClose={handleCloseModal('uploadPhotos')}
@@ -680,6 +749,7 @@ export function PODetailPage() {
                 onRefund={handleRefund}
                 onDelete={handleDelete}
                 onCreateDelivery={handleCreateDelivery}
+                onCreateGoodsReturn={handleCreateGoodsReturn}
                 onDeleteAttachment={handleDeleteAttachment}
                 isDeleting={deleteAttachmentAction.isMutating}
               />
@@ -785,6 +855,7 @@ export function PODetailPage() {
             onRefund={handleRefund}
             onDelete={handleDelete}
             onCreateDelivery={handleCreateDelivery}
+            onCreateGoodsReturn={handleCreateGoodsReturn}
             onDeleteAttachment={handleDeleteAttachment}
             isDeleting={deleteAttachmentAction.isMutating}
           />

@@ -11,11 +11,13 @@ interface DeliveryTypeBadgeProps {
 const typeKeyMap = {
   DELIVERY: 'delivery.types.delivery',
   RECEIVE: 'delivery.types.receive',
+  GOODS_RETURN: 'delivery.types.goodsReturn',
 } as const;
 
 const typeColorMap = {
   DELIVERY: 'orange',
   RECEIVE: 'cyan',
+  GOODS_RETURN: 'red',
 } as const;
 
 export function DeliveryTypeBadge({ type, size = 'sm' }: DeliveryTypeBadgeProps) {

@@ -30,6 +30,7 @@ type POActionZoneProps = {
   readonly onRefund: () => void;
   readonly onDelete?: () => void;
   readonly onCreateDelivery?: () => void;
+  readonly onCreateGoodsReturn?: () => void;
 };
 
 export function POActionZone({
@@ -44,6 +45,7 @@ export function POActionZone({
   onRefund,
   onDelete,
   onCreateDelivery,
+  onCreateGoodsReturn,
 }: POActionZoneProps) {
   const { t } = useTranslation();
 
@@ -97,6 +99,7 @@ export function POActionZone({
       onRefund,
       onDelete: onDelete ?? (() => {}),
       onCreateDelivery,
+      onCreateGoodsReturn,
     },
     options: {
       iconSize: 16,

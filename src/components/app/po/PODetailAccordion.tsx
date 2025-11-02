@@ -34,6 +34,7 @@ type PODetailAccordionProps = {
   readonly onRefund: () => void;
   readonly onDelete?: () => void;
   readonly onCreateDelivery: () => void;
+  readonly onCreateGoodsReturn: () => void;
   readonly onDeleteAttachment?: (attachmentKey: string) => void;
   readonly isDeleting?: boolean;
 };
@@ -51,6 +52,7 @@ export function PODetailAccordion({
   onRefund,
   onDelete,
   onCreateDelivery,
+  onCreateGoodsReturn,
   onDeleteAttachment,
   isDeleting,
 }: PODetailAccordionProps) {
@@ -163,6 +165,7 @@ export function PODetailAccordion({
         onRefund={onRefund}
         onDelete={onDelete}
         onCreateDelivery={onCreateDelivery}
+        onCreateGoodsReturn={onCreateGoodsReturn}
       />
     </Stack>
   );

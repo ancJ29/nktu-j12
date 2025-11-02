@@ -37,15 +37,14 @@
     "typeMessage": "Type a message..."
   },
   "common": {
-    "viewInFullScreen": "View in Full Screen",
-    "address": "Address",
-    "addressPlaceholder": "Address",
     "actions": "Actions",
     "activate": "Activate",
     "activated": "{{entity}} Activated",
     "active": "Active",
     "add": "Add",
     "addFailed": "Failed to add {{entity}}",
+    "address": "Address",
+    "addressPlaceholder": "Address",
     "apply": "Apply",
     "backToPreviousPage": "Back to previous page",
     "bulkImport": {
@@ -91,6 +90,7 @@
       "customer": "Customer",
       "deliveryRequest": "Delivery Request",
       "employee": "Employee",
+      "goodsReturnRequest": "Goods Return Request",
       "product": "Product",
       "vendor": "Vendor"
     },
@@ -225,6 +225,7 @@
     "updatedAt": "Updated At",
     "urgent": "Urgent",
     "vendor": "Vendor",
+    "viewInFullScreen": "View in Full Screen",
     "viewOnMap": "View on Google Maps",
     "zoomIn": "Zoom In",
     "zoomOut": "Zoom Out"
@@ -257,6 +258,7 @@
     "completedDate": "Completed Date",
     "completionNotes": "Completion Notes",
     "createDeliveryDescription": "Create a delivery request to send items to customer",
+    "createGoodsReturnRequest": "Create Goods Return Request",
     "createReceiveRequest": "Create Request",
     "deleteDelivery": "Delete Delivery",
     "deleteDeliveryDescription": "Are you sure you want to delete this delivery request? This action cannot be undone.",
@@ -277,15 +279,21 @@
     },
     "form": {
       "enterNotes": "Enter delivery notes",
+      "enterPONumber": "Enter PO number",
+      "noPOsAvailable": "No POs available for this customer",
       "selectAssignee": "Select Assignee",
       "selectCustomer": "Select Customer",
+      "selectCustomerFirst": "Select customer first",
       "selectDate": "Select Scheduled Date",
       "selectDriver": "Select Driver",
       "selectPO": "Select Purchase Order (optional)",
+      "selectPONumber": "Select PO number",
       "selectPOs": "Select Purchase Orders",
       "selectPOsDescription": "Select one or more purchase orders to create delivery requests",
       "urgentDeliveryDescription": "Mark this delivery as urgent"
     },
+    "goodsReturnDescription": "Create a request to pick up returned goods from customer",
+    "goodsReturnInfo": "Goods Return Request",
     "id": "Request ID",
     "messages": {
       "completeFailed": "Failed to complete delivery",
@@ -299,6 +307,7 @@
     "modal": {
       "tabs": {
         "delivery": "Delivery Request",
+        "goodsReturn": "Goods Return Request",
         "receive": "Receive Request"
       }
     },
@@ -328,6 +337,9 @@
     "receivedBy": "ReceivedBy",
     "receivedByDescription": "Name of person who received the delivery",
     "requestType": "Request Type",
+    "returnAddress": "Return Address",
+    "returnAddressDescription": "Optional - defaults to customer address if not specified",
+    "returnAddressPlaceholder": "Enter customer return address",
     "scheduledDate": "Scheduled Date",
     "status": "Status",
     "statuses": {
@@ -341,6 +353,7 @@
     "transitNotesDescription": "Optional notes about starting transit",
     "types": {
       "delivery": "Delivery",
+      "goodsReturn": "Goods Return",
       "receive": "Receive"
     },
     "updateDeliveryRequest": "Update Delivery Request",

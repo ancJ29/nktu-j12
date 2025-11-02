@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { type MantineSize, Modal, rem } from '@mantine/core';
+import { type MantineSize, Modal, rem, Text } from '@mantine/core';
 
 import { Drawer } from '@/components/common/ui';
 import { useDeviceType } from '@/hooks/useDeviceType';
@@ -8,12 +8,14 @@ import { useDeviceType } from '@/hooks/useDeviceType';
 type ModalOrDrawerProps = {
   readonly opened: boolean;
   readonly title: string;
+  readonly modalSize?: number | MantineSize | (string & {}) | undefined;
   readonly drawerSize?: number | MantineSize | (string & {}) | undefined;
   readonly children: ReactNode;
   readonly onClose: () => void;
 };
 export function ModalOrDrawer({
   title,
+  modalSize,
   drawerSize,
   opened,
   onClose,
@@ -22,7 +24,13 @@ export function ModalOrDrawer({
   const { isDesktop } = useDeviceType();
   if (isDesktop) {
     return (
-      <Modal centered opened={opened} title={title} onClose={onClose}>
+      <Modal
+        centered
+        opened={opened}
+        title={<Text fw={700}>{title}</Text>}
+        size={modalSize}
+        onClose={onClose}
+      >
         {children}
       </Modal>
     );
@@ -31,7 +39,7 @@ export function ModalOrDrawer({
   return (
     <Drawer
       opened={opened}
-      title={title}
+      title={<Text fw={600}>{title}</Text>}
       position="bottom"
       size={drawerSize ?? '50vh'}
       transitionProps={{
