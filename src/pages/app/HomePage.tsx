@@ -385,7 +385,7 @@ export function HomePage() {
                     color="blue"
                     onClick={(e) => {
                       e.stopPropagation();
-                      openFullscreen('delivery');
+                      openFullscreen('warehouse');
                     }}
                   >
                     {t('common.viewInFullScreen')}
