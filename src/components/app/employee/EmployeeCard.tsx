@@ -58,9 +58,14 @@ export function EmployeeCard({ employee, style, className }: EmployeeCardProps) 
               {t('common.form.email')}: {employee.email}
             </Text>
           ) : null}
-          {employee.phone ? (
+          {employee.companyPhoneNumber ? (
             <Text size="xs" c="dimmed">
-              {t('employee.phone')}: {employee.phone}
+              {t('common.phone')}: {employee.companyPhoneNumber}
+            </Text>
+          ) : null}
+          {employee.personalPhoneNumber ? (
+            <Text size="xs" c="dimmed">
+              {t('common.personalPhoneNumber')}: {employee.personalPhoneNumber}
             </Text>
           ) : null}
         </Box>

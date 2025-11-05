@@ -53,7 +53,7 @@ export function DeliveryGridCard({ deliveryRequest }: DeliveryGridCardProps) {
               <Text size="sm" fw={500}>
                 <DeliveryTypeBadge type={deliveryRequest.type} />
               </Text>
-              {(deliveryRequest.isDelivery || deliveryRequest.isGoodsReturn) ? (
+              {deliveryRequest.isDelivery || deliveryRequest.isGoodsReturn ? (
                 <>
                   <div>
                     <Text size="sm" c="dimmed">

@@ -27,7 +27,8 @@ type SingleEmployeeFormValues = {
   lastName: string;
   departmentId?: string;
   email?: string;
-  phone?: string;
+  companyPhoneNumber?: string;
+  personalPhoneNumber?: string;
   workType?: 'FULL_TIME' | 'PART_TIME';
   monthlySalary?: number;
   hourlyRate?: number;
@@ -101,10 +102,16 @@ export function SingleEmployeeForm({
             {...form.getInputProps('email')}
           />
           <TextInput
-            label={t('employee.phone')}
+            label={t('common.phone')}
             placeholder="0901-234-567"
             leftSection={<IconPhone size={16} />}
-            {...form.getInputProps('phone')}
+            {...form.getInputProps('companyPhoneNumber')}
+          />
+          <TextInput
+            label={t('common.personalPhoneNumber')}
+            placeholder="0901-234-567"
+            leftSection={<IconPhone size={16} />}
+            {...form.getInputProps('personalPhoneNumber')}
           />
 
           {hasWorkType && (

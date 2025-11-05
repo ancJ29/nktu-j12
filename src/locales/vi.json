@@ -176,6 +176,7 @@
       "vendorConfigDescription": "Cấu hình thiết lập nhà cung cấp",
       "vendorManagement": "Quản Lý Nhà Cung Cấp"
     },
+    "personalPhoneNumber": "Số Điện Thoại Cá Nhân",
     "phone": "Điện thoại",
     "photos": {
       "capture": "Chụp Ảnh",
@@ -447,7 +448,6 @@
     "notFound": "Không tìm thấy nhân viên",
     "partTime": "Bán Thời Gian",
     "passwordSetSuccessfully": "Đặt mật khẩu thành công, hệ thống sẽ tự động đăng xuất sau 3 giây",
-    "phone": "Số Điện Thoại",
     "purchasingOrder": "Đơn Đặt Hàng",
     "qrCodeCopied": "Đã sao chép mã QR vào clipboard",
     "salaryConfig": "Cấu Hình Lương",

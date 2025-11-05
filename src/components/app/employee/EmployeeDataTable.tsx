@@ -52,7 +52,13 @@ export function EmployeeDataTable({ employees }: EmployeeDataTableProps) {
         {
           key: 'contact',
           header: t('common.contact'),
-          render: (employee: Employee) => <ContactInfo {...employee} />,
+          render: (employee: Employee) => (
+            <ContactInfo
+              email={employee.email}
+              contactPhone={employee.companyPhoneNumber}
+              secondaryPhoneNumber={employee.personalPhoneNumber}
+            />
+          ),
         },
         {
           key: 'workType',

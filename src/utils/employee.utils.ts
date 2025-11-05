@@ -7,7 +7,8 @@ export type SingleEmployeeFormValues = {
   lastName: string;
   departmentId?: string;
   email?: string;
-  phone?: string;
+  companyPhoneNumber?: string;
+  personalPhoneNumber?: string;
   workType?: 'FULL_TIME' | 'PART_TIME';
   monthlySalary?: number;
   hourlyRate?: number;

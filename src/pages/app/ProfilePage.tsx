@@ -111,7 +111,10 @@ export function ProfilePage() {
                     {t('profile.phone')}
                   </Text>
                   <Text size="sm" fw={500}>
-                    {me.employee.phoneNumber}
+                    {me.employee?.metadata?.contact?.companyPhoneNumber}
+                  </Text>
+                  <Text size="sm" fw={500}>
+                    {me.employee?.metadata?.contact?.personalPhoneNumber}
                   </Text>
                 </Group>
                 <Group justify="space-between">

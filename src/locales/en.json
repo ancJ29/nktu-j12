@@ -176,6 +176,7 @@
       "vendorConfigDescription": "Configure vendor settings",
       "vendorManagement": "Vendor Management"
     },
+    "personalPhoneNumber": "Personal Phone Number",
     "phone": "Phone",
     "photos": {
       "capture": "Capture",
@@ -447,7 +448,6 @@
     "notFound": "Employee not found",
     "partTime": "Part Time",
     "passwordSetSuccessfully": "Password set successfully, the system will automatically logout after 3 seconds",
-    "phone": "Phone",
     "purchasingOrder": "Purchasing Order",
     "qrCodeCopied": "QR code copied to clipboard",
     "salaryConfig": "Salary Config",

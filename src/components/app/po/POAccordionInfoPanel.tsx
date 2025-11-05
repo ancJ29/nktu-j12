@@ -240,7 +240,8 @@ export function POAccordionInfoPanel({
                 c="red"
                 fw="bold"
                 onClick={() => {
-                  const deliveryRequestId = purchaseOrder.goodsReturnRequest?.goodsReturnRequestId || '-';
+                  const deliveryRequestId =
+                    purchaseOrder.goodsReturnRequest?.goodsReturnRequestId || '-';
                   navigate(getDeliveryDetailRoute(deliveryRequestId));
                 }}
               >

@@ -19,7 +19,6 @@ export type Employee = {
   employeeCode: string;
   fullName: string;
   email?: string;
-  phone?: string;
   workType?: WorkType;
   monthlySalary?: number;
   hourlyRate?: number;
@@ -28,6 +27,8 @@ export type Employee = {
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
+  personalPhoneNumber?: string;
+  companyPhoneNumber?: string;
   departmentId?: string;
   department?: string;
   position?: string;
@@ -57,11 +58,12 @@ export const employeeService = {
         departmentId: employee.departmentId,
         department: departmentMap.get(employee.departmentId ?? ''),
         workType,
-        phone: employee.phoneNumber,
         monthlySalary: employee.metadata?.monthlySalary,
         hourlyRate: employee.metadata?.hourRate,
         displayOrder: employee.metadata?.displayOrder,
         position: employee.metadata?.positionName ?? '',
+        companyPhoneNumber: employee.metadata?.contact?.companyPhoneNumber,
+        personalPhoneNumber: employee.metadata?.contact?.personalPhoneNumber,
       };
     });
     return this.employees;
@@ -81,7 +83,6 @@ export const employeeService = {
     lastName: string;
     departmentId?: string | undefined;
     email?: string;
-    phone?: string;
     workType?: WorkType;
     position?: string;
     monthlySalary?: number;
@@ -92,9 +93,12 @@ export const employeeService = {
       firstName: employee.firstName,
       lastName: employee.lastName,
       departmentId: employee.departmentId,
-      phoneNumber: employee.phone,
       employmentType: employee.workType ?? 'FULL_TIME',
       metadata: {
+        contact: {
+          personalPhoneNumber: 'TODO',
+          companyPhoneNumber: 'TODO',
+        },
         hourRate: employee.workType === 'FULL_TIME' ? undefined : employee.hourlyRate,
         monthlySalary: employee.workType === 'FULL_TIME' ? employee.monthlySalary : undefined,
         positionName: employee.position,
@@ -119,10 +123,13 @@ export const employeeService = {
       employees: employees.map((employee) => ({
         firstName: employee.firstName,
         lastName: employee.lastName,
-        phoneNumber: employee.phone,
         departmentId: employee.departmentId,
         employmentType: employee.workType ?? 'FULL_TIME',
         metadata: {
+          contact: {
+            personalPhoneNumber: 'TODO',
+            companyPhoneNumber: 'TODO',
+          },
           hourRate: employee.workType === 'FULL_TIME' ? undefined : employee.hourlyRate,
           monthlySalary: employee.workType === 'FULL_TIME' ? employee.monthlySalary : undefined,
           positionName: employee.position,
@@ -150,7 +157,8 @@ export const employeeService = {
       lastName: string;
       departmentId?: string | undefined;
       email?: string;
-      phone?: string;
+      companyPhoneNumber?: string;
+      personalPhoneNumber?: string;
       workType?: WorkType;
       monthlySalary?: number;
       hourlyRate?: number;
@@ -165,9 +173,12 @@ export const employeeService = {
       lastName: employee.lastName,
       departmentId: employee.departmentId,
       employmentType: employee.workType,
-      phoneNumber: employee.phone,
       email: employee.email,
       metadata: {
+        contact: {
+          personalPhoneNumber: employee.personalPhoneNumber,
+          companyPhoneNumber: employee.companyPhoneNumber,
+        },
         displayOrder: employee.displayOrder,
         hourRate: employee.workType === 'FULL_TIME' ? undefined : employee.hourlyRate,
         monthlySalary: employee.workType === 'FULL_TIME' ? employee.monthlySalary : undefined,

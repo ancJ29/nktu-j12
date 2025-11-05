@@ -74,7 +74,11 @@ export function EmployeeGridCard({ employee }: EmployeeGridCardProps) {
           <Text size="xs" c="dimmed" fw={500} mb={4}>
             {t('common.contact')}:
           </Text>
-          <ContactInfo email={employee.email} phoneNumber={employee.phone} />
+          <ContactInfo
+            email={employee.email}
+            contactPhone={employee.companyPhoneNumber}
+            secondaryPhoneNumber={employee.personalPhoneNumber}
+          />
         </Group>
         {clientConfig.features?.employee?.workType ? (
           <>

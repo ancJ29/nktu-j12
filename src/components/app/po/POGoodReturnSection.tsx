@@ -41,7 +41,9 @@ export function POGoodReturnSection({ purchaseOrder }: PODeliverySectionProps) {
             c="red"
             fw="bold"
             onClick={() =>
-              handleViewDeliveryRequest(purchaseOrder.goodsReturnRequest?.goodsReturnRequestId || '-')
+              handleViewDeliveryRequest(
+                purchaseOrder.goodsReturnRequest?.goodsReturnRequestId || '-',
+              )
             }
           >
             {purchaseOrder.goodsReturnRequest.goodsReturnRequestNumber}

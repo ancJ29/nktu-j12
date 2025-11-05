@@ -25,7 +25,8 @@ type HrState = {
     lastName: string;
     departmentId?: string | undefined;
     email?: string;
-    phone?: string;
+    companyPhoneNumber?: string;
+    personalPhoneNumber?: string;
     workType?: 'FULL_TIME' | 'PART_TIME';
     monthlySalary?: number;
     hourlyRate?: number;
@@ -37,7 +38,8 @@ type HrState = {
       lastName: string;
       departmentId?: string | undefined;
       email?: string;
-      phone?: string;
+      companyPhoneNumber?: string;
+      personalPhoneNumber?: string;
     }>,
   ) => Promise<void>;
   clearError: () => void;

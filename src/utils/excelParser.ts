@@ -143,7 +143,8 @@ export type BulkEmployee = {
   lastName: string;
   departmentName?: string;
   email?: string;
-  phone?: string;
+  companyPhoneNumber?: string;
+  personalPhoneNumber?: string;
 };
 
 export const parseEmployeeExcelFile = async (file: File): Promise<BulkEmployee[]> => {
@@ -225,8 +226,12 @@ export const parseEmployeeExcelFile = async (file: File): Promise<BulkEmployee[]
                 employee.email = value;
                 break;
               }
-              case 'phone': {
-                employee.phone = value;
+              case 'companyPhoneNumber': {
+                employee.companyPhoneNumber = value;
+                break;
+              }
+              case 'personalPhoneNumber': {
+                employee.personalPhoneNumber = value;
                 break;
               }
               default: {

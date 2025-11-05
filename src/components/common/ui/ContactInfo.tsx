@@ -5,6 +5,7 @@ import { useDeviceType } from '@/hooks/useDeviceType';
 type ContactInfoProps = {
   email?: string;
   phoneNumber?: string;
+  secondaryPhoneNumber?: string;
   contactPhone?: string;
   contactEmail?: string;
   pic?: string;
@@ -14,6 +15,7 @@ type ContactInfoProps = {
 export function ContactInfo(props: ContactInfoProps) {
   const email = props.contactEmail || props.email || '';
   const phoneNumber = props.contactPhone || props.phoneNumber || '';
+  const secondaryPhoneNumber = props.secondaryPhoneNumber || '';
   const pic = props.pic || '';
   const { isMobile } = useDeviceType();
 
@@ -21,29 +23,32 @@ export function ContactInfo(props: ContactInfoProps) {
     return props.blank ?? '-';
   }
 
-  const contact = Object.entries({ pic, phoneNumber, email }).map(([key, value]) => {
-    if (!value) return null;
-    if (key === 'phoneNumber' && isMobile) {
+  const contact = Object.entries({ pic, phoneNumber, email, secondaryPhoneNumber }).map(
+    ([key, value]) => {
+      if (!value) return null;
+      const isPhone = key === 'phoneNumber' || key === 'secondaryPhoneNumber';
+      if (isPhone && isMobile) {
+        return (
+          <Anchor
+            ml="sm"
+            href={`tel:${value}`}
+            size="sm"
+            fw={600}
+            style={{
+              fontStyle: 'italic',
+            }}
+          >
+            {value}
+          </Anchor>
+        );
+      }
       return (
-        <Anchor
-          ml="sm"
-          href={`tel:${value}`}
-          size="sm"
-          fw={600}
-          style={{
-            fontStyle: 'italic',
-          }}
-        >
+        <Text size="sm" key={key}>
           {value}
-        </Anchor>
+        </Text>
       );
-    }
-    return (
-      <Text size="sm" key={key}>
-        {value}
-      </Text>
-    );
-  });
+    },
+  );
 
   if (props.horizontal) {
     return <Group gap={4}>{contact}</Group>;

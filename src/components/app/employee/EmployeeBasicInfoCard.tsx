@@ -186,14 +186,23 @@ export function EmployeeBasicInfoCard({ employee, onEdit }: EmployeeBasicInfoCar
                 </Stack>
               </Grid.Col>
             ) : null}
-
-            {employee.phone ? (
+            {employee.companyPhoneNumber ? (
               <Grid.Col span={{ base: 6 }}>
                 <Stack gap="xs">
                   <Text c="dimmed" size="sm">
-                    {t('employee.phone')}
+                    {t('common.phone')}
                   </Text>
-                  <Text fw={500}>{employee.phone}</Text>
+                  <Text fw={500}>{employee.companyPhoneNumber}</Text>
+                </Stack>
+              </Grid.Col>
+            ) : null}
+            {employee.personalPhoneNumber ? (
+              <Grid.Col span={{ base: 6 }}>
+                <Stack gap="xs">
+                  <Text c="dimmed" size="sm">
+                    {t('common.personalPhoneNumber')}
+                  </Text>
+                  <Text fw={500}>{employee.personalPhoneNumber}</Text>
                 </Stack>
               </Grid.Col>
             ) : null}

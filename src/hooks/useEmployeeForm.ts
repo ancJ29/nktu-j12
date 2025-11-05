@@ -21,7 +21,8 @@ export function useEmployeeForm({ isEditMode }: UseEmployeeFormProps) {
       lastName: '',
       departmentId: undefined,
       email: undefined,
-      phone: undefined,
+      companyPhoneNumber: undefined,
+      personalPhoneNumber: undefined,
       workType: undefined,
       monthlySalary: undefined,
       hourlyRate: undefined,
@@ -43,7 +44,8 @@ export function useEmployeeForm({ isEditMode }: UseEmployeeFormProps) {
         lastName: lName,
         departmentId: undefined,
         email: undefined,
-        phone: `0901-${Math.floor(Math.random() * 1e3)}-${Math.floor(Math.random() * 1e3)}`,
+        companyPhoneNumber: `0901-${Math.floor(Math.random() * 1e3)}-${Math.floor(Math.random() * 1e3)}`,
+        personalPhoneNumber: `0901-${Math.floor(Math.random() * 1e3)}-${Math.floor(Math.random() * 1e3)}`,
         workType: Math.random() > 0.5 ? 'FULL_TIME' : 'PART_TIME',
         monthlySalary: 12000000,
         hourlyRate: 25000,
@@ -60,9 +62,13 @@ export function useEmployeeForm({ isEditMode }: UseEmployeeFormProps) {
       ...getFormValidators(t, ['firstName', 'lastName']),
       email: (value) =>
         value && !/^\S+@\S+\.\S+$/.test(value) ? t('validation.invalidEmail') : undefined,
-      phone: (value) =>
+      companyPhoneNumber: (value) =>
         value && value.length < 10
           ? t('validation.tooShort', { field: t('common.phone'), length: 10 })
+          : undefined,
+      personalPhoneNumber: (value) =>
+        value && value.length < 10
+          ? t('validation.tooShort', { field: t('common.personalPhoneNumber'), length: 10 })
           : undefined,
       monthlySalary: (value, values) => {
         if (!isEditMode && values.workType === 'FULL_TIME' && !value) {

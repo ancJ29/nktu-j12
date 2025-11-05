@@ -35,7 +35,7 @@ const levelValueMap = {
 const logLevel = isProduction ? levelValueMap['none'] : levelValueMap['debug'];
 
 export function registerLogger() {
-  const debug = false;
+  const debug = true;
   if (debug && isDevelopment) {
     return;
   }

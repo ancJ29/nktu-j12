@@ -7,11 +7,23 @@ import {
   optionalNumberSchema,
   optionalStringSchema,
   phoneNumberSchema,
+  // phoneNumberSchema,
   stringSchema,
   timestampSchema,
 } from './common.schemas';
 
 const employeeTypeSchema = z.enum(['FULL_TIME', 'PART_TIME']).optional();
+
+const EmployeeMetadataSchema = z.object({
+  contact: z.looseObject({
+    personalPhoneNumber: backendPhoneNumberSchema.optional(),
+    companyPhoneNumber: backendPhoneNumberSchema.optional(),
+  }),
+  displayOrder: optionalNumberSchema,
+  hourRate: optionalNumberSchema,
+  monthlySalary: optionalNumberSchema,
+  positionName: optionalStringSchema,
+});
 
 // Employee schema
 export const EmployeeSchema = z.object({
@@ -21,12 +33,17 @@ export const EmployeeSchema = z.object({
   firstName: stringSchema,
   lastName: stringSchema,
   employeeCode: stringSchema,
-  phoneNumber: phoneNumberSchema,
   employmentType: employeeTypeSchema.transform((val) => val ?? 'FULL_TIME'),
   departmentId: idSchema.optional(),
   isActive: z.boolean(),
   metadata: z
-    .object({
+    .looseObject({
+      contact: z
+        .object({
+          personalPhoneNumber: phoneNumberSchema.optional(),
+          companyPhoneNumber: phoneNumberSchema.optional(),
+        })
+        .optional(),
       displayOrder: optionalNumberSchema,
       hourRate: optionalNumberSchema,
       monthlySalary: optionalNumberSchema,
@@ -43,16 +60,8 @@ export const CreateEmployeeSchema = z.object({
   lastName: stringSchema,
   departmentId: optionalStringSchema,
   email: emailSchema.optional(),
-  phoneNumber: backendPhoneNumberSchema,
   employmentType: employeeTypeSchema.transform((val) => val ?? 'FULL_TIME'),
-  metadata: z
-    .object({
-      displayOrder: optionalNumberSchema,
-      hourRate: optionalNumberSchema,
-      monthlySalary: optionalNumberSchema,
-      positionName: optionalStringSchema,
-    })
-    .optional(),
+  metadata: EmployeeMetadataSchema.optional(),
 });
 
 export const CreateEmployeesRequestSchema = CreateEmployeeSchema;
@@ -66,15 +75,7 @@ export const UpdateEmployeeRequestSchema = z.object({
   departmentId: optionalStringSchema,
   employmentType: employeeTypeSchema,
   email: emailSchema.optional(),
-  phoneNumber: backendPhoneNumberSchema,
-  metadata: z
-    .object({
-      displayOrder: optionalNumberSchema,
-      hourRate: optionalNumberSchema,
-      monthlySalary: optionalNumberSchema,
-      positionName: optionalStringSchema,
-    })
-    .optional(),
+  metadata: EmployeeMetadataSchema.optional(),
 });
 
 // Response schemas
