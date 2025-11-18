@@ -66,6 +66,7 @@ function transformDRApiToFrontend(
   return {
     ...apiDR,
     isGoodsReturn: apiDR.type === 'GOODS_RETURN',
+    isAdditionalDelivery: apiDR.type === 'ADDITIONAL_DELIVERY',
     hasNewMessage: isNewMessage('DR', apiDR.id, apiDR.lastMessageAt),
     deliveryPerson,
     isReceive: apiDR.type === 'RECEIVE',

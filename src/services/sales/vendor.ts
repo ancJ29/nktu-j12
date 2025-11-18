@@ -84,7 +84,6 @@ export const vendorService = {
     id: string,
     data: Omit<Vendor, 'metadata' | 'id' | 'clientId'>,
   ): Promise<void> {
-    console.log('updateVendor', data);
     await salesApi.updateVendor(id, {
       ...data,
       metadata: {

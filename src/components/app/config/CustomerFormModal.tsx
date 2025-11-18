@@ -6,6 +6,7 @@ import {
   Button,
   Group,
   LoadingOverlay,
+  MultiSelect,
   ScrollArea,
   Stack,
   Textarea,
@@ -16,9 +17,14 @@ import { IconCheck, IconInfoCircle, IconTrash } from '@tabler/icons-react';
 import { ModalOrDrawer } from '@/components/common';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { Customer } from '@/services/sales/customer';
-import { useClientConfig, usePermissions } from '@/stores/useAppStore';
+import { useAppStore, useClientConfig, usePermissions } from '@/stores/useAppStore';
 import { confirmAction } from '@/utils/modals';
-import { canCreateCustomer, canDeleteCustomer, canEditCustomer } from '@/utils/permission.utils';
+import {
+  canCreateCustomer,
+  canDeleteCustomer,
+  canEditCustomer,
+  canSetSaleIdsForCustomer,
+} from '@/utils/permission.utils';
 
 import type { UseFormReturnType } from '@mantine/form';
 
@@ -34,6 +40,7 @@ export type CustomerFormValues = {
   taxCode?: string;
   isActive: boolean;
   memo?: string;
+  saleIds?: string[];
 };
 
 type CustomerFormModalProps = {
@@ -63,18 +70,27 @@ export function CustomerFormModal({
   const title = mode === 'create' ? t('common.add') : t('common.edit');
   const clientConfig = useClientConfig();
   const permissions = usePermissions();
+  const { sales } = useAppStore();
 
   const { noEmail, noTaxCode } = useMemo(() => {
     return clientConfig.features?.customer ?? { noEmail: false, noTaxCode: false };
   }, [clientConfig]);
 
-  const { canCreate, canEdit, canDelete } = useMemo(() => {
+  const { canCreate, canEdit, canDelete, canSetSaleIds } = useMemo(() => {
     return {
       canCreate: canCreateCustomer(permissions),
       canEdit: canEditCustomer(permissions),
       canDelete: canDeleteCustomer(permissions),
+      canSetSaleIds: canSetSaleIdsForCustomer(permissions) ?? false,
     };
   }, [permissions]);
+
+  const salesOptions = useMemo(() => {
+    return sales.map((sale) => ({
+      value: sale.id,
+      label: sale.fullName,
+    }));
+  }, [sales]);
 
   return (
     <ModalOrDrawer title={title} opened={opened} onClose={onClose} drawerSize="md">
@@ -122,6 +138,18 @@ export function CustomerFormModal({
                 disabled={isLoading}
                 {...form.getInputProps('pic')}
               />
+              {canSetSaleIds && (
+                <MultiSelect
+                  label={t('customer.saleIds')}
+                  placeholder={t('customer.saleIdsPlaceholder')}
+                  data={salesOptions}
+                  searchable
+                  clearable
+                  error={form.errors.saleIds}
+                  disabled={isLoading}
+                  {...form.getInputProps('saleIds')}
+                />
+              )}
 
               {!noEmail && (
                 <TextInput

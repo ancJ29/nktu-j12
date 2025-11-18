@@ -136,7 +136,7 @@ export function DeliveryDetailTabs({
                   <Grid>
                     <Grid.Col span={6}>
                       <Stack gap="xs">
-                        {deliveryRequest.isDelivery || deliveryRequest.isGoodsReturn ? (
+                        {deliveryRequest.customerName ? (
                           <>
                             <div>
                               <Text size="sm" c="dimmed">
@@ -252,7 +252,7 @@ export function DeliveryDetailTabs({
                 )}
 
                 {/* Receiving Address */}
-                {(deliveryRequest.isReceive || deliveryRequest.isGoodsReturn) && (
+                {deliveryRequest.customerName && (
                   <Card
                     withBorder
                     style={{

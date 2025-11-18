@@ -23,7 +23,12 @@ export const DeliveryStatusSchema = z.enum(['DRAFT', 'PENDING', 'IN_TRANSIT', 'C
 export type DeliveryStatus = z.infer<typeof DeliveryStatusSchema>;
 
 // Delivery Request base schema
-export const DeliveryRequestTypeSchema = z.enum(['DELIVERY', 'RECEIVE', 'GOODS_RETURN']);
+export const DeliveryRequestTypeSchema = z.enum([
+  'DELIVERY',
+  'RECEIVE',
+  'GOODS_RETURN',
+  'ADDITIONAL_DELIVERY',
+]);
 
 export const DeliveryRequestSchema = z.object({
   id: idSchema,
@@ -41,6 +46,7 @@ export const DeliveryRequestSchema = z.object({
       poId: idSchema,
       poNumber: stringSchema,
       customerId: idSchema.optional(),
+      personalCustomerName: optionalStringSchema,
     })
     .optional(),
   photos: z.array(S3DataSchema).optional(),

@@ -40,7 +40,6 @@ function useNavigationItems(isMobile = false) {
       navigationOverrides,
       user?.isRoot ?? false,
     );
-    console.log('navigationItems', user?.isRoot ?? false, JSON.stringify(navigationItems, null, 2));
     return navigationItems;
   }, [user, t, isMobile]);
 

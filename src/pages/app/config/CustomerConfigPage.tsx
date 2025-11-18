@@ -32,9 +32,14 @@ import { customerService } from '@/services/sales';
 // Use the service's expected types
 type CreateCustomerRequest = Parameters<typeof customerService.createCustomer>[0];
 type UpdateCustomerRequest = Parameters<typeof customerService.updateCustomer>[1];
-import { useClientConfig, usePermissions } from '@/stores/useAppStore';
+import { useAppStore, useClientConfig, usePermissions } from '@/stores/useAppStore';
 import { generateCustomerExcelTemplate, parseCustomerExcelFile } from '@/utils/excelParser';
-import { canCreateCustomer, canEditCustomer, canViewCustomer } from '@/utils/permission.utils';
+import {
+  canCreateCustomer,
+  canEditCustomer,
+  canSetSaleIdsForCustomer,
+  canViewCustomer,
+} from '@/utils/permission.utils';
 import { validateEmail } from '@/utils/validation';
 
 export function CustomerConfigPage() {
@@ -42,12 +47,14 @@ export function CustomerConfigPage() {
   const { isMobile } = useDeviceType();
   const permissions = usePermissions();
   const clientConfig = useClientConfig();
+  const { isSales, employeeId } = useAppStore();
 
-  const { canView, canCreate, canEdit } = useMemo(() => {
+  const { canView, canCreate, canEdit, canSetSaleIds } = useMemo(() => {
     return {
       canView: canViewCustomer(permissions),
       canCreate: canCreateCustomer(permissions),
       canEdit: canEditCustomer(permissions),
+      canSetSaleIds: canSetSaleIdsForCustomer(permissions) ?? false,
     };
   }, [permissions]);
 
@@ -68,6 +75,7 @@ export function CustomerConfigPage() {
       taxCode: '',
       isActive: true,
       memo: '',
+      saleIds: [],
     },
     validate: {
       name: (value) => (!value?.trim() ? t('validation.fieldRequired') : null),
@@ -78,14 +86,22 @@ export function CustomerConfigPage() {
   // Service adapter for the generic hook
   const service = useMemo(
     () => ({
-      getAll: customerService.getAllCustomers,
+      getAll: async () => {
+        const customers = await customerService.getAllCustomers();
+        if (isSales) {
+          return customers.filter((customer) => {
+            return (customer.saleIds ?? []).includes(employeeId ?? '-');
+          });
+        }
+        return customers;
+      },
       create: customerService.createCustomer,
       update: customerService.updateCustomer,
       activate: customerService.activateCustomer,
       deactivate: customerService.deactivateCustomer,
       bulkUpsert: customerService.bulkUpsertCustomers,
     }),
-    [],
+    [isSales, employeeId],
   );
 
   const {
@@ -124,6 +140,7 @@ export function CustomerConfigPage() {
     form,
     transformToCreateRequest: (values) => ({
       name: values.name,
+      saleIds: canSetSaleIds ? (employeeId ? [employeeId] : []) : (values.saleIds ?? []),
       companyName: values.companyName || undefined,
       contactEmail: values.contactEmail || undefined,
       contactPhone: values.contactPhone || undefined,
@@ -133,9 +150,11 @@ export function CustomerConfigPage() {
       taxCode: values.taxCode || undefined,
       isActive: true,
       memo: values.memo || undefined,
+      pic: values.pic || undefined,
     }),
     transformToUpdateRequest: (values) => ({
       name: values.name,
+      saleIds: canSetSaleIds ? undefined : (values.saleIds ?? []),
       companyName: values.companyName || undefined,
       contactEmail: values.contactEmail || undefined,
       contactPhone: values.contactPhone || undefined,
@@ -178,6 +197,7 @@ export function CustomerConfigPage() {
         isActive: customer.isActive,
         memo: customer?.memo || '',
         pic: customer?.pic || '',
+        saleIds: customer.saleIds ?? [],
       });
     },
     searchFilter: (customer, query) =>

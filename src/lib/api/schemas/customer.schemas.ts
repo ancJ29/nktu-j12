@@ -23,6 +23,7 @@ const CustomerMetadataSchema = z.looseObject({
   googleMapsUrl: optionalStringSchema,
   memo: optionalStringSchema,
   pic: optionalStringSchema,
+  saleIds: z.array(idSchema),
 });
 
 // Customer base schema
@@ -39,6 +40,7 @@ export const CustomerSchema = z.object({
   googleMapsUrl: optionalStringSchema,
   memo: optionalStringSchema,
   pic: optionalStringSchema,
+  saleIds: z.array(idSchema).optional(),
 });
 
 // Customer request schemas

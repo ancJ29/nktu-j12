@@ -26,6 +26,7 @@ export type {
 export type DeliveryRequest = Omit<ApiDeliveryRequest, 'metadata'> & {
   isReceive: boolean;
   isDelivery: boolean;
+  isAdditionalDelivery: boolean;
   isGoodsReturn: boolean;
   isUrgentDelivery?: boolean;
   type: DeliveryRequestType;
@@ -51,11 +52,15 @@ function transformApiToFrontend(
 ): DeliveryRequest {
   const { ...rest } = apiDR;
   const customerId = apiDR.purchaseOrder?.customerId;
-  const customerName = customerId ? (customerMapByCustomerId.get(customerId)?.name ?? '') : '';
+  const customerName = customerId
+    ? (customerMapByCustomerId.get(customerId)?.name ?? '')
+    : undefined;
+  const personalCustomerName = apiDR.purchaseOrder?.personalCustomerName;
 
   const employee = apiDR.assignedTo ? employeeMapByEmployeeId.get(apiDR.assignedTo) : undefined;
   const deliveryPerson = employee?.fullName ?? '';
   const isGoodsReturn = apiDR.type === 'GOODS_RETURN';
+  // const isAdditionalDelivery = apiDR.type === 'ADDITIONAL_DELIVERY';
   const receiveAddress = isGoodsReturn ? apiDR.deliveryAddress : apiDR.receiveAddress;
   const deliveryAddress = isGoodsReturn ? {} : apiDR.deliveryAddress;
   return {
@@ -65,11 +70,12 @@ function transformApiToFrontend(
     isReceive: apiDR.type === 'RECEIVE',
     isGoodsReturn: apiDR.type === 'GOODS_RETURN',
     isDelivery: apiDR.type === 'DELIVERY',
+    isAdditionalDelivery: apiDR.type === 'ADDITIONAL_DELIVERY',
     isUrgentDelivery: apiDR?.isUrgentDelivery ?? false,
     type: apiDR.type,
     purchaseOrderId: apiDR?.purchaseOrder?.poId,
     purchaseOrderNumber: apiDR?.purchaseOrder?.poNumber as string,
-    customerName,
+    customerName: customerName || personalCustomerName,
     customerId: apiDR?.purchaseOrder?.customerId,
     photos: apiDR.photos ?? [],
     deliveryAddress: deliveryAddress ?? {},

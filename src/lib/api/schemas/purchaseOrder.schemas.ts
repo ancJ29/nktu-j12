@@ -131,6 +131,17 @@ export const PurchaseOrderSchema = z.object({
       photos: z.array(S3DataSchema).optional(),
     })
     .optional(),
+  additionalDeliveryRequest: z
+    .object({
+      additionalDeliveryRequestId: idSchema,
+      additionalDeliveryRequestNumber: stringSchema,
+      assignedTo: optionalIdSchema,
+      status: DeliveryStatusSchema,
+      scheduledDate: timestampSchema,
+      completedDate: optionalTimestampSchema,
+      photos: z.array(S3DataSchema).optional(),
+    })
+    .optional(),
 });
 
 // Purchase Order request schemas

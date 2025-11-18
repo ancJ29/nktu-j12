@@ -41,6 +41,7 @@ type PODetailTabsProps = {
   readonly onDelete?: () => void;
   readonly onCreateDelivery?: () => void;
   readonly onCreateGoodsReturn?: () => void;
+  readonly onCreateAdditionalDelivery?: () => void;
   readonly onDeleteAttachment?: (attachmentKey: string) => void;
   readonly isDeleting?: boolean;
 };
@@ -58,6 +59,7 @@ export function PODetailTabs({
   onDelete,
   onCreateDelivery,
   onCreateGoodsReturn,
+  onCreateAdditionalDelivery,
   onDeleteAttachment,
   isDeleting,
 }: PODetailTabsProps) {
@@ -155,6 +157,7 @@ export function PODetailTabs({
             onDelete={onDelete}
             onCreateDelivery={onCreateDelivery}
             onCreateGoodsReturn={onCreateGoodsReturn}
+            onCreateAdditionalDelivery={onCreateAdditionalDelivery}
           />
           <POErrorBoundary componentName="POBasicInfoCard">
             <POBasicInfoCard

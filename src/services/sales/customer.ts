@@ -25,6 +25,7 @@ export type Customer = {
   pic?: string;
   taxCode?: string;
   isActive: boolean;
+  saleIds?: string[];
 };
 
 /**
@@ -44,6 +45,7 @@ function transformCustomer(customer: APICustomer): Customer {
     googleMapsUrl: customer.googleMapsUrl,
     memo: customer.memo,
     pic: customer.pic,
+    saleIds: customer.saleIds ?? [],
   };
 }
 
@@ -84,6 +86,7 @@ export const customerService = {
         memo: data.memo || undefined,
         pic: data.pic || undefined,
         isActive: true,
+        saleIds: data.saleIds ?? [],
       },
     });
     return transformCustomer(customer);
@@ -107,6 +110,7 @@ export const customerService = {
         deliveryAddress: data.deliveryAddress || undefined,
         taxCode: data.taxCode || undefined,
         isActive: data.isActive ?? true,
+        saleIds: data.saleIds ?? [],
       },
     });
   },

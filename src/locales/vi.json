@@ -39,6 +39,10 @@
   "common": {
     "actions": "",
     "activate": "Kích Hoạt",
+    "created": "{{entity}} đã được tạo thành công",
+    "createdMessage": "{{name}} đã được tạo thành công",
+    "updated": "{{entity}} đã được cập nhật thành công",
+    "updatedMessage": "{{name}} đã được cập nhật thành công",
     "activated": "Đã Kích Hoạt {{entity}}",
     "active": "Hoạt động",
     "add": "Thêm",
@@ -87,6 +91,7 @@
     "dragAndDropFile": "Kéo và thả file vào đây",
     "edit": "Sửa",
     "entity": {
+      "additionalDeliveryRequest": "Yêu Cầu Giao Hàng Bổ Sung",
       "customer": "Khách Hàng",
       "deliveryRequest": "Yêu Cầu Giao Nhận",
       "employee": "Nhân Viên",
@@ -239,6 +244,8 @@
     "deliveryAddressPlaceholder": "Địa chỉ giao hàng (nếu khác địa chỉ chính)",
     "namePlaceholder": "Tên khách hàng",
     "phonePlaceholder": "+84901234567",
+    "saleIds": "Nhân Viên Kinh Doanh",
+    "saleIdsPlaceholder": "Chọn nhân viên kinh doanh",
     "searchPlaceholder": "Tìm khách hàng theo tên, công ty",
     "taxCode": "Mã Số Thuế",
     "taxCodePlaceholder": "Mã Số Thuế (Tùy Chọn)"
@@ -258,6 +265,7 @@
     "assignedTo": "Người Phụ Trách",
     "completedDate": "Ngày Hoàn Thành",
     "completionNotes": "Ghi Chú Hoàn Thành",
+    "createAdditionalDeliveryRequest": "Tạo Yêu Cầu Giao Hàng Bổ Sung",
     "createDeliveryDescription": "Tạo yêu cầu giao hàng để gửi hàng đến khách hàng",
     "createGoodsReturnRequest": "Tạo Yêu Cầu Trả Hàng",
     "createReceiveRequest": "Tạo yêu cầu giao nhận",
@@ -353,6 +361,7 @@
     "transitNotes": "Ghi Chú Vận Chuyển",
     "transitNotesDescription": "Ghi chú tùy chọn về việc bắt đầu vận chuyển",
     "types": {
+      "additionalDelivery": "Giao Hàng Bổ Sung",
       "delivery": "Giao Hàng",
       "goodsReturn": "Trả Hàng",
       "receive": "Nhận Hàng"

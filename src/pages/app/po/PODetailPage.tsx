@@ -14,6 +14,7 @@ import {
   POPhotoUpload,
   POStatusModal,
 } from '@/components/app/po';
+import { AdditionalDeliveryCreateModal } from '@/components/app/po/AdditionalDeliveryCreateModal';
 import { GoodsReturnCreateModal } from '@/components/app/po/GoodsReturnCreateModal';
 import { ChatPanel, NewMessageBadge } from '@/components/common';
 import { AppPageTitle, PermissionDeniedPage, Tabs } from '@/components/common';
@@ -83,6 +84,7 @@ export function PODetailPage() {
   // Delivery and Goods Return modal states
   const [deliveryModalOpened, setDeliveryModalOpened] = useState(false);
   const [goodsReturnModalOpened, setGoodsReturnModalOpened] = useState(false);
+  const [additionalDeliveryModalOpened, setAdditionalDeliveryModalOpened] = useState(false);
 
   // Mobile tabs state
   const [mobileTabValue, setMobileTabValue] = useState<'info' | 'communication'>('info');
@@ -195,6 +197,12 @@ export function PODetailPage() {
   const handleCreateGoodsReturn = useCallback(() => {
     if (purchaseOrder) {
       setGoodsReturnModalOpened(true);
+    }
+  }, [purchaseOrder]);
+
+  const handleCreateAdditionalDelivery = useCallback(() => {
+    if (purchaseOrder) {
+      setAdditionalDeliveryModalOpened(true);
     }
   }, [purchaseOrder]);
 
@@ -574,6 +582,53 @@ export function PODetailPage() {
     },
   );
 
+  const createAdditionalDeliveryAction = useSWRAction<
+    | {
+        assignedTo: string;
+        scheduledDate: string;
+        notes: string;
+      }
+    | undefined
+  >(
+    'create-additional-delivery-request',
+    async (data) => {
+      if (!canShipPurchaseOrder(permissions)) {
+        throw new Error(t('common.doNotHavePermissionForAction'));
+      }
+      if (!canCreate) {
+        throw new Error(t('common.doNotHavePermissionForAction'));
+      }
+      if (!data || !purchaseOrder) {
+        throw new Error(t('common.invalidFormData'));
+      }
+
+      // Create ADDITIONAL_DELIVERY request for current PO
+      await createDeliveryRequest({
+        type: 'ADDITIONAL_DELIVERY',
+        assignedTo: data.assignedTo,
+        scheduledDate: data.scheduledDate,
+        notes: data.notes,
+        purchaseOrderId: purchaseOrder.id,
+      });
+    },
+    {
+      notifications: {
+        successTitle: t('common.success'),
+        successMessage: t('delivery.createAdditionalDeliveryRequest'),
+        errorTitle: t('common.errors.notificationTitle'),
+        errorMessage: t('po.deliveryRequestCreateFailed'),
+      },
+      onSuccess: async () => {
+        if (poId) {
+          // Reload PO
+          void (await loadPO(poId));
+        }
+        setAdditionalDeliveryModalOpened(false);
+        navigate(ROUTERS.DELIVERY_MANAGEMENT);
+      },
+    },
+  );
+
   useEffect(() => {
     if (poId) {
       void loadPO(poId);
@@ -667,6 +722,13 @@ export function PODetailPage() {
         onClose={() => setGoodsReturnModalOpened(false)}
         onConfirm={createGoodsReturnAction.trigger}
       />
+      <AdditionalDeliveryCreateModal
+        opened={additionalDeliveryModalOpened}
+        purchaseOrder={purchaseOrder}
+        isLoading={createAdditionalDeliveryAction.isMutating}
+        onClose={() => setAdditionalDeliveryModalOpened(false)}
+        onConfirm={createAdditionalDeliveryAction.trigger}
+      />
       <POPhotoUpload
         opened={modals.uploadPhotosModalOpened}
         onClose={handleCloseModal('uploadPhotos')}
@@ -750,6 +812,7 @@ export function PODetailPage() {
                 onDelete={handleDelete}
                 onCreateDelivery={handleCreateDelivery}
                 onCreateGoodsReturn={handleCreateGoodsReturn}
+                onCreateAdditionalDelivery={handleCreateAdditionalDelivery}
                 onDeleteAttachment={handleDeleteAttachment}
                 isDeleting={deleteAttachmentAction.isMutating}
               />
@@ -856,6 +919,7 @@ export function PODetailPage() {
             onDelete={handleDelete}
             onCreateDelivery={handleCreateDelivery}
             onCreateGoodsReturn={handleCreateGoodsReturn}
+            onCreateAdditionalDelivery={handleCreateAdditionalDelivery}
             onDeleteAttachment={handleDeleteAttachment}
             isDeleting={deleteAttachmentAction.isMutating}
           />

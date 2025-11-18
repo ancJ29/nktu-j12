@@ -44,6 +44,10 @@ export function canEditCustomer(permissions: Permission) {
   return Boolean(permissions.customer.canEdit);
 }
 
+export function canSetSaleIdsForCustomer(permissions: Permission) {
+  return Boolean(permissions.customer.actions?.canSetSaleIds ?? false);
+}
+
 export function canDeleteCustomer(permissions: Permission) {
   return Boolean(permissions.customer.canDelete);
 }

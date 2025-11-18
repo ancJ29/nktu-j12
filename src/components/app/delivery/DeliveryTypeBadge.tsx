@@ -12,12 +12,14 @@ const typeKeyMap = {
   DELIVERY: 'delivery.types.delivery',
   RECEIVE: 'delivery.types.receive',
   GOODS_RETURN: 'delivery.types.goodsReturn',
+  ADDITIONAL_DELIVERY: 'delivery.types.additionalDelivery',
 } as const;
 
 const typeColorMap = {
   DELIVERY: 'orange',
   RECEIVE: 'cyan',
   GOODS_RETURN: 'red',
+  ADDITIONAL_DELIVERY: 'teal',
 } as const;
 
 export function DeliveryTypeBadge({ type, size = 'sm' }: DeliveryTypeBadgeProps) {

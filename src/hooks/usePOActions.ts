@@ -37,6 +37,7 @@ export type POActionConfig = {
     | 'delete'
     | 'createDelivery'
     | 'createGoodsReturn'
+    | 'createAdditionalDelivery'
     | 'toggleInternalDelivery';
   readonly color: ButtonProps['color'];
   readonly variant?: ButtonProps['variant'];
@@ -85,6 +86,7 @@ export type UsePOActionsProps = {
     readonly onDelete: () => void;
     readonly onCreateDelivery?: () => void;
     readonly onCreateGoodsReturn?: () => void;
+    readonly onCreateAdditionalDelivery?: () => void;
   };
   readonly options?: POActionsOptions;
 };
@@ -315,6 +317,20 @@ export function usePOActions({
         actions.push(createDeleteAction());
         break;
       }
+    }
+
+    if (purchaseOrder.deliveryRequest) {
+      actions.unshift({
+        key: 'create-additional-delivery',
+        action: 'createAdditionalDelivery',
+        color: 'teal',
+        variant: 'filled',
+        icon: IconTruck,
+        translationKey: 'delivery.createAdditionalDeliveryRequest',
+        onClick: callbacks.onCreateAdditionalDelivery ?? (() => {}),
+        isDisabled: !canShip || !!purchaseOrder.additionalDeliveryRequest,
+        showCondition: true,
+      });
     }
 
     // Filter out actions that shouldn't be shown

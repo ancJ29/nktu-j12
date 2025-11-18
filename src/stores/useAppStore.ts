@@ -27,7 +27,10 @@ type AppState = {
   customerMapByCustomerId: Map<string, CustomerOverview>; // Stable Map for customer lookup
   isAuthenticated: boolean;
   authInitialized: boolean;
+  isSales: boolean;
+  employeeId: string | undefined;
   isLoading: boolean;
+  sales: EmployeeOverview[];
   permissionError: boolean;
   theme: 'light' | 'dark';
   config: {
@@ -73,6 +76,7 @@ export const useAppStore = create<AppState>()(
 
       return {
         clientCode,
+        isSales: false,
         user: undefined, // User will be fetched from /auth/me
         overviewData: undefined, // Overview data will be fetched after login
         employeeMapByUserId: new Map(), // Initialize empty Map
@@ -80,7 +84,9 @@ export const useAppStore = create<AppState>()(
         isAuthenticated: authService.hasValidToken(),
         authInitialized: false,
         isLoading: false,
+        employeeId: undefined,
         permissionError: false,
+        sales: [],
         theme: 'light',
         config: {
           pagination: {
@@ -123,6 +129,9 @@ export const useAppStore = create<AppState>()(
               updateClientTranslations(user.clientConfig.translations);
             }
             // Fetch overview data after getting user profile
+            // TODO: refactor this
+            const isSales = user.department?.code === 'sales';
+            set({ isSales, employeeId: user.employee?.id ?? undefined });
             await get().fetchOverviewData();
           } catch (error: unknown) {
             logError('Failed to fetch user profile:', error, {
@@ -146,9 +155,14 @@ export const useAppStore = create<AppState>()(
               overviewData.employees.map((employee) => [employee.userId || employee.id, employee]),
             );
             const customerMapByCustomerId = new Map(
+              // TODO: filter by sales
               overviewData.customers.map((customer) => [customer.id, customer]),
             );
+            const sales = overviewData.employees.filter((employee) => {
+              return employee.departmentCode === 'sales';
+            });
             set({
+              sales,
               overviewData,
               employeeMapByUserId,
               customerMapByCustomerId,
@@ -288,6 +302,9 @@ const EMPTY_PERMISSIONS: Permission = Object.freeze({
     canCreate: false,
     canEdit: false,
     canDelete: false,
+    actions: {
+      canSetSaleIds: false,
+    },
   },
   product: {
     canView: false,

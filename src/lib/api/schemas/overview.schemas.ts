@@ -17,6 +17,7 @@ export const EmployeeOverviewSchema = z.object({
   lastName: stringSchema.describe('Employee last name'),
   departmentId: idSchema.optional().describe('Department ID'),
   departmentName: stringSchema.optional().describe('Department name'),
+  departmentCode: stringSchema.optional().describe('Department code'),
   employeeCode: optionalStringSchema.describe('Employee code'),
 });
 
@@ -43,6 +44,7 @@ export const CustomerOverviewSchema = z.object({
   address: optionalStringSchema.describe('Customer address'),
   deliveryAddress: optionalStringSchema.describe('Customer delivery address'),
   pic: optionalStringSchema.describe('Customer PIC'),
+  saleIds: z.array(idSchema).describe('Internal sale IDs'),
   phone: optionalStringSchema.describe('Customer phone'),
   email: optionalStringSchema.describe('Customer email'),
   googleMapsUrl: optionalStringSchema.describe('Google Maps URL'),

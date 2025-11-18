@@ -12,6 +12,7 @@ import {
   getShippingInfo,
 } from '@/utils/purchaseOrder';
 
+import { POAdditionalDeliverySection } from './POAdditionalDeliverySection';
 import { POAttachmentsSection } from './POAttachmentsSection';
 import { PODatesSection } from './PODatesSection';
 import { PODeliverySection } from './PODeliverySection';
@@ -83,6 +84,7 @@ export function POBasicInfoCard({
         <SimpleGrid cols={{ base: 1, md: 2 }}>
           <PODeliverySection purchaseOrder={purchaseOrder} />
           <POGoodReturnSection purchaseOrder={purchaseOrder} />
+          <POAdditionalDeliverySection purchaseOrder={purchaseOrder} />
 
           {notes.shippingInfo && (
             <div>

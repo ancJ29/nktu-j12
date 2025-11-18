@@ -52,6 +52,15 @@ export type PurchaseOrder = Omit<ApiPurchaseOrder, 'deliveryRequest' | 'items'> 
     scheduledDate: Date | string;
     photos?: PhotoData[];
   };
+  additionalDeliveryRequest?: {
+    additionalDeliveryRequestId: string;
+    additionalDeliveryRequestNumber?: string;
+    assignedTo?: string;
+    status: DeliveryStatus;
+    scheduledDate: Date | string;
+    completedDate?: Date | string;
+    photos?: PhotoData[];
+  };
 };
 
 /**
@@ -75,6 +84,11 @@ function transformApiToFrontend(
     ? employeeMapByEmployeeId.get(goodsReturnRequest.assignedTo)?.fullName
     : undefined;
   let customerName = '';
+
+  const additionalDeliveryRequest = apiPO?.additionalDeliveryRequest;
+  const additionalDeliveryPerson = additionalDeliveryRequest?.assignedTo
+    ? employeeMapByEmployeeId.get(additionalDeliveryRequest.assignedTo)?.fullName
+    : undefined;
 
   if (apiPO.customerId) {
     customerName = customerMapByCustomerId.get(apiPO.customerId)?.name ?? '';
@@ -117,6 +131,18 @@ function transformApiToFrontend(
           scheduledDate: goodsReturnRequest.scheduledDate,
           completedDate: goodsReturnRequest.completedDate,
           photos: goodsReturnRequest.photos,
+        }
+      : undefined,
+    additionalDeliveryRequest: additionalDeliveryRequest
+      ? {
+          additionalDeliveryRequestId: additionalDeliveryRequest.additionalDeliveryRequestId,
+          additionalDeliveryRequestNumber:
+            additionalDeliveryRequest.additionalDeliveryRequestNumber,
+          assignedTo: additionalDeliveryPerson,
+          status: additionalDeliveryRequest.status,
+          scheduledDate: additionalDeliveryRequest.scheduledDate,
+          completedDate: additionalDeliveryRequest.completedDate,
+          photos: additionalDeliveryRequest.photos,
         }
       : undefined,
     items: apiPO.items.map((item) => ({

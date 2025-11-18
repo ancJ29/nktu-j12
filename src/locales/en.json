@@ -39,6 +39,10 @@
   "common": {
     "actions": "Actions",
     "activate": "Activate",
+    "created": "{{entity}} created successfully",
+    "createdMessage": "{{entity}} created successfully",
+    "updated": "{{entity}} updated successfully",
+    "updatedMessage": "{{entity}} updated successfully",
     "activated": "{{entity}} Activated",
     "active": "Active",
     "add": "Add",
@@ -87,6 +91,7 @@
     "dragAndDropFile": "Drag and drop your file here",
     "edit": "Edit",
     "entity": {
+      "additionalDeliveryRequest": "Additional Delivery Request",
       "customer": "Customer",
       "deliveryRequest": "Delivery Request",
       "employee": "Employee",
@@ -239,6 +244,8 @@
     "deliveryAddressPlaceholder": "Delivery Address (if different from main address)",
     "namePlaceholder": "Customer Name",
     "phonePlaceholder": "+84901234567",
+    "saleIds": "Sales Representatives",
+    "saleIdsPlaceholder": "Select sales representatives",
     "searchPlaceholder": "Search customers by name",
     "taxCode": "Tax Code",
     "taxCodePlaceholder": "Tax Code (Optional)"
@@ -258,6 +265,7 @@
     "assignedTo": "Assigned To",
     "completedDate": "Completed Date",
     "completionNotes": "Completion Notes",
+    "createAdditionalDeliveryRequest": "Create Additional Delivery Request",
     "createDeliveryDescription": "Create a delivery request to send items to customer",
     "createGoodsReturnRequest": "Create Goods Return Request",
     "createReceiveRequest": "Create Request",
@@ -353,6 +361,7 @@
     "transitNotes": "Transit Notes",
     "transitNotesDescription": "Optional notes about starting transit",
     "types": {
+      "additionalDelivery": "Additional Delivery",
       "delivery": "Delivery",
       "goodsReturn": "Goods Return",
       "receive": "Receive"

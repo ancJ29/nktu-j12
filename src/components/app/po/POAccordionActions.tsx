@@ -31,6 +31,7 @@ type POAccordionActionsProps = {
   readonly onDelete?: () => void;
   readonly onCreateDelivery: () => void;
   readonly onCreateGoodsReturn: () => void;
+  readonly onCreateAdditionalDelivery: () => void;
 };
 
 export function POAccordionActions({
@@ -46,6 +47,7 @@ export function POAccordionActions({
   onDelete,
   onCreateDelivery,
   onCreateGoodsReturn,
+  onCreateAdditionalDelivery,
 }: POAccordionActionsProps) {
   const { t } = useTranslation();
 
@@ -100,6 +102,7 @@ export function POAccordionActions({
       onDelete: onDelete ?? (() => {}),
       onCreateDelivery,
       onCreateGoodsReturn,
+      onCreateAdditionalDelivery,
     },
     options: {
       iconSize: 14,

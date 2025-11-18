@@ -11,7 +11,12 @@ const BasePermissionSchema = z.object({
 });
 
 // Customer permission schema
-const CustomerPermissionSchema = BasePermissionSchema;
+const CustomerPermissionSchema = BasePermissionSchema.extend({
+  actions: z.object({
+    canSetSaleIds: booleanSchema,
+    // TODO: remove optional after backend is updated
+  }),
+});
 
 // Product permission schema
 const ProductPermissionSchema = BasePermissionSchema;

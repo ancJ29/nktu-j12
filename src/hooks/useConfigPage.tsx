@@ -169,7 +169,7 @@ export function useConfigPage<
       },
       onSuccess: (item: T) => {
         showSuccessNotification(
-          t(`${entityName}.created` as any),
+          t('common.created', { entity: t(`common.entity.${entityName}` as any) }),
           t(`${entityName}.createdMessage` as any, { name: item.name }),
         );
         closeCreate();
@@ -205,10 +205,10 @@ export function useConfigPage<
         errorTitle: t('common.errors.notificationTitle'),
         errorMessage: t('common.updateFailed', { entity: t(`common.entity.${entityName}` as any) }),
       },
-      onSuccess: (item: T) => {
+      onSuccess: () => {
         showSuccessNotification(
-          t(`${entityName}.updated` as any),
-          t(`${entityName}.updatedMessage` as any, { name: item.name }),
+          t('common.updated', { entity: t(`common.entity.${entityName}` as any) }),
+          t('common.updatedMessage', { entity: t(`common.entity.${entityName}` as any) }),
         );
         closeEdit();
         form.reset();
@@ -242,7 +242,7 @@ export function useConfigPage<
       onSuccess: (item: T) => {
         showSuccessNotification(
           t('common.activated', { entity: t(`common.entity.${entityName}` as any) }),
-          t(`${entityName}.updatedMessage` as any, { name: item.name }),
+          t('common.updatedMessage', { name: item.name }),
         );
         closeEdit();
         form.reset();
@@ -275,8 +275,8 @@ export function useConfigPage<
       },
       onSuccess: (item: T) => {
         showSuccessNotification(
-          t('common.deactivated', { entity: t(`common.entity.${entityName}` as any) }),
-          t(`${entityName}.updatedMessage` as any, { name: item.name }),
+          t('common.updated', { entity: t(`common.entity.${entityName}` as any) }),
+          t('common.updatedMessage', { name: item.name }),
         );
         closeEdit();
         form.reset();

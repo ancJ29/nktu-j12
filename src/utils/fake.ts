@@ -400,6 +400,9 @@ function generateDepartmentPermissions() {
       },
       customer: {
         ...basePermission,
+        actions: {
+          canSetSaleIds: false,
+        },
       },
       product: {
         ...basePermission,

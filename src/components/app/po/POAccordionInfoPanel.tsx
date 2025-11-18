@@ -282,6 +282,124 @@ export function POAccordionInfoPanel({
         </div>
       )}
 
+      {purchaseOrder.additionalDeliveryRequest && (
+        <div>
+          <Divider />
+          <Text size="xs" fw={500} c="red" mb={4} mt="md">
+            <IconTruckDelivery size={14} style={{ verticalAlign: 'middle' }} />{' '}
+            {t('common.entity.goodsReturnRequest')}
+          </Text>
+          <Stack gap="xs">
+            <Group gap="xs">
+              <Text size="xs" c="dimmed">
+                {t('delivery.id')}:
+              </Text>
+              <Anchor
+                size="sm"
+                c="red"
+                fw="bold"
+                onClick={() => {
+                  const deliveryRequestId =
+                    purchaseOrder.additionalDeliveryRequest?.additionalDeliveryRequestId || '-';
+                  navigate(getDeliveryDetailRoute(deliveryRequestId));
+                }}
+              >
+                {purchaseOrder.additionalDeliveryRequest.additionalDeliveryRequestNumber}
+              </Anchor>
+            </Group>
+            <Group gap="xs">
+              <Text size="xs" c="dimmed">
+                {t('delivery.status')}:
+              </Text>
+              <DeliveryStatusBadge status={purchaseOrder.additionalDeliveryRequest.status} />
+            </Group>
+            <InfoField
+              label={
+                <Text size="xs" c="dimmed">
+                  {t('delivery.assignedTo')}:
+                </Text>
+              }
+              layout="horizontal"
+              value={
+                <Group gap={4}>
+                  <IconUser size={14} color="var(--mantine-color-gray-6)" />
+                  <Text size="sm">{purchaseOrder.additionalDeliveryRequest.assignedTo}</Text>
+                </Group>
+              }
+            />
+            <InfoField
+              label={
+                <Text size="xs" c="dimmed">
+                  {t('delivery.scheduledDate')}:
+                </Text>
+              }
+              layout="horizontal"
+              value={formatDate(purchaseOrder.additionalDeliveryRequest.scheduledDate)}
+              icon={IconIdentifiers.CALENDAR}
+            />
+          </Stack>
+        </div>
+      )}
+
+      {purchaseOrder.additionalDeliveryRequest && (
+        <div>
+          <Divider />
+          <Text size="xs" fw={500} c="blue" mb={4} mt="md">
+            <IconTruckDelivery size={14} style={{ verticalAlign: 'middle' }} />{' '}
+            {t('common.entity.additionalDeliveryRequest')}
+          </Text>
+          <Stack gap="xs">
+            <Group gap="xs">
+              <Text size="xs" c="dimmed">
+                {t('delivery.id')}:
+              </Text>
+              <Anchor
+                size="sm"
+                c="blue"
+                fw="bold"
+                onClick={() => {
+                  const deliveryRequestId =
+                    purchaseOrder.additionalDeliveryRequest?.additionalDeliveryRequestId || '-';
+                  navigate(getDeliveryDetailRoute(deliveryRequestId));
+                }}
+              >
+                {purchaseOrder.additionalDeliveryRequest.additionalDeliveryRequestNumber}
+              </Anchor>
+            </Group>
+            <Group gap="xs">
+              <Text size="xs" c="dimmed">
+                {t('delivery.status')}:
+              </Text>
+              <DeliveryStatusBadge status={purchaseOrder.additionalDeliveryRequest.status} />
+            </Group>
+            <InfoField
+              label={
+                <Text size="xs" c="dimmed">
+                  {t('delivery.assignedTo')}:
+                </Text>
+              }
+              layout="horizontal"
+              value={
+                <Group gap={4}>
+                  <IconUser size={14} color="var(--mantine-color-gray-6)" />
+                  <Text size="sm">{purchaseOrder.additionalDeliveryRequest.assignedTo}</Text>
+                </Group>
+              }
+            />
+            <InfoField
+              label={
+                <Text size="xs" c="dimmed">
+                  {t('delivery.scheduledDate')}:
+                </Text>
+              }
+              layout="horizontal"
+              value={formatDate(purchaseOrder.additionalDeliveryRequest.scheduledDate)}
+              icon={IconIdentifiers.CALENDAR}
+            />
+          </Stack>
+        </div>
+      )}
+
       {notes.shippingInfo && (
         <div>
           <Text size="xs" fw={500} c="cyan" mb={4}>

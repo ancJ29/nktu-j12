@@ -17,6 +17,7 @@ export type EmployeeOverview = {
   employeeCode: string;
   fullName: string;
   departmentName: string | undefined;
+  departmentCode: string | undefined;
 };
 
 export type DepartmentOverview = {
@@ -49,6 +50,7 @@ export type CustomerOverview = {
   pic: string | undefined;
   phone: string | undefined;
   email: string | undefined;
+  saleIds: string[];
   googleMapsUrl: string | undefined;
 };
 
@@ -126,6 +128,7 @@ export const overviewService = {
       googleMapsUrl: beCustomer.googleMapsUrl ?? undefined,
       isActive: beCustomer.isActive,
       deliveryAddress: beCustomer.deliveryAddress ?? beCustomer.address ?? undefined,
+      saleIds: beCustomer.saleIds,
     };
   },
 
@@ -144,6 +147,7 @@ export const overviewService = {
       fullName,
       employeeCode: beEmployee.employeeCode ?? '',
       departmentName: beEmployee.departmentName ?? undefined,
+      departmentCode: beEmployee.departmentCode ?? undefined,
     };
   },
 
