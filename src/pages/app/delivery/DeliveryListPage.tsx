@@ -89,7 +89,7 @@ export function DeliveryListPage() {
   const { currentEmployeeId, canExportExcel, canCreate, canView, canViewAll, canUpdateOrderInDay } = useMemo(() => {
     const employeeId = currentUser?.employee?.id ?? '-';
     return {
-      canExportExcel: canExportExcelDeliveryRequest(permissions) || true,
+      canExportExcel: canExportExcelDeliveryRequest(permissions),
       canCreate: canCreateDeliveryRequest(permissions),
       currentEmployeeId: employeeId,
       canView: canViewDeliveryRequest(permissions),

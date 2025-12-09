@@ -83,7 +83,7 @@ export function POListPage() {
   const permissions = usePermissions();
   const { canExportExcel, canView, canViewAll, canCreate } = useMemo(
     () => ({
-      canExportExcel: canExportExcelPurchaseOrder(permissions) || true,
+      canExportExcel: canExportExcelPurchaseOrder(permissions),
       canView: canViewPurchaseOrder(permissions),
       canViewAll: canViewAllPurchaseOrder(permissions),
       canCreate: canCreatePurchaseOrder(permissions),
