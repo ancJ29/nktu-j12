@@ -734,6 +734,176 @@ export const parseProductExcelFile = async (file: File): Promise<BulkProduct[]> 
   });
 };
 
+// Purchase Order export types and functions
+export type ExportPurchaseOrder = {
+  poNumber: string;
+  customerName: string;
+  salesPerson?: string;
+  orderDate: string;
+  deliveryDate?: string;
+  itemCount: number;
+  status: string;
+  isUrgentPO: boolean;
+  customerPONumber?: string;
+};
+
+export const exportPurchaseOrdersToExcel = (
+  purchaseOrders: ExportPurchaseOrder[],
+  language?: string,
+  filename?: string,
+) => {
+  const isVietnamese = language === 'vi';
+
+  // Headers based on locale
+  const headers = isVietnamese
+    ? [
+        'STT',
+        'Số PO',
+        'Mã PO Khách Hàng',
+        'Khách Hàng',
+        'Nhân Viên Bán Hàng',
+        'Ngày Đặt Hàng',
+        'Ngày Giao Hàng',
+        'Số Sản Phẩm',
+        'Trạng Thái',
+        'Gấp',
+      ]
+    : [
+        'No.',
+        'PO Number',
+        'Customer PO Number',
+        'Customer',
+        'Sales Person',
+        'Order Date',
+        'Delivery Date',
+        'Item Count',
+        'Status',
+        'Urgent',
+      ];
+
+  // Transform data to rows
+  const rows = purchaseOrders.map((po, index) => [
+    index + 1,
+    po.poNumber,
+    po.customerPONumber || '',
+    po.customerName,
+    po.salesPerson || '',
+    po.orderDate,
+    po.deliveryDate || '',
+    po.itemCount,
+    po.status,
+    po.isUrgentPO ? (isVietnamese ? 'Có' : 'Yes') : '',
+  ]);
+
+  const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+
+  // Set column widths
+  worksheet['!cols'] = [
+    { width: 5 }, // No.
+    { width: 15 }, // PO Number
+    { width: 18 }, // Customer PO Number
+    { width: 25 }, // Customer
+    { width: 20 }, // Sales Person
+    { width: 12 }, // Order Date
+    { width: 12 }, // Delivery Date
+    { width: 10 }, // Item Count
+    { width: 15 }, // Status
+    { width: 8 }, // Urgent
+  ];
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, isVietnamese ? 'Đơn hàng' : 'Purchase Orders');
+
+  const defaultFilename = isVietnamese
+    ? `don_hang_${new Date().toISOString().split('T')[0]}.xlsx`
+    : `purchase_orders_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+  XLSX.writeFile(workbook, filename || defaultFilename);
+};
+
+// Delivery Request export types and functions
+export type ExportDeliveryRequest = {
+  deliveryRequestNumber: string;
+  type: string;
+  customerName?: string;
+  vendorName?: string;
+  scheduledDate: string;
+  completedDate?: string;
+  deliveryPerson?: string;
+  status: string;
+  isUrgentDelivery?: boolean;
+};
+
+export const exportDeliveryRequestsToExcel = (
+  deliveryRequests: ExportDeliveryRequest[],
+  language?: string,
+  filename?: string,
+) => {
+  const isVietnamese = language === 'vi';
+
+  // Headers based on locale
+  const headers = isVietnamese
+    ? [
+        'STT',
+        'Mã Giao Nhận',
+        'Loại',
+        'Khách Hàng/Nhà Cung Cấp',
+        'Ngày Dự Kiến',
+        'Ngày Hoàn Thành',
+        'Người Phụ Trách',
+        'Trạng Thái',
+        'Gấp',
+      ]
+    : [
+        'No.',
+        'Request ID',
+        'Type',
+        'Customer/Vendor',
+        'Scheduled Date',
+        'Completed Date',
+        'Assigned To',
+        'Status',
+        'Urgent',
+      ];
+
+  // Transform data to rows
+  const rows = deliveryRequests.map((dr, index) => [
+    index + 1,
+    dr.deliveryRequestNumber,
+    dr.type,
+    dr.customerName || dr.vendorName || '',
+    dr.scheduledDate,
+    dr.completedDate || '',
+    dr.deliveryPerson || '',
+    dr.status,
+    dr.isUrgentDelivery ? (isVietnamese ? 'Có' : 'Yes') : '',
+  ]);
+
+  const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+
+  // Set column widths
+  worksheet['!cols'] = [
+    { width: 5 }, // No.
+    { width: 15 }, // Request ID
+    { width: 15 }, // Type
+    { width: 25 }, // Customer/Vendor
+    { width: 12 }, // Scheduled Date
+    { width: 15 }, // Completed Date
+    { width: 20 }, // Assigned To
+    { width: 12 }, // Status
+    { width: 8 }, // Urgent
+  ];
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, isVietnamese ? 'Giao nhận' : 'Delivery Requests');
+
+  const defaultFilename = isVietnamese
+    ? `giao_nhan_${new Date().toISOString().split('T')[0]}.xlsx`
+    : `delivery_requests_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+  XLSX.writeFile(workbook, filename || defaultFilename);
+};
+
 export const generateProductExcelTemplate = (language?: string) => {
   const isVietnamese = language === 'vi';
 

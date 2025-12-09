@@ -9,6 +9,7 @@ import { logError } from '@/utils/logger';
 import { showErrorNotification } from '@/utils/notifications';
 import { renderFullName } from '@/utils/string';
 import { formatDateTime } from '@/utils/time';
+import { geoApi } from '@/lib/api/services/geo.service';
 
 export type PhotoConfig = {
   readonly quality?: number;
@@ -45,12 +46,6 @@ const DEFAULT_CONFIG: Required<PhotoConfig> = {
   includeLocation: true,
 };
 
-type LocationInfo = {
-  readonly latitude: number;
-  readonly longitude: number;
-  readonly address?: string;
-};
-
 type ViewMode = 'camera' | 'review';
 
 export function PhotoCapture({ opened, onClose, onCapture, config, labels }: PhotoCaptureProps) {
@@ -80,33 +75,6 @@ export function PhotoCapture({ opened, onClose, onCapture, config, labels }: Pho
   const [capturedPhoto, setCapturedPhoto] = useState<string | null>(null);
   const [photoSize, setPhotoSize] = useState<number>(0);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [location, setLocation] = useState<LocationInfo | null>(null);
-
-  // Get user location
-  const getLocation = useCallback(async () => {
-    if (!mergedConfig.includeLocation) return;
-
-    try {
-      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject, {
-          enableHighAccuracy: true,
-          timeout: 5000,
-          maximumAge: 0,
-        });
-      });
-
-      setLocation({
-        latitude: position.coords.latitude,
-        longitude: position.coords.longitude,
-      });
-    } catch (error) {
-      logError('Failed to get location:', error, {
-        module: 'PhotoCapture',
-        action: 'getLocation',
-      });
-      // Don't show error notification as location is optional
-    }
-  }, [mergedConfig.includeLocation]);
 
   // Start camera
   const startCamera = useCallback(async () => {
@@ -124,9 +92,6 @@ export function PhotoCapture({ opened, onClose, onCapture, config, labels }: Pho
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
       }
-
-      // Get location when camera starts
-      getLocation();
     } catch (error) {
       logError('Failed to start camera:', error, {
         module: 'PhotoCapture',
@@ -135,7 +100,7 @@ export function PhotoCapture({ opened, onClose, onCapture, config, labels }: Pho
       setCameraError(true);
       showErrorNotification(t('common.photos.permissionDenied'), mergedLabels.permissionDenied);
     }
-  }, [t, mergedConfig, mergedLabels.permissionDenied, getLocation]);
+  }, [t, mergedConfig, mergedLabels.permissionDenied]);
 
   // Stop camera
   const stopCamera = useCallback(() => {
@@ -163,7 +128,7 @@ export function PhotoCapture({ opened, onClose, onCapture, config, labels }: Pho
 
   // Draw overlay text on canvas
   const drawOverlay = useCallback(
-    (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
+    async (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
       if (!mergedConfig.includeTimestamp && !mergedConfig.includeLocation) return;
 
       // Prepare overlay text
@@ -184,9 +149,38 @@ export function PhotoCapture({ opened, onClose, onCapture, config, labels }: Pho
       }
 
       // Add location
-      if (mergedConfig.includeLocation && location) {
-        const locationText = `${location.latitude.toFixed(6)}, ${location.longitude.toFixed(6)}`;
-        overlayLines.push(locationText);
+      if (mergedConfig.includeLocation) {
+        try {
+          const address = await new Promise<string>((resolve) => {
+            navigator.geolocation.getCurrentPosition(async (position) => {
+              geoApi.getGeoData(position.coords.longitude, position.coords.latitude).then((geoData) => {
+                resolve(geoData.oneLineAddress);
+              });
+            });
+          });
+          if (address) {
+            // split into multiple lines if it's too long, max 40 characters per line
+            let counter = 0, line = '';
+            address.split(' ').forEach((word) => {
+              counter += word.length;
+              if (counter < 40) {
+                line += `${word} `;
+              } else {
+                overlayLines.push(line.trim());
+                line = `${word} `;
+                counter = word.length;
+              }
+            });
+            if (line.trim()) {
+              overlayLines.push(line.trim());
+            }
+          }
+        } catch (error) {
+          logError('Failed to get location', error, {
+            module: 'PhotoCapture',
+            action: 'drawOverlay',
+          });
+        }
       }
 
       if (overlayLines.length === 0) return;
@@ -248,7 +242,8 @@ export function PhotoCapture({ opened, onClose, onCapture, config, labels }: Pho
     ctx.drawImage(video, 0, 0);
 
     // Add overlay
-    drawOverlay(ctx, canvas);
+    await drawOverlay(ctx, canvas);
+    console.log('drawOverlay done');
 
     // Get initial capture
     const base64 = canvas.toDataURL('image/jpeg', mergedConfig.quality);
@@ -273,7 +268,6 @@ export function PhotoCapture({ opened, onClose, onCapture, config, labels }: Pho
     setCameraError(false);
     setViewMode('camera');
     setIsProcessing(false);
-    setLocation(null);
     onClose();
   }, [stopCamera, onClose]);
 

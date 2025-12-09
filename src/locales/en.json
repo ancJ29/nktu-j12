@@ -217,6 +217,7 @@
     },
     "remove": "Remove",
     "save": "Save",
+    "showError": "Error",
     "status": "Status",
     "statusesSelected": "{{count}} statuses selected",
     "success": "Success",
@@ -279,6 +280,10 @@
       "createFirstDeliveryRequest": "Create your first delivery request"
     },
     "detail": "Delivery Details",
+    "exportExcel": "Export Excel",
+    "exportExcelComingSoon": "Excel export feature coming soon",
+    "exportExcelSuccess": "Delivery requests exported successfully",
+    "noDataToExport": "No data to export",
     "filters": {
       "allEmployees": "All Employees",
       "searchPlaceholder": "Search by delivery number",
@@ -650,6 +655,8 @@
     "expectedDelivery": "Expected Delivery",
     "exportExcel": "Export Excel",
     "exportExcelComingSoon": "Excel export feature coming soon",
+    "exportExcelSuccess": "Purchase orders exported successfully",
+    "noDataToExport": "No data to export",
     "exportPDF": "Export PDF",
     "exportPDFComingSoon": "PDF export feature coming soon",
     "externalDelivery": "External",

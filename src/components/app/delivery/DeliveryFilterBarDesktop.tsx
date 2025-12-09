@@ -3,19 +3,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { Button, Group, MultiSelect, Select } from '@mantine/core';
 import { IconCheck, IconClearAll } from '@tabler/icons-react';
 
-import { DatePickerInput } from '@/components/common';
 import { SearchBar } from '@/components/common';
 import { DELIVERY_STATUS, type DeliveryStatusType } from '@/constants/deliveryRequest';
 import { useTranslation } from '@/hooks/useTranslation';
-import {
-  useClientConfig,
-  useCustomerOptions,
-  useEmployees,
-  usePermissions,
-} from '@/stores/useAppStore';
+import { useCustomerOptions, usePermissions } from '@/stores/useAppStore';
 import { canFilterDeliveryRequest } from '@/utils/permission.utils';
-import 'dayjs/locale/vi';
-import 'dayjs/locale/en';
+
+import { DeliveryAdvancedFiltersPopover } from './DeliveryAdvancedFiltersPopover';
 
 interface DeliveryFilterBarDesktopProps {
   readonly searchQuery: string;
@@ -50,8 +44,6 @@ export function DeliveryFilterBarDesktop({
 }: DeliveryFilterBarDesktopProps) {
   const { t } = useTranslation();
   const permissions = usePermissions();
-  const employees = useEmployees();
-  const clientConfig = useClientConfig();
   const customerOptions = useCustomerOptions();
 
   const canFilter = useMemo(() => canFilterDeliveryRequest(permissions), [permissions]);
@@ -74,22 +66,6 @@ export function DeliveryFilterBarDesktop({
   const handleApplyStatuses = () => {
     onStatusesChange(pendingStatuses);
   };
-
-  // Employee options for Select - filtered by assigneeIds from clientConfig
-  const employeeOptions = useMemo(() => {
-    const assigneeIds = clientConfig.features?.deliveryRequest?.assigneeIds ?? [];
-
-    // Filter employees based on assigneeIds if configured, otherwise show all
-    const filteredEmployees =
-      assigneeIds.length > 0
-        ? employees.filter((employee) => assigneeIds.includes(employee.id))
-        : employees;
-
-    return filteredEmployees.map((employee) => ({
-      value: employee.id,
-      label: employee.fullName,
-    }));
-  }, [employees, clientConfig.features?.deliveryRequest]);
 
   // Status options for MultiSelect
   const statusOptions = useMemo(
@@ -127,9 +103,8 @@ export function DeliveryFilterBarDesktop({
   }
 
   return (
-    <Group justify="start" align="flex-end" gap="sm" wrap="nowrap" mb="xl">
-      {/* Search Bar - flex 2 */}
-      <div style={{ flex: 2, minWidth: 150, maxWidth: 250 }}>
+    <Group justify="start" align="end" gap="sm" wrap="nowrap" mb="xl">
+      <div style={{ minWidth: 200 }}>
         <SearchBar
           placeholder={t('delivery.filters.searchPlaceholder')}
           searchQuery={searchQuery}
@@ -144,21 +119,9 @@ export function DeliveryFilterBarDesktop({
         placeholder={t('common.filters.selectCustomer')}
         data={customerOptions}
         value={customerId ?? null}
-        style={{ flex: 1, minWidth: 150 }}
+        style={{ flex: 1, minWidth: 150, borderRadius: '5px' }}
         onChange={(value) => onCustomerChange(value || undefined)}
-        label={t('common.customer') as string}
-      />
-
-      {/* Assignee Select - flex 1 */}
-      <Select
-        clearable
-        searchable
-        placeholder={t('delivery.filters.selectAssignee')}
-        data={employeeOptions}
-        value={assignedTo ?? null}
-        style={{ flex: 1, minWidth: 150 }}
-        onChange={(value) => onAssignedToChange(value || undefined)}
-        label={t('delivery.assignedTo') as string}
+        label={t('common.customer')}
       />
 
       {/* Status MultiSelect - flex 1 */}
@@ -170,7 +133,7 @@ export function DeliveryFilterBarDesktop({
         value={filteredStatuses}
         style={{ flex: 1, minWidth: 180 }}
         onChange={(values) => setPendingStatuses(values as DeliveryStatusType[])}
-        label={t('delivery.status') as string}
+        label={t('delivery.status')}
         maxDropdownHeight={280}
         styles={{
           input: {
@@ -194,22 +157,13 @@ export function DeliveryFilterBarDesktop({
         {t('common.apply')}
       </Button>
 
-      {/* Scheduled Date Range */}
-      <DatePickerInput
-        label={t('delivery.scheduledDate')}
-        placeholder={t('delivery.filters.selectScheduledDate')}
-        value={[scheduledDateStart, scheduledDateEnd]}
-        style={{ flex: 1.5, minWidth: 220 }}
-        onChange={(dates) => {
-          if (!dates) {
-            onScheduledDateChange(undefined, undefined);
-          } else {
-            const [start, end] = dates;
-            const startDate = start ? new Date(start) : undefined;
-            const endDate = end ? new Date(end) : undefined;
-            onScheduledDateChange(startDate, endDate);
-          }
-        }}
+      {/* Advanced Filters Popover */}
+      <DeliveryAdvancedFiltersPopover
+        assignedTo={assignedTo}
+        scheduledDateStart={scheduledDateStart}
+        scheduledDateEnd={scheduledDateEnd}
+        onAssignedToChange={onAssignedToChange}
+        onScheduledDateChange={onScheduledDateChange}
       />
 
       {/* Clear Button */}

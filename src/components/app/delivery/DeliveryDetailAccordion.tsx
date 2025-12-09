@@ -220,14 +220,12 @@ export function DeliveryDetailAccordion({
         {deliveryRequest.isDelivery && (
           <Accordion.Item value="address">
             <Accordion.Control icon={<IconMapPin size={20} />}>
-              <Group justify="start" align="center" gap="sm">
-                <Text size="sm">{t('po.shippingAddress')}</Text>
-                <ViewOnMap googleMapsUrl={deliveryRequest.deliveryAddress?.googleMapsUrl} />
-              </Group>
+              <Text size="sm">{t('po.shippingAddress')}</Text>
             </Accordion.Control>
             <Accordion.Panel>
               <Group justify="space-between" align="flex-start">
                 <Text size="sm">{deliveryRequest.deliveryAddress?.oneLineAddress || '-'}</Text>
+                <ViewOnMap googleMapsUrl={deliveryRequest.deliveryAddress?.googleMapsUrl} />
               </Group>
             </Accordion.Panel>
           </Accordion.Item>
@@ -237,14 +235,12 @@ export function DeliveryDetailAccordion({
         {deliveryRequest.receiveAddress && (
           <Accordion.Item value="address">
             <Accordion.Control icon={<IconMapPin size={20} />}>
-              <Group justify="start" align="center" gap="sm">
-                <Text size="sm">{t('po.receiveAddress')}</Text>
-                <ViewOnMap googleMapsUrl={deliveryRequest.receiveAddress?.googleMapsUrl} />
-              </Group>
+              <Text size="sm">{t('po.receiveAddress')}</Text>
             </Accordion.Control>
             <Accordion.Panel>
               <Group justify="space-between" align="flex-start">
                 <Text size="sm">{deliveryRequest.receiveAddress?.oneLineAddress || '-'}</Text>
+                <ViewOnMap googleMapsUrl={deliveryRequest.receiveAddress?.googleMapsUrl} />
               </Group>
             </Accordion.Panel>
           </Accordion.Item>

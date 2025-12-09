@@ -120,14 +120,12 @@ export function PODetailAccordion({
         {purchaseOrder.address && (
           <Accordion.Item value="address">
             <Accordion.Control icon={<IconMapPin size={16} />}>
-              <Group justify="start" align="center" gap="sm">
-                <Text size="sm">{t('po.shippingAddress')}</Text>
-                <ViewOnMap googleMapsUrl={purchaseOrder.googleMapsUrl} />
-              </Group>
+              <Text size="sm">{t('po.shippingAddress')}</Text>
             </Accordion.Control>
             <Accordion.Panel>
               <Group justify="space-between" align="flex-start">
                 <Text size="sm">{purchaseOrder.address}</Text>
+                <ViewOnMap googleMapsUrl={purchaseOrder.googleMapsUrl} />
               </Group>
             </Accordion.Panel>
           </Accordion.Item>

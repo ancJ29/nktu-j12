@@ -217,6 +217,7 @@
     },
     "remove": "Xóa",
     "save": "Lưu",
+    "showError": "Lỗi",
     "status": "Trạng thái",
     "statusesSelected": "{{count}} trạng thái đã chọn",
     "success": "Thành công",
@@ -279,6 +280,10 @@
       "createFirstDeliveryRequest": "Tạo yêu cầu giao nhận đầu tiên"
     },
     "detail": "Chi Tiết Giao Nhận",
+    "exportExcel": "Xuất Excel",
+    "exportExcelComingSoon": "Tính năng xuất Excel sắp ra mắt",
+    "exportExcelSuccess": "Xuất danh sách giao nhận thành công",
+    "noDataToExport": "Không có dữ liệu để xuất",
     "filters": {
       "allEmployees": "Tất Cả Nhân Viên",
       "searchPlaceholder": "Tìm kiếm theo mã giao nhận",
@@ -650,6 +655,8 @@
     "expectedDelivery": "Dự Kiến Giao",
     "exportExcel": "Xuất Excel",
     "exportExcelComingSoon": "Tính năng xuất Excel sắp ra mắt",
+    "exportExcelSuccess": "Xuất danh sách đơn hàng thành công",
+    "noDataToExport": "Không có dữ liệu để xuất",
     "exportPDF": "Xuất PDF",
     "exportPDFComingSoon": "Tính năng xuất PDF sắp ra mắt",
     "externalDelivery": "Giao Ngoài",

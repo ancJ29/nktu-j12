@@ -72,6 +72,10 @@ export function canViewPurchaseOrder(permissions: Permission) {
   return Boolean(permissions.purchaseOrder.canView);
 }
 
+export function canExportExcelPurchaseOrder(permissions: Permission) {
+  return Boolean(permissions.purchaseOrder.query?.canExportExcel);
+}
+
 export function canViewAllPurchaseOrder(permissions: Permission) {
   return Boolean(permissions.purchaseOrder.query.canViewAll);
 }
@@ -134,6 +138,10 @@ export function canRefundPurchaseOrder(permissions: Permission) {
 
 export function canViewDeliveryRequest(permissions: Permission) {
   return Boolean(permissions.deliveryRequest.canView);
+}
+
+export function canExportExcelDeliveryRequest(permissions: Permission) {
+  return Boolean(permissions.deliveryRequest.query?.canExportExcel);
 }
 
 export function canViewAllDeliveryRequest(permissions: Permission) {

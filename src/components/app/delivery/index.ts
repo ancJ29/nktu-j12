@@ -5,6 +5,7 @@ export { DeliveryGridCard } from './DeliveryGridCard';
 export { DeliveryDataTable } from './DeliveryDataTable';
 export { DeliveryFilterBarDesktop } from './DeliveryFilterBarDesktop';
 export { DeliveryFilterBarMobile } from './DeliveryFilterBarMobile';
+export { DeliveryAdvancedFiltersPopover } from './DeliveryAdvancedFiltersPopover';
 export { DeliveryStatusBadge } from './DeliveryStatusBadge';
 export { DeliveryTypeBadge } from './DeliveryTypeBadge';
 export { DeliveryStatusDrawer } from './DeliveryStatusDrawer';

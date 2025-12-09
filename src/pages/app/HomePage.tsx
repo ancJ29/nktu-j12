@@ -783,11 +783,11 @@ function POCard({ po, onClick }: { readonly po: PurchaseOrder; readonly onClick:
 
 function PONumber({ po }: { readonly po: PurchaseOrder }) {
   return (
-    <Text size="sm" fw={500}>
+    <Text size="sm" fw={500} component="span">
       {po.poNumber}
       <NewMessageBadge hasNewMessage={po.hasNewMessage} />
       {po.customerPONumber && (
-        <Text size="sm" ml="xs">
+        <Text size="sm" ml="xs" component="span">
           ({po.customerPONumber})
         </Text>
       )}

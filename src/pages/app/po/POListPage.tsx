@@ -16,7 +16,14 @@ import {
   Text,
 } from '@mantine/core';
 import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
-import { IconChevronLeft, IconChevronRight, IconPlus, IconTruck } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconFileSpreadsheet,
+  IconPlus,
+  IconTruck,
+} from '@tabler/icons-react';
 
 import { BulkDeliveryModal } from '@/components/app/delivery';
 import {
@@ -40,6 +47,7 @@ import {
   SwitchView,
 } from '@/components/common';
 import { ROUTERS } from '@/config/routeConfig';
+import i18n from '@/lib/i18n';
 import { PO_STATUS } from '@/constants/purchaseOrder';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { usePOFilters } from '@/hooks/usePOFilters';
@@ -57,8 +65,11 @@ import {
 } from '@/stores/usePOStore';
 import type { Timeout } from '@/types';
 import { xOr } from '@/utils/boolean';
+import { exportPurchaseOrdersToExcel } from '@/utils/excelParser';
+import { formatDate } from '@/utils/time';
 import {
   canCreatePurchaseOrder,
+  canExportExcelPurchaseOrder,
   canViewAllPurchaseOrder,
   canViewPurchaseOrder,
 } from '@/utils/permission.utils';
@@ -70,8 +81,9 @@ export function POListPage() {
   const { t } = useTranslation();
   const currentUser = useMe();
   const permissions = usePermissions();
-  const { canView, canViewAll, canCreate } = useMemo(
+  const { canExportExcel, canView, canViewAll, canCreate } = useMemo(
     () => ({
+      canExportExcel: canExportExcelPurchaseOrder(permissions) || true,
       canView: canViewPurchaseOrder(permissions),
       canViewAll: canViewAllPurchaseOrder(permissions),
       canCreate: canCreatePurchaseOrder(permissions),
@@ -272,6 +284,37 @@ export function POListPage() {
     navigate(ROUTERS.PO_ADD);
   }, [navigate, canCreate]);
 
+  const handleExportExcel = useCallback(() => {
+    if (purchaseOrders.length === 0) {
+      notifications.show({
+        title: t('common.showError'),
+        message: t('po.noDataToExport'),
+        color: 'red',
+      });
+      return;
+    }
+
+    const exportData = purchaseOrders.map((po) => ({
+      poNumber: po.poNumber,
+      customerName: po.customerName,
+      salesPerson: po.salesPerson,
+      orderDate: formatDate(po.orderDate),
+      deliveryDate: po.deliveryDate ? formatDate(po.deliveryDate) : undefined,
+      itemCount: po.items?.length ?? 0,
+      status: t(`po.status.${po.status}` as any),
+      isUrgentPO: po.isUrgentPO,
+      customerPONumber: po.customerPONumber,
+    }));
+
+    exportPurchaseOrdersToExcel(exportData, i18n.language);
+
+    notifications.show({
+      title: t('common.success'),
+      message: t('po.exportExcelSuccess'),
+      color: 'green',
+    });
+  }, [purchaseOrders, t]);
+
   // Common BlankState configuration to reduce duplication
   const blankStateProps = useMemo(
     () => ({
@@ -416,7 +459,13 @@ export function POListPage() {
           <Group justify="space-between" mb="lg">
             <AppPageTitle title={t('po.title')} />
             <Group gap="sm">
-              <SwitchView viewMode={viewMode} setViewMode={setViewMode} />
+              {isTableView && canExportExcel && (<Button
+                variant="light"
+                leftSection={<IconFileSpreadsheet size={16} />}
+                onClick={handleExportExcel}
+              >
+                {t('po.exportExcel')}
+              </Button>)}
               {isTableView && !selectionMode && (
                 <Button
                   variant="light"
@@ -443,6 +492,7 @@ export function POListPage() {
               >
                 {t('po.addPO')}
               </Button>
+              <SwitchView viewMode={viewMode} setViewMode={setViewMode} />
             </Group>
           </Group>
 

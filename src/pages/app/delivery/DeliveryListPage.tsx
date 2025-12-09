@@ -16,9 +16,11 @@ import {
   Text,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import {
   IconChevronLeft,
   IconChevronRight,
+  IconFileSpreadsheet,
   IconPackage,
   IconPlus,
   IconSortAscending,
@@ -47,6 +49,7 @@ import {
 } from '@/components/common';
 import { ROUTERS } from '@/config/routeConfig';
 import { DELIVERY_STATUS } from '@/constants/deliveryRequest';
+import i18n from '@/lib/i18n';
 import { useDeliveryRequestFilters } from '@/hooks/useDeliveryRequestFilters';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { useSWRAction } from '@/hooks/useSWRAction';
@@ -62,8 +65,11 @@ import {
 } from '@/stores/useDeliveryRequestStore';
 import type { Timeout } from '@/types';
 import { xOr } from '@/utils/boolean';
+import { exportDeliveryRequestsToExcel } from '@/utils/excelParser';
+import { formatDate } from '@/utils/time';
 import {
   canCreateDeliveryRequest,
+  canExportExcelDeliveryRequest,
   canUpdateDeliveryOrderInDay,
   canViewAllDeliveryRequest,
   canViewDeliveryRequest,
@@ -80,9 +86,10 @@ export function DeliveryListPage() {
   const isLoading = useDeliveryRequestLoading();
   const error = useDeliveryRequestError();
 
-  const { currentEmployeeId, canCreate, canView, canViewAll, canUpdateOrderInDay } = useMemo(() => {
+  const { currentEmployeeId, canExportExcel, canCreate, canView, canViewAll, canUpdateOrderInDay } = useMemo(() => {
     const employeeId = currentUser?.employee?.id ?? '-';
     return {
+      canExportExcel: canExportExcelDeliveryRequest(permissions) || true,
       canCreate: canCreateDeliveryRequest(permissions),
       currentEmployeeId: employeeId,
       canView: canViewDeliveryRequest(permissions),
@@ -234,6 +241,53 @@ export function DeliveryListPage() {
   );
 
   // Initial load is handled by filter effect
+
+  const handleExportExcel = () => {
+    if (deliveryRequests.length === 0) {
+      notifications.show({
+        title: t('common.showError'),
+        message: t('delivery.noDataToExport'),
+        color: 'red',
+      });
+      return;
+    }
+
+    // Type key mapping for i18n
+    const typeKeyMap: Record<string, string> = {
+      DELIVERY: 'delivery.types.delivery',
+      RECEIVE: 'delivery.types.receive',
+      GOODS_RETURN: 'delivery.types.goodsReturn',
+      ADDITIONAL_DELIVERY: 'delivery.types.additionalDelivery',
+    };
+
+    // Status key mapping for i18n
+    const statusKeyMap: Record<string, string> = {
+      DRAFT: 'delivery.statuses.draft',
+      PENDING: 'delivery.statuses.pending',
+      IN_TRANSIT: 'delivery.statuses.inTransit',
+      COMPLETED: 'delivery.statuses.completed',
+    };
+
+    const exportData = deliveryRequests.map((dr) => ({
+      deliveryRequestNumber: dr.deliveryRequestNumber,
+      type: t((typeKeyMap[dr.type] ?? dr.type) as any),
+      customerName: dr.customerName,
+      vendorName: dr.vendorName,
+      scheduledDate: formatDate(dr.scheduledDate),
+      completedDate: dr.completedDate ? formatDate(dr.completedDate) : undefined,
+      deliveryPerson: dr.deliveryPerson,
+      status: t((statusKeyMap[dr.status] ?? dr.status) as any),
+      isUrgentDelivery: dr.isUrgentDelivery,
+    }));
+
+    exportDeliveryRequestsToExcel(exportData, i18n.language);
+
+    notifications.show({
+      title: t('common.success'),
+      message: t('delivery.exportExcelSuccess'),
+      color: 'green',
+    });
+  };
 
   // Mobile drawer handlers
   const handleQuickActionSelect = (
@@ -426,6 +480,13 @@ export function DeliveryListPage() {
           <Group justify="space-between" mb="lg">
             <AppPageTitle title={t('delivery.title')} />
             <Group gap="sm">
+              {isTableView && canExportExcel && (<Button
+                variant="light"
+                leftSection={<IconFileSpreadsheet size={16} />}
+                onClick={handleExportExcel}
+              >
+                {t('delivery.exportExcel')}
+              </Button>)}
               <Button
                 leftSection={<IconSortAscending size={16} />}
                 variant="light"
@@ -467,7 +528,7 @@ export function DeliveryListPage() {
           {/* Content Area */}
           <BlankState
             {...blankStateProps}
-            // Note: Delivery requests are created from PO pages, not directly
+          // Note: Delivery requests are created from PO pages, not directly
           />
 
           {/* Data Display */}
