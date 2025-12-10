@@ -328,6 +328,7 @@ const EMPTY_PERMISSIONS: Permission = Object.freeze({
     canEdit: false,
     canDelete: false,
     query: {
+      canExportExcel: false,
       canFilter: false,
       canViewAll: false,
     },
@@ -349,6 +350,7 @@ const EMPTY_PERMISSIONS: Permission = Object.freeze({
     canEdit: false,
     canDelete: false,
     query: {
+      canExportExcel: false,
       canFilter: false,
       canViewAll: false,
       canViewDeliverFromMyPO: false,

@@ -417,6 +417,7 @@ function generateDepartmentPermissions() {
       purchaseOrder: {
         ...basePermission,
         query: {
+          canExportExcel: false,
           canFilter: false,
           canViewAll: false,
         },
@@ -435,6 +436,7 @@ function generateDepartmentPermissions() {
       deliveryRequest: {
         ...basePermission,
         query: {
+          canExportExcel: false,
           canFilter: false,
           canViewAll: false,
         },
