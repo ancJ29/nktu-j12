@@ -34,7 +34,7 @@ const PurchaseOrderPermissionSchema = BasePermissionSchema.extend({
   query: z.object({
     canFilter: booleanSchema,
     canViewAll: booleanSchema,
-    canExportExcel: booleanSchema.optional(), // TODO: remove optional
+    canExportExcel: booleanSchema,
   }),
   actions: z.object({
     canConfirm: booleanSchema,
@@ -54,7 +54,7 @@ const DeliveryRequestPermissionSchema = BasePermissionSchema.extend({
   query: z.object({
     canFilter: booleanSchema,
     canViewAll: booleanSchema,
-    canExportExcel: booleanSchema.optional(), // TODO: remove optional
+    canExportExcel: booleanSchema
   }),
   actions: z.object({
     canUpdateDeliveryOrderInDay: booleanSchema,
