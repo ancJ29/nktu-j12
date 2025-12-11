@@ -658,7 +658,6 @@ export function HomePage() {
                           </Table.Td>
                           <Table.Td>
                             <Text fw={400}>
-
                               {deliveryRequest.customerName || deliveryRequest.vendorName}
                             </Text>
                           </Table.Td>

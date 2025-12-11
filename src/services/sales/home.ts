@@ -62,6 +62,7 @@ function transformDRApiToFrontend(
 ): DeliveryRequest {
   const employee = apiDR.assignedTo ? employeeMapByEmployeeId.get(apiDR.assignedTo) : undefined;
   const deliveryPerson = employee?.fullName ?? '';
+
   return {
     ...apiDR,
     isGoodsReturn: apiDR.type === 'GOODS_RETURN',
