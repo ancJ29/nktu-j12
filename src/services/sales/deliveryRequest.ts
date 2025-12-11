@@ -75,7 +75,7 @@ function transformApiToFrontend(
     type: apiDR.type,
     purchaseOrderId: apiDR?.purchaseOrder?.poId,
     purchaseOrderNumber: apiDR?.purchaseOrder?.poNumber as string,
-    customerName: customerName || personalCustomerName,
+    customerName: customerName || personalCustomerName || '----',
     customerId: apiDR?.purchaseOrder?.customerId,
     photos: apiDR.photos ?? [],
     deliveryAddress: deliveryAddress ?? {},

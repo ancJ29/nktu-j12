@@ -62,7 +62,6 @@ function transformDRApiToFrontend(
 ): DeliveryRequest {
   const employee = apiDR.assignedTo ? employeeMapByEmployeeId.get(apiDR.assignedTo) : undefined;
   const deliveryPerson = employee?.fullName ?? '';
-
   return {
     ...apiDR,
     isGoodsReturn: apiDR.type === 'GOODS_RETURN',
@@ -128,7 +127,9 @@ export const homeService = {
       // Add customer name from overview
       const customerId = dr.purchaseOrder?.customerId;
       if (customerId) {
-        transformed.customerName = customerMapByCustomerId.get(customerId)?.name ?? '';
+        transformed.customerName = customerMapByCustomerId.get(customerId)?.name ?? 'BBB';
+      } else {
+        transformed.customerName = dr.purchaseOrder?.personalCustomerName;
       }
       return transformed;
     });
