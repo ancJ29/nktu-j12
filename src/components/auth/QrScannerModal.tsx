@@ -103,7 +103,6 @@ export function QrScannerModal({ opened, onClose, onScan }: QrScannerModalProps)
       const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
 
       // Dynamically import jsQR to reduce initial bundle size
-      // eslint-disable-next-line unicorn/no-await-expression-member
       const jsQR = (await import('jsqr')).default;
 
       // Decode QR code using jsQR

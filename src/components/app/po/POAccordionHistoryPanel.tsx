@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Group, Stack, Text } from '@mantine/core';
 import {
   IconCheck,

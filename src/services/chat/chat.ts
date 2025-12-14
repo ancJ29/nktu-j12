@@ -1,4 +1,3 @@
-/* eslint-disable import/order */
 import { chatApi } from '@/lib/api';
 import type {
   GetChatHistoryRequest,

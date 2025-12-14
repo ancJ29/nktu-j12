@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from 'react';
 
 import { Button, CloseButton, Group, List, Paper, Stack, Text, ThemeIcon } from '@mantine/core';

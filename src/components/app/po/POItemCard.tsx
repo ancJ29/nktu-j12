@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ActionIcon, Badge, Card, Group, NumberInput, Stack, Text } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
 

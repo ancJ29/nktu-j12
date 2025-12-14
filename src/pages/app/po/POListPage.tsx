@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useNavigate } from 'react-router';
@@ -47,13 +48,13 @@ import {
   SwitchView,
 } from '@/components/common';
 import { ROUTERS } from '@/config/routeConfig';
-import i18n from '@/lib/i18n';
 import { PO_STATUS } from '@/constants/purchaseOrder';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { usePOFilters } from '@/hooks/usePOFilters';
 import { useSWRAction } from '@/hooks/useSWRAction';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useViewMode } from '@/hooks/useViewMode';
+import i18n from '@/lib/i18n';
 import { useMe, usePermissions } from '@/stores/useAppStore';
 import { useDeliveryRequestActions } from '@/stores/useDeliveryRequestStore';
 import {
@@ -66,7 +67,6 @@ import {
 import type { Timeout } from '@/types';
 import { xOr } from '@/utils/boolean';
 import { exportPurchaseOrdersToExcel } from '@/utils/excelParser';
-import { formatDate } from '@/utils/time';
 import {
   canCreatePurchaseOrder,
   canExportExcelPurchaseOrder,
@@ -74,6 +74,7 @@ import {
   canViewPurchaseOrder,
 } from '@/utils/permission.utils';
 import { STORAGE_KEYS } from '@/utils/storageKeys';
+import { formatDate } from '@/utils/time';
 
 export function POListPage() {
   const navigate = useNavigate();
@@ -459,13 +460,15 @@ export function POListPage() {
           <Group justify="space-between" mb="lg">
             <AppPageTitle title={t('po.title')} />
             <Group gap="sm">
-              {isTableView && canExportExcel && (<Button
-                variant="light"
-                leftSection={<IconFileSpreadsheet size={16} />}
-                onClick={handleExportExcel}
-              >
-                {t('po.exportExcel')}
-              </Button>)}
+              {isTableView && canExportExcel && (
+                <Button
+                  variant="light"
+                  leftSection={<IconFileSpreadsheet size={16} />}
+                  onClick={handleExportExcel}
+                >
+                  {t('po.exportExcel')}
+                </Button>
+              )}
               {isTableView && !selectionMode && (
                 <Button
                   variant="light"

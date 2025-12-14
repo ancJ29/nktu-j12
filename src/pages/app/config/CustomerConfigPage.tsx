@@ -26,7 +26,6 @@ import type {
   BulkUpsertCustomersResponse,
   Customer,
 } from '@/services/sales';
-// eslint-disable-next-line import/order
 import { customerService } from '@/services/sales';
 
 // Use the service's expected types
