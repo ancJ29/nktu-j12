@@ -4,12 +4,12 @@ import { Badge, Button, Group, Image, Loader, Stack, Text } from '@mantine/core'
 import { IconCamera, IconCheck, IconRotate, IconX } from '@tabler/icons-react';
 
 import { useTranslation } from '@/hooks/useTranslation';
+import { geoApi } from '@/lib/api/services/geo.service';
 import { useMe } from '@/stores/useAppStore';
 import { logError } from '@/utils/logger';
 import { showErrorNotification } from '@/utils/notifications';
 import { renderFullName } from '@/utils/string';
 import { formatDateTime } from '@/utils/time';
-import { geoApi } from '@/lib/api/services/geo.service';
 
 export type PhotoConfig = {
   readonly quality?: number;
@@ -153,14 +153,17 @@ export function PhotoCapture({ opened, onClose, onCapture, config, labels }: Pho
         try {
           const address = await new Promise<string>((resolve) => {
             navigator.geolocation.getCurrentPosition(async (position) => {
-              geoApi.getGeoData(position.coords.longitude, position.coords.latitude).then((geoData) => {
-                resolve(geoData.oneLineAddress);
-              });
+              geoApi
+                .getGeoData(position.coords.longitude, position.coords.latitude)
+                .then((geoData) => {
+                  resolve(geoData.oneLineAddress);
+                });
             });
           });
           if (address) {
             // split into multiple lines if it's too long, max 40 characters per line
-            let counter = 0, line = '';
+            let counter = 0,
+              line = '';
             address.split(' ').forEach((word) => {
               counter += word.length;
               if (counter < 40) {
@@ -222,7 +225,7 @@ export function PhotoCapture({ opened, onClose, onCapture, config, labels }: Pho
       ctx.shadowOffsetX = 0;
       ctx.shadowOffsetY = 0;
     },
-    [mergedConfig.includeTimestamp, mergedConfig.includeLocation, location, me],
+    [mergedConfig.includeTimestamp, mergedConfig.includeLocation, me],
   );
 
   // Capture photo

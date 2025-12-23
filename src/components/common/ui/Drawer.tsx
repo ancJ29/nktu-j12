@@ -18,7 +18,6 @@ type DrawerProps = MantineDrawerProps & {
 export function Drawer({
   expandable = false,
   expanded = false,
-  onExpandedChange,
   position = 'bottom',
   children,
   size,

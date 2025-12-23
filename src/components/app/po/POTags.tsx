@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Badge, Group } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 

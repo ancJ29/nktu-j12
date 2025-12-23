@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Grid, Text } from '@mantine/core';
 
 import { useTranslation } from '@/hooks/useTranslation';

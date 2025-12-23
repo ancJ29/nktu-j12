@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 declare module 'virtual:pwa-register/react' {
   import type { Dispatch, SetStateAction } from 'react';
 

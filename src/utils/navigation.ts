@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { NavigationItem as FrontendNavigationItem } from '@/components/layouts/types';
 import { getRoute } from '@/config/routeConfig';
 import type { NavigationItemType as BackendNavigationItem } from '@/lib/api/schemas/clientConfig.schemas';

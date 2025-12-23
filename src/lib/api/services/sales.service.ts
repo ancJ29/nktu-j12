@@ -1,4 +1,3 @@
-/* eslint-disable sort-imports */
 import { BaseApiClient } from '../base';
 import {
   // Customer schemas

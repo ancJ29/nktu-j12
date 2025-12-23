@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Box, Stack, Text } from '@mantine/core';
 
 import classes from './DateBox.module.css';

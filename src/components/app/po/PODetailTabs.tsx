@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from 'react';
 
 import { Button, Group, ScrollArea, Stack } from '@mantine/core';

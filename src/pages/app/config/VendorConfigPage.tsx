@@ -21,7 +21,6 @@ import { useConfigPage } from '@/hooks/useConfigPage';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { BulkUpsertVendorsRequest, BulkUpsertVendorsResponse, Vendor } from '@/services/sales';
-// eslint-disable-next-line import/order
 import { vendorService } from '@/services/sales';
 
 // Use the service's expected types

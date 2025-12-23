@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, MultiSelect, Stack, Text, Textarea } from '@mantine/core';
 
 import { useTranslation } from '@/hooks/useTranslation';

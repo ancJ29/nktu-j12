@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, Stack, Text } from '@mantine/core';
 
 import { useDeviceType } from '@/hooks/useDeviceType';

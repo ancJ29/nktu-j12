@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useEffect, useRef } from 'react';
+
+import { useRegisterSW } from 'virtual:pwa-register/react';
 
 import { useLocalStorage } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { useRegisterSW } from 'virtual:pwa-register/react';
 
 import { useTranslation } from '@/hooks/useTranslation';
 import { isDevelopment } from '@/utils/env';

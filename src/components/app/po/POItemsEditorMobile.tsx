@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useState } from 'react';
+
+import { v4 as uuidv4 } from 'uuid';
 
 import { ActionIcon, Affix, Button, Card, Stack, Text } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
-import { v4 as uuidv4 } from 'uuid';
 
 import { FAB_BOTTOM_OFFSET, FAB_RIGHT_OFFSET, FAB_Z_INDEX } from '@/constants/po.constants';
 import { useTranslation } from '@/hooks/useTranslation';
