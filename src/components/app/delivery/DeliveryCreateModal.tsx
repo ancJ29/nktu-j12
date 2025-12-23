@@ -172,9 +172,9 @@ export function DeliveryCreateModal({
 
   const isFormValid = Boolean(
     selectedEmployeeId &&
-    scheduledDate &&
-    oneLineAddress.trim() &&
-    (useCustomVendor ? customVendorName.trim() : selectedVendorId),
+      scheduledDate &&
+      oneLineAddress.trim() &&
+      (useCustomVendor ? customVendorName.trim() : selectedVendorId),
   );
 
   return (

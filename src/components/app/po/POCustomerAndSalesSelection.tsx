@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, Select, Stack, Switch, Text, TextInput } from '@mantine/core';
 
 import { useTranslation } from '@/hooks/useTranslation';

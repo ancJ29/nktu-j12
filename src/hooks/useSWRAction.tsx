@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useState } from 'react';
 
 import useSWRMutation from 'swr/mutation';

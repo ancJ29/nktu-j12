@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo, useState } from 'react';
 
 import { Drawer, Modal, ScrollArea } from '@mantine/core';

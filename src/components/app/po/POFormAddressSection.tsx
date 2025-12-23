@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, Group, Stack, Text, Textarea, TextInput } from '@mantine/core';
 
 import { ViewOnMap } from '@/components/common';

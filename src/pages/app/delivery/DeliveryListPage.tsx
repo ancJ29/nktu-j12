@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useNavigate } from 'react-router';
@@ -50,12 +49,12 @@ import {
 } from '@/components/common';
 import { ROUTERS } from '@/config/routeConfig';
 import { DELIVERY_STATUS } from '@/constants/deliveryRequest';
+import i18n from '@/lib/i18n';
 import { useDeliveryRequestFilters } from '@/hooks/useDeliveryRequestFilters';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { useSWRAction } from '@/hooks/useSWRAction';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useViewMode } from '@/hooks/useViewMode';
-import i18n from '@/lib/i18n';
 import { useMe, usePermissions } from '@/stores/useAppStore';
 import {
   useDeliveryRequestActions,
@@ -67,6 +66,7 @@ import {
 import type { Timeout } from '@/types';
 import { xOr } from '@/utils/boolean';
 import { exportDeliveryRequestsToExcel } from '@/utils/excelParser';
+import { formatDate } from '@/utils/time';
 import {
   canCreateDeliveryRequest,
   canExportExcelDeliveryRequest,
@@ -75,7 +75,6 @@ import {
   canViewDeliveryRequest,
 } from '@/utils/permission.utils';
 import { STORAGE_KEYS } from '@/utils/storageKeys';
-import { formatDate } from '@/utils/time';
 
 export function DeliveryListPage() {
   const navigate = useNavigate();
@@ -87,18 +86,17 @@ export function DeliveryListPage() {
   const isLoading = useDeliveryRequestLoading();
   const error = useDeliveryRequestError();
 
-  const { currentEmployeeId, canExportExcel, canCreate, canView, canViewAll, canUpdateOrderInDay } =
-    useMemo(() => {
-      const employeeId = currentUser?.employee?.id ?? '-';
-      return {
-        canExportExcel: canExportExcelDeliveryRequest(permissions),
-        canCreate: canCreateDeliveryRequest(permissions),
-        currentEmployeeId: employeeId,
-        canView: canViewDeliveryRequest(permissions),
-        canViewAll: canViewAllDeliveryRequest(permissions),
-        canUpdateOrderInDay: canUpdateDeliveryOrderInDay(permissions),
-      };
-    }, [currentUser, permissions]);
+  const { currentEmployeeId, canExportExcel, canCreate, canView, canViewAll, canUpdateOrderInDay } = useMemo(() => {
+    const employeeId = currentUser?.employee?.id ?? '-';
+    return {
+      canExportExcel: canExportExcelDeliveryRequest(permissions),
+      canCreate: canCreateDeliveryRequest(permissions),
+      currentEmployeeId: employeeId,
+      canView: canViewDeliveryRequest(permissions),
+      canViewAll: canViewAllDeliveryRequest(permissions),
+      canUpdateOrderInDay: canUpdateDeliveryOrderInDay(permissions),
+    };
+  }, [currentUser, permissions]);
 
   const {
     loadDeliveryRequestsWithFilter,
@@ -482,15 +480,13 @@ export function DeliveryListPage() {
           <Group justify="space-between" mb="lg">
             <AppPageTitle title={t('delivery.title')} />
             <Group gap="sm">
-              {isTableView && canExportExcel && (
-                <Button
-                  variant="light"
-                  leftSection={<IconFileSpreadsheet size={16} />}
-                  onClick={handleExportExcel}
-                >
-                  {t('delivery.exportExcel')}
-                </Button>
-              )}
+              {isTableView && canExportExcel && (<Button
+                variant="light"
+                leftSection={<IconFileSpreadsheet size={16} />}
+                onClick={handleExportExcel}
+              >
+                {t('delivery.exportExcel')}
+              </Button>)}
               <Button
                 leftSection={<IconSortAscending size={16} />}
                 variant="light"
@@ -532,7 +528,7 @@ export function DeliveryListPage() {
           {/* Content Area */}
           <BlankState
             {...blankStateProps}
-            // Note: Delivery requests are created from PO pages, not directly
+          // Note: Delivery requests are created from PO pages, not directly
           />
 
           {/* Data Display */}

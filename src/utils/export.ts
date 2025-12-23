@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface ExportColumn<T> {
   readonly key: keyof T | string;
   readonly label: string;

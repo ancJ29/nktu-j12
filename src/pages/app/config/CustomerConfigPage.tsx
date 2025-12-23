@@ -26,6 +26,7 @@ import type {
   BulkUpsertCustomersResponse,
   Customer,
 } from '@/services/sales';
+// eslint-disable-next-line import/order
 import { customerService } from '@/services/sales';
 
 // Use the service's expected types
@@ -37,6 +38,7 @@ import {
   canCreateCustomer,
   canEditCustomer,
   canSetSaleIdsForCustomer,
+  canViewAllCustomer,
   canViewCustomer,
 } from '@/utils/permission.utils';
 import { validateEmail } from '@/utils/validation';
@@ -48,9 +50,10 @@ export function CustomerConfigPage() {
   const clientConfig = useClientConfig();
   const { isSales, employeeId } = useAppStore();
 
-  const { canView, canCreate, canEdit, canSetSaleIds } = useMemo(() => {
+  const { canView, canViewAll, canCreate, canEdit, canSetSaleIds } = useMemo(() => {
     return {
       canView: canViewCustomer(permissions),
+      canViewAll: canViewAllCustomer(permissions),
       canCreate: canCreateCustomer(permissions),
       canEdit: canEditCustomer(permissions),
       canSetSaleIds: canSetSaleIdsForCustomer(permissions) ?? false,
@@ -87,7 +90,7 @@ export function CustomerConfigPage() {
     () => ({
       getAll: async () => {
         const customers = await customerService.getAllCustomers();
-        if (isSales) {
+        if (isSales && !canViewAll) {
           return customers.filter((customer) => {
             return (customer.saleIds ?? []).includes(employeeId ?? '-');
           });
@@ -100,7 +103,7 @@ export function CustomerConfigPage() {
       deactivate: customerService.deactivateCustomer,
       bulkUpsert: customerService.bulkUpsertCustomers,
     }),
-    [isSales, employeeId],
+    [isSales, employeeId, canViewAll],
   );
 
   const {

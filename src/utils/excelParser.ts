@@ -895,11 +895,7 @@ export const exportDeliveryRequestsToExcel = (
   ];
 
   const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(
-    workbook,
-    worksheet,
-    isVietnamese ? 'Giao nhận' : 'Delivery Requests',
-  );
+  XLSX.utils.book_append_sheet(workbook, worksheet, isVietnamese ? 'Giao nhận' : 'Delivery Requests');
 
   const defaultFilename = isVietnamese
     ? `giao_nhan_${new Date().toISOString().split('T')[0]}.xlsx`

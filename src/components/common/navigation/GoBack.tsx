@@ -19,11 +19,7 @@ export function GoBack({ label, variant = 'anchor', route }: GoBackProps) {
   const location = useLocation();
   const goBack = useCallback(() => {
     if (location.key === 'default') {
-      if (route) {
-        navigate(route);
-      } else {
-        navigate(ROUTERS.HOME);
-      }
+      route ? navigate(route) : navigate(ROUTERS.HOME);
     } else {
       navigate(-1);
     }

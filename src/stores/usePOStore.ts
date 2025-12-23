@@ -360,7 +360,7 @@ export const usePOStore = create<POState>()(
         const previousCurrentPO = state.currentPO;
 
         // Apply optimistic update (exclude photos since they'll be updated after force reload)
-        const { photos: _photos, ...updateData } = data;
+        const { photos, ...updateData } = data;
         get()._optimisticUpdate(id, updateData);
         set({ isLoading: true, error: undefined });
 

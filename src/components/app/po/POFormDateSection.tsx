@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, Group, SimpleGrid, Stack, Switch, Text, TextInput } from '@mantine/core';
 
 import { DateInput } from '@/components/common';

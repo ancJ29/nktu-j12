@@ -14,6 +14,7 @@ const BasePermissionSchema = z.object({
 const CustomerPermissionSchema = BasePermissionSchema.extend({
   actions: z.object({
     canSetSaleIds: booleanSchema,
+    canViewAll: booleanSchema.optional(),
     // TODO: remove optional after backend is updated
   }),
 });
@@ -54,7 +55,7 @@ const DeliveryRequestPermissionSchema = BasePermissionSchema.extend({
   query: z.object({
     canFilter: booleanSchema,
     canViewAll: booleanSchema,
-    canExportExcel: booleanSchema,
+    canExportExcel: booleanSchema
   }),
   actions: z.object({
     canUpdateDeliveryOrderInDay: booleanSchema,

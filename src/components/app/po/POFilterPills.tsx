@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Badge, Group } from '@mantine/core';
 import { IconX } from '@tabler/icons-react';
 

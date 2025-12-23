@@ -36,6 +36,10 @@ export function canViewCustomer(permissions: Permission) {
   return Boolean(permissions.customer.canView);
 }
 
+export function canViewAllCustomer(permissions: Permission) {
+  return Boolean(permissions.customer.actions?.canViewAll ?? false);
+}
+
 export function canCreateCustomer(permissions: Permission) {
   return Boolean(permissions.customer.canCreate);
 }
