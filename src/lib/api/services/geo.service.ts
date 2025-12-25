@@ -5,13 +5,7 @@ export class GeoApi {
   ): Promise<{
     oneLineAddress: string;
   }> {
-    const debug = true;
-    if (debug) {
-      return {
-        oneLineAddress: 'test',
-      };
-    }
-    const url = 'https://c-workers-m8ge9.api-bridge.work';
+    const url = 'https://cadmus-bv1ef.api-bridge.work';
     try {
       const response = await fetch(url, {
         method: 'POST',
