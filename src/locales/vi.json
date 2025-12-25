@@ -190,7 +190,8 @@
       "retake": "Chụp Lại",
       "takePhoto": "Chụp Ảnh",
       "upload": "Tải lên",
-      "uploading": "Đang tải ảnh lên"
+      "uploading": "Đang tải ảnh lên",
+      "loadingLocation": "Đang tải vị trí..."
     },
     "previous": "Trước",
     "pwa": {

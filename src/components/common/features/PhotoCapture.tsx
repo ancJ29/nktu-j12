@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Badge, Button, Group, Image, Loader, Stack, Text } from '@mantine/core';
+import { Badge, Box, Button, Center, Group, Image, Loader, Stack, Text } from '@mantine/core';
 import { IconCamera, IconCheck, IconRotate, IconX } from '@tabler/icons-react';
 
 import { useTranslation } from '@/hooks/useTranslation';
@@ -69,6 +69,7 @@ export function PhotoCapture({ opened, onClose, onCapture, config, labels }: Pho
     };
   }, [labels, t]);
 
+  const [loadingLocation, setLoadingLocation] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [cameraError, setCameraError] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('camera');
@@ -151,12 +152,14 @@ export function PhotoCapture({ opened, onClose, onCapture, config, labels }: Pho
       // Add location
       if (mergedConfig.includeLocation) {
         try {
+          setLoadingLocation(true);
           const address = await new Promise<string>((resolve) => {
             navigator.geolocation.getCurrentPosition(async (position) => {
               geoApi
                 .getGeoData(position.coords.longitude, position.coords.latitude)
                 .then((geoData) => {
                   resolve(geoData.oneLineAddress);
+                  setLoadingLocation(false);
                 });
             });
           });
@@ -319,6 +322,22 @@ export function PhotoCapture({ opened, onClose, onCapture, config, labels }: Pho
         flexDirection: 'column',
       }}
     >
+      {loadingLocation && (<Center style={{
+        flex: 1,
+        width: '100vw',
+        height: '100vh',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        opacity: 1,
+        zIndex: 9999,
+        backgroundColor: 'gray',
+      }}>
+        <Box ta="center" p="md">
+          <Loader color="white" size="xl" />
+          <Text c="white" size="sm">{t('common.photos.loadingLocation')}</Text>
+        </Box>
+      </Center>)}
       {/* Camera View */}
       {viewMode === 'camera' && !cameraError && (
         <div style={{ flex: 1, position: 'relative', backgroundColor: 'black' }}>

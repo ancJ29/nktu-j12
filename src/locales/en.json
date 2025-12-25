@@ -190,7 +190,8 @@
       "retake": "Retake",
       "takePhoto": "Take Photo",
       "upload": "Upload",
-      "uploading": "Uploading photos..."
+      "uploading": "Uploading photos...",
+      "loadingLocation": "Loading location..."
     },
     "previous": "Previous",
     "pwa": {
