@@ -1,6 +1,7 @@
 import z from 'zod/v4';
 
 import type { Dictionary } from '@/types/dictionary';
+import { getClientCodeFromHost } from '@/utils/env';
 // import { isDevelopment } from '@/utils/env';
 
 const passwordRegex =
@@ -86,7 +87,7 @@ export const AddressSchema = z.object({
 export const S3DataSchema = z.looseObject({
   id: idSchema,
   // TODO: remove this transform once we have a proper S3 URL
-  publicUrl: stringSchema.transform((val) => val.replace('undefined', 'NKTU')),
+  publicUrl: stringSchema.transform((val) => val.replace('undefined', getClientCodeFromHost())),
   key: stringSchema,
   caption: optionalStringSchema,
   timestamp: stringSchema,

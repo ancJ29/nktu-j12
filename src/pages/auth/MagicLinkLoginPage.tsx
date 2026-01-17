@@ -14,6 +14,7 @@ import { useTranslation } from '@/hooks/useTranslation';
 import { useAppStore } from '@/stores/useAppStore';
 import { logError } from '@/utils/logger';
 import { STORAGE_KEYS } from '@/utils/storageKeys';
+import { getClientCodeFromHost } from '@/utils/env';
 
 const MAGIC_LINK_STORAGE_KEY = 'magicLinkParams';
 
@@ -167,7 +168,7 @@ export function MagicLinkLoginPage() {
         }
       } else {
         // Treat as token-only and use clientCode from localStorage
-        const clientCode = localStorage.getItem(STORAGE_KEYS.AUTH.CLIENT_CODE) ?? 'NKTU';
+        const clientCode = localStorage.getItem(STORAGE_KEYS.AUTH.CLIENT_CODE) ?? getClientCodeFromHost();
 
         sessionStorage.setItem(
           MAGIC_LINK_STORAGE_KEY,
@@ -197,7 +198,7 @@ export function MagicLinkLoginPage() {
         handleQrScan(trimmedCode);
       } else {
         // Treat as token-only input and use clientCode from localStorage
-        const clientCode = localStorage.getItem(STORAGE_KEYS.AUTH.CLIENT_CODE) ?? 'NKTU';
+        const clientCode = localStorage.getItem(STORAGE_KEYS.AUTH.CLIENT_CODE) ?? getClientCodeFromHost();
 
         sessionStorage.setItem(
           MAGIC_LINK_STORAGE_KEY,

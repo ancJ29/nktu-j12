@@ -16,6 +16,7 @@ import {
 import { logError } from '@/utils/logger';
 import { cacheNavigationConfig, clearNavigationCache } from '@/utils/navigationCache';
 import { STORAGE_KEYS } from '@/utils/storageKeys';
+import { getClientCodeFromHost } from '@/utils/env';
 
 type ClientPublicConfig = ClientPublicConfigResponse;
 type AppState = {
@@ -61,7 +62,7 @@ export const useAppStore = create<AppState>()(
   devtools(
     (set, get) => {
       // Load public client config on initialization
-      const clientCode = localStorage.getItem(STORAGE_KEYS.AUTH.CLIENT_CODE) ?? 'NKTU';
+      const clientCode = localStorage.getItem(STORAGE_KEYS.AUTH.CLIENT_CODE) ?? getClientCodeFromHost();
       clientApi
         .getPubicClientConfig(clientCode)
         .then((config) => {

@@ -157,12 +157,18 @@ export const usePOStore = create<POState>()(
           };
 
           const response = await purchaseOrderService.getPOsWithFilter(params);
+          const purchaseOrders = reset
+              ? response.purchaseOrders
+              : uniqueBy([...state.purchaseOrders, ...response.purchaseOrders], 'id')
+          purchaseOrders.sort((a, b) => {
+            if (a.isUrgentPO && !b.isUrgentPO) return -1;
+            if (!a.isUrgentPO && b.isUrgentPO) return 1;
+            return b.orderDate.getTime() - a.orderDate.getTime();
+          })
           set({
             isLoading: false,
             isLoadingMore: false,
-            purchaseOrders: reset
-              ? response.purchaseOrders
-              : uniqueBy([...state.purchaseOrders, ...response.purchaseOrders], 'id'),
+            purchaseOrders,
             currentCursor: response.pagination.nextCursor,
             hasMorePOs: response.pagination.hasNext,
           });
