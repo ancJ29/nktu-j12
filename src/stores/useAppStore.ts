@@ -413,6 +413,9 @@ export const usePermissions = () =>
 export const useClientConfig = () =>
   useAppStore((state) => state.user?.clientConfig ?? EMPTY_CLIENT_CONFIG);
 
+export const usePurchaseOrderNoTags = () =>
+  useAppStore((state) => state.user?.clientConfig?.features?.purchaseOrder?.noTags ?? false);
+
 // Stable empty array for PO tags to avoid infinite re-renders
 const EMPTY_PO_TAGS_ARRAY: readonly string[] = [];
 

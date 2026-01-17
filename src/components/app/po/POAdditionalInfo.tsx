@@ -2,7 +2,7 @@
 import { Card, MultiSelect, Stack, Text, Textarea } from '@mantine/core';
 
 import { useTranslation } from '@/hooks/useTranslation';
-import { usePOTags } from '@/stores/useAppStore';
+import { usePOTags, usePurchaseOrderNoTags } from '@/stores/useAppStore';
 
 import type { UseFormReturnType } from '@mantine/form';
 
@@ -13,6 +13,7 @@ type POAdditionalInfoProps = {
 export function POAdditionalInfo({ form }: POAdditionalInfoProps) {
   const { t } = useTranslation();
   const availableTags = usePOTags();
+  const noTags = usePurchaseOrderNoTags();
 
   return (
     <Card withBorder radius="md" p="xl">
@@ -27,7 +28,8 @@ export function POAdditionalInfo({ form }: POAdditionalInfoProps) {
           rows={4}
           {...form.getInputProps('notes')}
         />
-        <MultiSelect
+        {/* Show tags if noTags is false */}
+        {(noTags !== true) && (<MultiSelect
           label={t('po.tags')}
           placeholder={t('po.selectTags')}
           data={availableTags.map((tag) => ({
@@ -37,7 +39,8 @@ export function POAdditionalInfo({ form }: POAdditionalInfoProps) {
           searchable
           clearable
           {...form.getInputProps('poTags')}
-        />
+        />)}
+
       </Stack>
     </Card>
   );

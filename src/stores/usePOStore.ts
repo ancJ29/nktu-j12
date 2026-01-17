@@ -14,6 +14,7 @@ import {
 import { getErrorMessage } from '@/utils/errorUtils';
 
 import { useAppStore } from './useAppStore';
+import { uniqueBy } from '@/utils/array';
 
 // Type for uploading photos during PO creation/update
 type POUploadPhoto = {
@@ -156,13 +157,12 @@ export const usePOStore = create<POState>()(
           };
 
           const response = await purchaseOrderService.getPOsWithFilter(params);
-
           set({
             isLoading: false,
             isLoadingMore: false,
             purchaseOrders: reset
               ? response.purchaseOrders
-              : [...state.purchaseOrders, ...response.purchaseOrders],
+              : uniqueBy([...state.purchaseOrders, ...response.purchaseOrders], 'id'),
             currentCursor: response.pagination.nextCursor,
             hasMorePOs: response.pagination.hasNext,
           });

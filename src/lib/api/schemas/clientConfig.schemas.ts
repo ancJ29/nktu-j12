@@ -43,6 +43,7 @@ export const ClientConfigSchema = z.object({
         .object({
           assigneeIds: z.array(idSchema),
           tags: z.array(stringSchema),
+          noTags: optionalBooleanSchema,
         })
         .partial(),
       employee: z
