@@ -12,6 +12,10 @@ export function getClientCodeFromHost() {
   if (host.includes('sigma')) {
     return 'SIGMA';
   }
+  // cspell:words kimtri
+  if (host.includes('kimtri')) {
+    return 'KIMTRI';
+  }
   // cspell:words nktu
   return 'NKTU';
 }
