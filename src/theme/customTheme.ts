@@ -64,6 +64,42 @@ export const themeConfig: Record<string, CustomThemeConfig> = {
       inActiveColor: '#2e2e2e',
     },
   },
+  forest: {
+    brandColors: [
+      '#f0f7f1', // [0] lightest (Mint tint)
+      '#dae9db', // [1]
+      '#bdd7bf', // [2]
+      '#9bc29e', // [3]
+      '#78ab7c', // [4]
+      '#5f9163', // [5]
+      '#4a764d', // [6]
+      '#3d613f', // [7]
+      '#314e33', // [8]
+      '#263c28', // [9] darkest (Deep Forest)
+    ],
+    default: {
+      appShell: {
+        backgroundColor: '#162418',
+        color: '#ffffff',
+        menu: {
+          color: '#D9D9D9',
+          active: {
+            color: '#ffffff',
+            background: '#3d613f',
+          },
+          border: '#3E493F',
+          background: '#222d23',
+          hover: '#162418',
+          inactive: '#222d23',
+        },
+      },
+      inputBorderColor: '#9bc29e',
+      borderColor: '#3d613f',
+      dangerColor: '#F2340A',
+      activeColor: '#37b24d', // A slightly brighter green for "active" status
+      inActiveColor: '#F2340A',
+    },
+  },
   elegant: {
     brandColors: [
       '#eaf3fb', // [0] lightest

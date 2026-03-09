@@ -1,10 +1,10 @@
 import { type ReactNode, useCallback } from 'react';
 
 import { useRouteChange } from '@/hooks/useRouteChange';
-import { useTheme } from '@/hooks/useTheme';
-import { routeObjects } from '@/routers';
+// import { useTheme } from '@/hooks/useTheme';
+// import { routeObjects } from '@/routers';
 import { refreshNavigationCacheTTL } from '@/utils/navigationCache';
-import { getThemeForRoute } from '@/utils/routeTheme';
+// import { getThemeForRoute } from '@/utils/routeTheme';
 import { routeTracker } from '@/utils/routeTracking';
 
 interface RouteChangeProviderProps {
@@ -17,19 +17,11 @@ interface RouteChangeProviderProps {
  * Place this at the root of your application to track all route changes
  */
 export function RouteChangeProvider({ children, onRouteChange }: RouteChangeProviderProps) {
-  const { themeName, setThemeName } = useTheme();
+  // const { themeName, setThemeName } = useTheme();
 
   const handleRouteChange = useCallback(
     (routeChange: { from: string | null; to: string; isFirstMount: boolean }) => {
       const { from, to, isFirstMount } = routeChange;
-
-      // Extract theme from route configuration
-      const newTheme = getThemeForRoute(to, routeObjects) || 'elegant';
-
-      // Update theme if changed (useLocalStorage handles persistence)
-      if (themeName !== newTheme) {
-        setThemeName(newTheme);
-      }
 
       // Track route change
       routeTracker.track(from, to);
@@ -55,7 +47,7 @@ export function RouteChangeProvider({ children, onRouteChange }: RouteChangeProv
       // - Update breadcrumbs
       // - Clear errors from error store
     },
-    [themeName, setThemeName, onRouteChange],
+    [onRouteChange],
   );
 
   useRouteChange(handleRouteChange);

@@ -10,12 +10,8 @@ import { ROUTERS } from '@/config/routeConfig';
 import { appRouteObjects } from './app';
 import { authRouteObjects } from './auth';
 import {
-  ClockManagementPage,
   HomePage,
-  MobileOnlyLayout,
-  MyTimesheetPage,
   NotFound,
-  TimekeeperDashboardPage,
 } from './components';
 import { configRouteObjects } from './config';
 import { deliveryRouteObjects } from './delivery';
@@ -34,32 +30,9 @@ export const routeObjects: ThemeRouteObject[] = [
     path: ROUTERS.ROOT,
     Component: () => <Navigate to={ROUTERS.LOGIN} />,
   },
-  // Timekeeper routes with timeKeeper theme
-  {
-    path: '',
-    theme: 'timeKeeper', // Green theme for time-keeper routes
-    element: <MobileOnlyLayout />,
-    children: [
-      {
-        path: ROUTERS.TIME_KEEPER_DASHBOARD,
-        Component: TimekeeperDashboardPage,
-      },
-      {
-        path: ROUTERS.TIME_KEEPER_MY_TIMESHEET,
-        Component: MyTimesheetPage,
-      },
-      {
-        path: ROUTERS.TIME_KEEPER_CLOCK,
-        Component: ClockManagementPage,
-      },
-    ],
-  },
-  // AUTH routes (default elegant theme)
   ...authRouteObjects,
-  // APP routes (with AppLayout) - elegant theme
   {
     path: '',
-    theme: 'elegant', // Explicitly set elegant theme
     element: (
       <ProtectedRoute>
         <AppLayout />
@@ -73,10 +46,8 @@ export const routeObjects: ThemeRouteObject[] = [
       ...deliveryRouteObjects,
     ],
   },
-  // Old APP routes (with ResponsiveAuthLayout) - elegant theme
   {
     path: '',
-    theme: 'elegant', // Explicitly set elegant theme
     element: (
       <ProtectedRoute>
         <ResponsiveAuthLayout />

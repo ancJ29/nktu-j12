@@ -94,7 +94,7 @@ export function getMantineTheme(themeName: string) {
  * @returns CSS variables resolver function
  */
 export function getResolver(themeName: string): CSSVariablesResolver {
-  const config = themeConfig[themeName] ?? themeConfig.elegant;
+  const config = themeConfig[themeName] ?? themeConfig.element;
   return () => ({
     variables: _build(config.default),
     light: _build(config.light ?? config.default, config.default),
@@ -105,8 +105,8 @@ export function getResolver(themeName: string): CSSVariablesResolver {
 // @deprecated These static exports are deprecated and should not be used.
 // Use getMantineTheme() and getResolver() functions directly in components.
 // Only kept for backward compatibility during migration.
-export const theme = getMantineTheme('elegant');
-export const resolver = getResolver('elegant');
+export const theme = getMantineTheme('element');
+export const resolver = getResolver('element');
 
 function _build(colors: CustomColors, defaultColors?: CustomColors) {
   return {
