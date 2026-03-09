@@ -1,46 +1,27 @@
-import { useMemo } from 'react';
-
-import { Button, Group, Popover, Select, Stack } from '@mantine/core';
+import { Button, Group, Popover, Stack } from '@mantine/core';
 import { IconAdjustments, IconCalendar } from '@tabler/icons-react';
 
 import { DatePickerInput } from '@/components/common';
 import { useTranslation } from '@/hooks/useTranslation';
-import { useEmployees, usePermissions } from '@/stores/useAppStore';
-import { canViewAllPurchaseOrder } from '@/utils/permission.utils';
 
 interface POAdvancedFiltersPopoverProps {
-  readonly salesId?: string;
   readonly orderDateStart?: Date;
   readonly orderDateEnd?: Date;
   readonly deliveryDateStart?: Date;
   readonly deliveryDateEnd?: Date;
-  readonly onSalesIdChange: (salesId: string | undefined) => void;
   readonly onOrderDateChange: (start: Date | undefined, end: Date | undefined) => void;
   readonly onDeliveryDateChange: (start: Date | undefined, end: Date | undefined) => void;
 }
 
 export function POAdvancedFiltersPopover({
-  salesId,
   orderDateStart,
   orderDateEnd,
   deliveryDateStart,
   deliveryDateEnd,
-  onSalesIdChange,
   onOrderDateChange,
   onDeliveryDateChange,
 }: POAdvancedFiltersPopoverProps) {
   const { t } = useTranslation();
-  const permissions = usePermissions();
-  const employees = useEmployees();
-  const canViewAll = canViewAllPurchaseOrder(permissions);
-
-  // Employee options for sales filter
-  const employeeOptions = useMemo(() => {
-    return employees.map((e) => ({
-      value: e.id,
-      label: e.fullName,
-    }));
-  }, [employees]);
 
   return (
     <Popover
@@ -58,19 +39,6 @@ export function POAdvancedFiltersPopover({
 
       <Popover.Dropdown>
         <Stack gap="md" style={{ minWidth: 300 }}>
-          {/* Sales Representative Filter - Only show if user has canViewAll permission */}
-          {canViewAll && (
-            <Select
-              clearable
-              searchable
-              label={t('po.salesPerson')}
-              placeholder={t('po.selectSalesPerson')}
-              data={employeeOptions}
-              value={salesId ?? null}
-              onChange={(value) => onSalesIdChange(value || undefined)}
-            />
-          )}
-
           {/* Order Date Range */}
           <Stack gap="xs">
             <DatePickerInput

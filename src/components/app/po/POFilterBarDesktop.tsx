@@ -6,8 +6,8 @@ import { IconCheck, IconClearAll } from '@tabler/icons-react';
 import { SearchBar } from '@/components/common';
 import { PO_STATUS, type POStatusType } from '@/constants/purchaseOrder';
 import { useTranslation } from '@/hooks/useTranslation';
-import { useCustomerOptions, usePermissions } from '@/stores/useAppStore';
-import { canFilterPurchaseOrder } from '@/utils/permission.utils';
+import { useCustomerOptions, useEmployees, usePermissions } from '@/stores/useAppStore';
+import { canFilterPurchaseOrder, canViewAllPurchaseOrder } from '@/utils/permission.utils';
 
 import { POAdvancedFiltersPopover } from './POAdvancedFiltersPopover';
 
@@ -52,6 +52,16 @@ export function POFilterBarDesktop({
   const permissions = usePermissions();
 
   const customerOptions = useCustomerOptions();
+  const employees = useEmployees();
+  const canViewAll = canViewAllPurchaseOrder(permissions);
+
+  // Employee options for sales filter
+  const employeeOptions = useMemo(() => {
+    return employees.map((e) => ({
+      value: e.id,
+      label: e.fullName,
+    }));
+  }, [employees]);
 
   // Local state for pending status changes
   const [pendingStatuses, setPendingStatuses] = useState<POStatusType[]>(selectedStatuses);
@@ -135,6 +145,20 @@ export function POFilterBarDesktop({
         label={t('common.customer')}
       />
 
+      {/* Sales Person Select - Only show if user has canViewAll permission */}
+      {canViewAll && (
+        <Select
+          clearable
+          searchable
+          placeholder={t('po.selectSalesPerson')}
+          data={employeeOptions}
+          value={salesId ?? null}
+          style={{ flex: 1, minWidth: 150 }}
+          onChange={(value) => onSalesIdChange(value || undefined)}
+          label={t('po.salesPerson')}
+        />
+      )}
+
       {/* Status MultiSelect - flex 1 */}
       <MultiSelect
         clearable
@@ -169,12 +193,10 @@ export function POFilterBarDesktop({
 
       {/* Advanced Filters Popover */}
       <POAdvancedFiltersPopover
-        salesId={salesId}
         orderDateStart={orderDateStart}
         orderDateEnd={orderDateEnd}
         deliveryDateStart={deliveryDateStart}
         deliveryDateEnd={deliveryDateEnd}
-        onSalesIdChange={onSalesIdChange}
         onOrderDateChange={onOrderDateChange}
         onDeliveryDateChange={onDeliveryDateChange}
       />
