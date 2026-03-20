@@ -68,6 +68,7 @@ import type { Timeout } from '@/types';
 import { xOr } from '@/utils/boolean';
 import { exportPurchaseOrdersToExcel } from '@/utils/excelParser';
 import {
+  canCreateDeliveryRequest,
   canCreatePurchaseOrder,
   canExportExcelPurchaseOrder,
   canViewAllPurchaseOrder,
@@ -82,8 +83,10 @@ export function POListPage() {
   const { t } = useTranslation();
   const currentUser = useMe();
   const permissions = usePermissions();
-  const { canExportExcel, canView, canViewAll, canCreate } = useMemo(
+  const { canCreateDR, canExportExcel, canView, canViewAll, canCreate } = useMemo(
     () => ({
+      // canCreateDr
+      canCreateDR: canCreateDeliveryRequest(permissions),
       canExportExcel: canExportExcelPurchaseOrder(permissions),
       canView: canViewPurchaseOrder(permissions),
       canViewAll: canViewAllPurchaseOrder(permissions),
@@ -469,7 +472,7 @@ export function POListPage() {
                   {t('po.exportExcel')}
                 </Button>
               )}
-              {isTableView && !selectionMode && (
+              {isTableView && !selectionMode && canCreateDR && (
                 <Button
                   variant="light"
                   leftSection={<IconTruck size={16} />}
