@@ -33,6 +33,7 @@ import { useCurrentPO, usePOActions, usePOError, usePOLoading } from '@/stores/u
 import {
   canCancelPurchaseOrder,
   canConfirmPurchaseOrder,
+  canCreateDeliveryRequest,
   canCreatePurchaseOrder,
   canDeletePurchaseOrder,
   canDeliverPurchaseOrder,
@@ -69,8 +70,9 @@ export function PODetailPage() {
     clearError,
   } = usePOActions();
 
-  const { canEdit, canCreate, canTakePhoto } = useMemo(
+  const { canEdit, canCreate, canTakePhoto, canCreateDR } = useMemo(
     () => ({
+      canCreateDR: canCreateDeliveryRequest(permissions),
       canEdit: canEditPurchaseOrder(permissions),
       canCreate: canCreatePurchaseOrder(permissions),
       canTakePhoto: canTakePhotoPurchaseOrder(permissions),
@@ -501,7 +503,7 @@ export function PODetailPage() {
       if (!canShipPurchaseOrder(permissions)) {
         throw new Error(t('common.doNotHavePermissionForAction'));
       }
-      if (!canCreate) {
+      if (!canCreateDR) {
         throw new Error(t('common.doNotHavePermissionForAction'));
       }
       if (!data || !purchaseOrder) {

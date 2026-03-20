@@ -10,6 +10,7 @@ import { usePermissions } from '@/stores/useAppStore';
 import {
   canCancelPurchaseOrder,
   canConfirmPurchaseOrder,
+  canCreateDeliveryRequest,
   canDeletePurchaseOrder,
   canDeliverPurchaseOrder,
   canEditPurchaseOrder,
@@ -63,6 +64,7 @@ export function POAccordionActions({
     canRefund,
     canDelete,
     canEdit,
+    canCreateDR,
   } = useMemo(
     () => ({
       canConfirm: canConfirmPurchaseOrder(permissions),
@@ -74,6 +76,7 @@ export function POAccordionActions({
       canRefund: canRefundPurchaseOrder(permissions),
       canDelete: canDeletePurchaseOrder(permissions),
       canEdit: canEditPurchaseOrder(permissions),
+      canCreateDR: canCreateDeliveryRequest(permissions),
     }),
     [permissions],
   );
@@ -91,6 +94,7 @@ export function POAccordionActions({
       canRefund,
       canDelete,
       canEdit,
+      canCreateDR,
     },
     callbacks: {
       onConfirm,

@@ -20,10 +20,6 @@ const APP_DESCRIPTION = process.env.VITE_APP_DESCRIPTION || 'CMngt Progressive W
 
 // https://vite.dev/config/
 export default defineConfig({
-  server: {
-    // https://533a614b56bc.ngrok-free.app
-    allowedHosts: ['533a614b56bc.ngrok-free.app'],
-  },
   resolve: {
     alias: {
       // eslint-disable-next-line no-undef

@@ -169,7 +169,10 @@ function applyNavigationOverrides(
     .map((item) => {
       // If item is denied, hide it
       if (denied.includes(item.id)) {
-        return null;
+        return {
+          ...item,
+          disabled: true,
+        };
       }
 
       // Create a new item to avoid mutation

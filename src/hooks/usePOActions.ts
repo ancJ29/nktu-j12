@@ -74,6 +74,7 @@ export type UsePOActionsProps = {
     readonly canRefund: boolean;
     readonly canDelete: boolean;
     readonly canEdit: boolean;
+    readonly canCreateDR: boolean;
   };
   readonly callbacks: {
     readonly onConfirm: () => void;
@@ -132,6 +133,7 @@ export function usePOActions({
     const canConfirm = permissions.canConfirm;
     const canDelete = permissions.canDelete;
     const canEdit = permissions.canEdit;
+    const canCreateDR = permissions.canCreateDR;
 
     const actions: POActionConfig[] = [];
 
@@ -230,7 +232,7 @@ export function usePOActions({
             icon: IconClipboardList,
             translationKey: 'po.createDeliveryRequest',
             onClick: callbacks.onCreateDelivery ?? (() => {}),
-            isDisabled: !canShip,
+            isDisabled: !canShip || !canCreateDR,
             showCondition: true,
           });
         }
@@ -260,7 +262,7 @@ export function usePOActions({
             icon: IconClipboardList,
             translationKey: 'po.createDeliveryRequest',
             onClick: callbacks.onCreateDelivery ?? (() => {}),
-            isDisabled: !canShip,
+            isDisabled: !canShip || !canCreateDR,
             showCondition: true,
           });
         } else {
@@ -304,7 +306,7 @@ export function usePOActions({
             icon: IconTruck,
             translationKey: 'delivery.createGoodsReturnRequest',
             onClick: callbacks.onCreateGoodsReturn ?? (() => {}),
-            isDisabled: !canShip,
+            isDisabled: !canShip || !canCreateDR,
             showCondition: true,
           },
           createRefundAction(),
@@ -328,7 +330,7 @@ export function usePOActions({
         icon: IconTruck,
         translationKey: 'delivery.createAdditionalDeliveryRequest',
         onClick: callbacks.onCreateAdditionalDelivery ?? (() => {}),
-        isDisabled: !canShip || !!purchaseOrder.additionalDeliveryRequest,
+        isDisabled: !canShip || !canCreateDR || !!purchaseOrder.additionalDeliveryRequest,
         showCondition: true,
       });
     }
