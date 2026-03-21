@@ -20,6 +20,7 @@ type EmployeeDangerZoneProps = {
   readonly onActivate: () => void;
   readonly onDeactivate: () => void;
   readonly onSetPassword: () => void;
+  readonly onDelete: () => void;
 };
 
 export function EmployeeDangerZone({
@@ -27,6 +28,7 @@ export function EmployeeDangerZone({
   onActivate,
   onDeactivate,
   onSetPassword,
+  onDelete,
 }: EmployeeDangerZoneProps) {
   const { t } = useTranslation();
   const { isDesktop } = useDeviceType();
@@ -188,10 +190,11 @@ export function EmployeeDangerZone({
                   </Text>
                 </Box>
                 <Button
-                  disabled
                   color="red"
                   variant="outline"
+                  disabled={!canEdit}
                   leftSection={<IconTrash size={16} />}
+                  onClick={onDelete}
                 >
                   {t('common.delete')}
                 </Button>
@@ -206,10 +209,11 @@ export function EmployeeDangerZone({
                 </Box>
                 <Button
                   fullWidth
-                  disabled
                   color="red"
                   variant="outline"
+                  disabled={!canEdit}
                   leftSection={<IconTrash size={16} />}
+                  onClick={onDelete}
                 >
                   {t('common.delete')}
                 </Button>

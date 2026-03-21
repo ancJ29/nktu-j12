@@ -33,6 +33,7 @@ export type Employee = {
   department?: string;
   position?: string;
   displayOrder?: number;
+  isHidden?: boolean;
 };
 
 export const employeeService = {
@@ -61,6 +62,7 @@ export const employeeService = {
         monthlySalary: employee.metadata?.monthlySalary,
         hourlyRate: employee.metadata?.hourRate,
         displayOrder: employee.metadata?.displayOrder,
+        isHidden: employee.metadata?.isHidden ?? false,
         position: employee.metadata?.positionName ?? '',
         companyPhoneNumber: employee.metadata?.contact?.companyPhoneNumber,
         personalPhoneNumber: employee.metadata?.contact?.personalPhoneNumber,
@@ -165,6 +167,7 @@ export const employeeService = {
       startDate: Date;
       endDate?: Date;
       displayOrder?: number;
+      isHidden?: boolean;
       position?: string;
     },
   ) {
@@ -180,6 +183,7 @@ export const employeeService = {
           companyPhoneNumber: employee.companyPhoneNumber,
         },
         displayOrder: employee.displayOrder,
+        isHidden: employee.isHidden ?? false,
         hourRate: employee.workType === 'FULL_TIME' ? undefined : employee.hourlyRate,
         monthlySalary: employee.workType === 'FULL_TIME' ? employee.monthlySalary : undefined,
         positionName: employee.position,
@@ -193,6 +197,7 @@ function _sortEmployees<
   T extends {
     metadata?: {
       displayOrder?: number;
+      isHidden?: boolean;
     };
     isActive?: boolean;
     createdAt: Date;

@@ -19,6 +19,7 @@ type EmployeeDetailTabsProps = {
   readonly onActivate: () => void;
   readonly onDeactivate: () => void;
   readonly onSetPassword: () => void;
+  readonly onDelete: () => void;
 };
 
 export function EmployeeDetailTabs({
@@ -27,6 +28,7 @@ export function EmployeeDetailTabs({
   onActivate,
   onDeactivate,
   onSetPassword,
+  onDelete,
 }: EmployeeDetailTabsProps) {
   const { t } = useTranslation();
 
@@ -65,6 +67,7 @@ export function EmployeeDetailTabs({
                 onActivate={onActivate}
                 onDeactivate={onDeactivate}
                 onSetPassword={onSetPassword}
+                onDelete={onDelete}
               />
             </Stack>
           </Box>

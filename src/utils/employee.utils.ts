@@ -16,6 +16,7 @@ export type SingleEmployeeFormValues = {
   endDate?: Date;
   isEndDateEnabled?: boolean;
   displayOrder?: number;
+  isHidden?: boolean;
 };
 
 export type ImportResult = {

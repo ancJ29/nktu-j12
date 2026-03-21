@@ -4,6 +4,7 @@ import {
   backendPhoneNumberSchema,
   emailSchema,
   idSchema,
+  optionalBooleanSchema,
   optionalNumberSchema,
   optionalStringSchema,
   phoneNumberSchema,
@@ -20,6 +21,7 @@ const EmployeeMetadataSchema = z.object({
     companyPhoneNumber: backendPhoneNumberSchema.optional(),
   }),
   displayOrder: optionalNumberSchema,
+  isHidden: optionalBooleanSchema,
   hourRate: optionalNumberSchema,
   monthlySalary: optionalNumberSchema,
   positionName: optionalStringSchema,
@@ -45,6 +47,7 @@ export const EmployeeSchema = z.object({
         })
         .optional(),
       displayOrder: optionalNumberSchema,
+      isHidden: optionalBooleanSchema,
       hourRate: optionalNumberSchema,
       monthlySalary: optionalNumberSchema,
       positionName: optionalStringSchema,

@@ -11,6 +11,7 @@ export function useEmployeeModal() {
   const [deactivateOpened, deactivateHandlers] = useDisclosure(false);
   const [activateOpened, activateHandlers] = useDisclosure(false);
   const [passwordOpened, passwordHandlers] = useDisclosure(false);
+  const [deleteOpened, deleteHandlers] = useDisclosure(false);
 
   const openDeactivateModal = useCallback(
     (employee: Employee) => {
@@ -36,6 +37,14 @@ export function useEmployeeModal() {
     [passwordHandlers],
   );
 
+  const openDeleteModal = useCallback(
+    (employee: Employee) => {
+      setTargetEmployee(employee);
+      deleteHandlers.open();
+    },
+    [deleteHandlers],
+  );
+
   const closeDeactivateModal = useCallback(() => {
     deactivateHandlers.close();
     setTargetEmployee(undefined);
@@ -50,6 +59,11 @@ export function useEmployeeModal() {
     passwordHandlers.close();
     setTargetEmployee(undefined);
   }, [passwordHandlers]);
+
+  const closeDeleteModal = useCallback(() => {
+    deleteHandlers.close();
+    setTargetEmployee(undefined);
+  }, [deleteHandlers]);
 
   return {
     targetEmployee,
@@ -67,6 +81,11 @@ export function useEmployeeModal() {
       opened: passwordOpened,
       open: openPasswordModal,
       close: closePasswordModal,
+    },
+    deleteModal: {
+      opened: deleteOpened,
+      open: openDeleteModal,
+      close: closeDeleteModal,
     },
   };
 }

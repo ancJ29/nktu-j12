@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router';
 import { LoadingOverlay, Stack } from '@mantine/core';
 
 import {
+  EmployeeDeleteModal,
   EmployeeDetailAccordion,
   EmployeeDetailAlert,
   EmployeeDetailTabs,
@@ -15,12 +16,13 @@ import { AppPageTitle, PermissionDeniedPage } from '@/components/common';
 import { AppMobileLayout } from '@/components/common';
 import { DetailPageLayout } from '@/components/common/layouts/DetailPageLayout';
 import { ResourceNotFound } from '@/components/common/layouts/ResourceNotFound';
-import { getEmployeeEditRoute } from '@/config/routeConfig';
+import { getEmployeeEditRoute, ROUTERS } from '@/config/routeConfig';
 import { useDeviceType } from '@/hooks/useDeviceType';
 import { useEmployeeModal } from '@/hooks/useEmployeeModal';
 import { useOnce } from '@/hooks/useOnce';
 import { useSWRAction } from '@/hooks/useSWRAction';
 import { useTranslation } from '@/hooks/useTranslation';
+import { employeeService } from '@/services/hr/employee';
 import { userService } from '@/services/user/user';
 import { usePermissions } from '@/stores/useAppStore';
 import { useEmployeeList, useHrActions, useHrLoading } from '@/stores/useHrStore';
@@ -47,7 +49,8 @@ export function EmployeeDetailPage() {
     };
   }, [permissions]);
 
-  const { targetEmployee, deactivateModal, activateModal, passwordModal } = useEmployeeModal();
+  const { targetEmployee, deactivateModal, activateModal, passwordModal, deleteModal } =
+    useEmployeeModal();
 
   // Memoize employee lookup for better performance
   const employee = useMemo(
@@ -78,6 +81,12 @@ export function EmployeeDetailPage() {
       passwordModal.open(employee);
     }
   }, [employee, canSetPassword, passwordModal]);
+
+  const handleDelete = useCallback(() => {
+    if (employee && canEdit) {
+      deleteModal.open(employee);
+    }
+  }, [employee, canEdit, deleteModal]);
 
   const confirmSetPassword = useSWRAction(
     'confirm-set-password',
@@ -153,6 +162,39 @@ export function EmployeeDetailPage() {
     },
   );
 
+  const confirmDeleteEmployee = useSWRAction(
+    'delete-employee',
+    async () => {
+      if (!targetEmployee) {
+        throw new Error(t('common.invalidFormData'));
+      }
+      if (!canEdit) {
+        throw new Error(t('common.doNotHavePermissionForAction'));
+      }
+
+      await employeeService.updateEmployee(targetEmployee.id, {
+        firstName: targetEmployee.firstName,
+        lastName: targetEmployee.lastName,
+        departmentId: targetEmployee.departmentId,
+        startDate: targetEmployee.startDate ?? new Date(),
+        isHidden: true,
+      });
+      employeeService.clearCache();
+    },
+    {
+      notifications: {
+        successTitle: t('common.success'),
+        successMessage: t('employee.employeeDeleted'),
+        errorTitle: t('common.errors.notificationTitle'),
+        errorMessage: t('employee.deleteEmployeeFailed'),
+      },
+      onSuccess: () => {
+        deleteModal.close();
+        navigate(ROUTERS.EMPLOYEE_MANAGEMENT);
+      },
+    },
+  );
+
   useOnce(() => {
     void loadEmployees();
   });
@@ -179,6 +221,12 @@ export function EmployeeDetailPage() {
         employee={targetEmployee}
         onClose={passwordModal.close}
         onConfirm={confirmSetPassword.trigger}
+      />
+      <EmployeeDeleteModal
+        opened={deleteModal.opened}
+        employee={targetEmployee}
+        onClose={deleteModal.close}
+        onConfirm={confirmDeleteEmployee.trigger}
       />
     </>
   );
@@ -217,6 +265,7 @@ export function EmployeeDetailPage() {
             onDeactivate={handleDeactivate}
             onEdit={handleEdit}
             onSetPassword={handleSetPassword}
+            onDelete={handleDelete}
           />
         </Stack>
         {modals}
@@ -235,6 +284,7 @@ export function EmployeeDetailPage() {
             onActivate={handleActivate}
             onDeactivate={handleDeactivate}
             onSetPassword={handleSetPassword}
+            onDelete={handleDelete}
           />
         </Stack>
       ) : (

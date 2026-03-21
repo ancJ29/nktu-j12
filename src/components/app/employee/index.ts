@@ -7,6 +7,7 @@ export { EmployeePasswordModal } from './EmployeePasswordModal';
 export { EmployeeBasicInfoCard } from './EmployeeBasicInfoCard';
 export { EmployeeMagicLinkModal } from './EmployeeMagicLinkModal';
 export { EmployeeDangerZone } from './EmployeeDangerZone';
+export { EmployeeDeleteModal } from './EmployeeDeleteModal';
 export { ComingSoonCard } from '@/components/common/ui/ComingSoonCard';
 export { EmployeeDetailTabs } from './EmployeeDetailTabs';
 export { EmployeeDetailAccordion } from './EmployeeDetailAccordion';

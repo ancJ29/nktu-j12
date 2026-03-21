@@ -65,6 +65,10 @@ export function useEmployeeFilters(employees: readonly Employee[]) {
 
   const filteredEmployees = useMemo(() => {
     return employees.filter((employee) => {
+      if (employee?.isHidden) {
+        return false;
+      }
+
       const { searchQuery, departmentId, status } = filters;
 
       // Status filter

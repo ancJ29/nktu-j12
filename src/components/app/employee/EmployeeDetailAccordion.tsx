@@ -19,6 +19,7 @@ type EmployeeDetailAccordionProps = {
   readonly onDeactivate: () => void;
   readonly onEdit: () => void;
   readonly onSetPassword: () => void;
+  readonly onDelete: () => void;
 };
 
 export function EmployeeDetailAccordion({
@@ -27,6 +28,7 @@ export function EmployeeDetailAccordion({
   onDeactivate,
   onEdit,
   onSetPassword,
+  onDelete,
 }: EmployeeDetailAccordionProps) {
   const { t } = useTranslation();
 
@@ -96,6 +98,7 @@ export function EmployeeDetailAccordion({
               onActivate={onActivate}
               onDeactivate={onDeactivate}
               onSetPassword={onSetPassword}
+              onDelete={onDelete}
             />
           </Stack>
         </Accordion.Panel>

@@ -97,6 +97,7 @@ export function EmployeeFormPage({ mode }: EmployeeFormPageProps) {
         endDate: employee.endDate,
         isEndDateEnabled: false,
         displayOrder: employee.displayOrder,
+        isHidden: employee.isHidden ?? false,
       });
     } catch (error) {
       logError('Failed to load employee', error, {
@@ -152,6 +153,7 @@ export function EmployeeFormPage({ mode }: EmployeeFormPageProps) {
           hourlyRate: values.hourlyRate,
           startDate: values.startDate ?? new Date(),
           displayOrder: values.displayOrder,
+          isHidden: values.isHidden ?? false,
           ...(values.isEndDateEnabled && { endDate: values.endDate }),
         });
         return result;
