@@ -8,7 +8,7 @@ import { useDeviceType } from '@/hooks/useDeviceType';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { PurchaseOrder } from '@/services/sales/purchaseOrder';
 import { useDeliveryAssigneeOptions } from '@/stores/useDeliveryRequestStore';
-import { formatDate } from '@/utils/time';
+import { formatDateTime } from '@/utils/time';
 
 type AdditionalDeliveryCreateModalProps = {
   readonly opened: boolean;
@@ -102,7 +102,7 @@ export function AdditionalDeliveryCreateModal({
               {t('po.orderDate')}:
             </Text>
             <Text size="sm" fw={500}>
-              {formatDate(purchaseOrder.orderDate)}
+              {formatDateTime(purchaseOrder.orderDate)}
             </Text>
           </Group>
         </Stack>

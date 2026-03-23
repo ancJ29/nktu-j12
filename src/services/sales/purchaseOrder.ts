@@ -113,37 +113,37 @@ function transformApiToFrontend(
     statusHistory: apiPO?.statusHistory,
     deliveryRequest: apiPO?.deliveryRequest
       ? {
-          deliveryRequestId: apiPO.deliveryRequest.deliveryRequestId,
-          deliveryRequestNumber: apiPO.deliveryRequest.deliveryRequestNumber,
-          deliveryPerson,
-          isUrgentDelivery: apiPO.deliveryRequest.isUrgentDelivery,
-          status: apiPO.deliveryRequest.status,
-          scheduledDate: apiPO.deliveryRequest.scheduledDate,
-          photos: apiPO.deliveryRequest.photos,
-        }
+        deliveryRequestId: apiPO.deliveryRequest.deliveryRequestId,
+        deliveryRequestNumber: apiPO.deliveryRequest.deliveryRequestNumber,
+        deliveryPerson,
+        isUrgentDelivery: apiPO.deliveryRequest.isUrgentDelivery,
+        status: apiPO.deliveryRequest.status,
+        scheduledDate: apiPO.deliveryRequest.scheduledDate,
+        photos: apiPO.deliveryRequest.photos,
+      }
       : undefined,
     goodsReturnRequest: goodsReturnRequest
       ? {
-          goodsReturnRequestId: goodsReturnRequest.goodsReturnRequestId,
-          goodsReturnRequestNumber: goodsReturnRequest.goodsReturnRequestNumber,
-          assignedTo: goodsReturnPerson,
-          status: goodsReturnRequest.status,
-          scheduledDate: goodsReturnRequest.scheduledDate,
-          completedDate: goodsReturnRequest.completedDate,
-          photos: goodsReturnRequest.photos,
-        }
+        goodsReturnRequestId: goodsReturnRequest.goodsReturnRequestId,
+        goodsReturnRequestNumber: goodsReturnRequest.goodsReturnRequestNumber,
+        assignedTo: goodsReturnPerson,
+        status: goodsReturnRequest.status,
+        scheduledDate: goodsReturnRequest.scheduledDate,
+        completedDate: goodsReturnRequest.completedDate,
+        photos: goodsReturnRequest.photos,
+      }
       : undefined,
     additionalDeliveryRequest: additionalDeliveryRequest
       ? {
-          additionalDeliveryRequestId: additionalDeliveryRequest.additionalDeliveryRequestId,
-          additionalDeliveryRequestNumber:
-            additionalDeliveryRequest.additionalDeliveryRequestNumber,
-          assignedTo: additionalDeliveryPerson,
-          status: additionalDeliveryRequest.status,
-          scheduledDate: additionalDeliveryRequest.scheduledDate,
-          completedDate: additionalDeliveryRequest.completedDate,
-          photos: additionalDeliveryRequest.photos,
-        }
+        additionalDeliveryRequestId: additionalDeliveryRequest.additionalDeliveryRequestId,
+        additionalDeliveryRequestNumber:
+          additionalDeliveryRequest.additionalDeliveryRequestNumber,
+        assignedTo: additionalDeliveryPerson,
+        status: additionalDeliveryRequest.status,
+        scheduledDate: additionalDeliveryRequest.scheduledDate,
+        completedDate: additionalDeliveryRequest.completedDate,
+        photos: additionalDeliveryRequest.photos,
+      }
       : undefined,
     items: apiPO.items.map((item) => ({
       ...item,
@@ -186,52 +186,46 @@ export const purchaseOrderService = {
     // Transform Date objects to ISO strings for API
     const apiParams = filters
       ? {
-          poNumber: filters.poNumber,
-          customerId: filters.customerId,
-          salesId: filters.salesId,
-          // Support both single status and multiple statuses
-          status: filters.statuses?.length === 1 ? filters.statuses[0] : filters.status,
-          statuses:
-            filters.statuses?.length && filters.statuses.length > 1 ? filters.statuses : undefined,
-          orderDateFrom:
-            filters.orderDateFrom instanceof Date
-              ? filters.orderDateFrom.toISOString()
-              : filters.orderDateFrom,
-          orderDateTo:
-            filters.orderDateTo instanceof Date
-              ? filters.orderDateTo.toISOString()
-              : filters.orderDateTo,
-          deliveryDateFrom:
-            filters.deliveryDateFrom instanceof Date
-              ? filters.deliveryDateFrom.toISOString()
-              : filters.deliveryDateFrom,
-          deliveryDateTo:
-            filters.deliveryDateTo instanceof Date
-              ? filters.deliveryDateTo.toISOString()
-              : filters.deliveryDateTo,
-          cursor: filters.cursor,
-          limit: filters.limit,
-        }
+        poNumber: filters.poNumber,
+        customerId: filters.customerId,
+        salesId: filters.salesId,
+        // Support both single status and multiple statuses
+        status: filters.statuses?.length === 1 ? filters.statuses[0] : filters.status,
+        statuses:
+          filters.statuses?.length && filters.statuses.length > 1 ? filters.statuses : undefined,
+        orderDateFrom:
+          filters.orderDateFrom instanceof Date
+            ? filters.orderDateFrom.toISOString()
+            : filters.orderDateFrom,
+        orderDateTo:
+          filters.orderDateTo instanceof Date
+            ? filters.orderDateTo.toISOString()
+            : filters.orderDateTo,
+        deliveryDateFrom:
+          filters.deliveryDateFrom instanceof Date
+            ? filters.deliveryDateFrom.toISOString()
+            : filters.deliveryDateFrom,
+        deliveryDateTo:
+          filters.deliveryDateTo instanceof Date
+            ? filters.deliveryDateTo.toISOString()
+            : filters.deliveryDateTo,
+        cursor: filters.cursor,
+        limit: filters.limit,
+      }
       : undefined;
 
     const response = await salesApi.getPurchaseOrders(apiParams);
     const employeeMapByEmployeeId = await overviewService.getEmployeeOverview();
     const productMapByProductId = await overviewService.getProductOverview();
     const customerMapByCustomerId = await overviewService.getCustomerOverview();
-    const purchaseOrders = response.purchaseOrders
-      .sort((a, b) => {
-        if (a.isUrgentPO && !b.isUrgentPO) return -1;
-        if (!a.isUrgentPO && b.isUrgentPO) return 1;
-        return b.orderDate.getTime() - a.orderDate.getTime();
-      })
-      .map((po) =>
-        transformApiToFrontend(
-          po,
-          employeeMapByEmployeeId,
-          productMapByProductId,
-          customerMapByCustomerId,
-        ),
-      );
+    const purchaseOrders = response.purchaseOrders.map((po) =>
+      transformApiToFrontend(
+        po,
+        employeeMapByEmployeeId,
+        productMapByProductId,
+        customerMapByCustomerId,
+      ),
+    );
     return {
       purchaseOrders,
       pagination: response.pagination,
@@ -245,11 +239,11 @@ export const purchaseOrderService = {
     const customerMapByCustomerId = await overviewService.getCustomerOverview();
     return po
       ? transformApiToFrontend(
-          po,
-          employeeMapByEmployeeId,
-          productMapByProductId,
-          customerMapByCustomerId,
-        )
+        po,
+        employeeMapByEmployeeId,
+        productMapByProductId,
+        customerMapByCustomerId,
+      )
       : undefined;
   },
 

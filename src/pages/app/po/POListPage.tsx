@@ -75,7 +75,7 @@ import {
   canViewPurchaseOrder,
 } from '@/utils/permission.utils';
 import { STORAGE_KEYS } from '@/utils/storageKeys';
-import { formatDate } from '@/utils/time';
+import { formatDate, formatDateTime } from '@/utils/time';
 
 export function POListPage() {
   const navigate = useNavigate();
@@ -302,7 +302,7 @@ export function POListPage() {
       poNumber: po.poNumber,
       customerName: po.customerName,
       salesPerson: po.salesPerson,
-      orderDate: formatDate(po.orderDate),
+      orderDate: formatDateTime(po.orderDate),
       deliveryDate: po.deliveryDate ? formatDate(po.deliveryDate) : undefined,
       itemCount: po.items?.length ?? 0,
       status: t(`po.status.${po.status}` as any),

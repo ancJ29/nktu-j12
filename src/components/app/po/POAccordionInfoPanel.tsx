@@ -108,7 +108,7 @@ export function POAccordionInfoPanel({
           <InfoField
             label={t('po.orderDate')}
             icon={IconIdentifiers.CALENDAR}
-            value={formatDate(purchaseOrder.orderDate)}
+            value={formatDateTime(purchaseOrder.orderDate)}
           />
         </Grid.Col>
         <Grid.Col span={6}>

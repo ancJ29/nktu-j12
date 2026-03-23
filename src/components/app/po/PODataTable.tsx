@@ -8,7 +8,7 @@ import { NewMessageBadge } from '@/components/common';
 import { getPODetailRoute } from '@/config/routeConfig';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { PurchaseOrder } from '@/services/sales/purchaseOrder';
-import { formatDate } from '@/utils/time';
+import { formatDateTime, formatDate } from '@/utils/time';
 
 import { PODeliveryBadge } from './PODeliveryBadge';
 import { POStatusBadge } from './POStatusBadge';
@@ -164,7 +164,7 @@ function PODataTableComponent({
                 <Table.Td>
                   <Text size="sm">{po.salesPerson}</Text>
                 </Table.Td>
-                <Table.Td>{formatDate(po.orderDate)}</Table.Td>
+                <Table.Td>{formatDateTime(po.orderDate)}</Table.Td>
                 <Table.Td>{formatDate(po.deliveryDate)}</Table.Td>
                 <Table.Td>
                   <Text size="sm">

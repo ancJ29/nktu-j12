@@ -8,7 +8,7 @@ import { NewMessageBadge } from '@/components/common';
 import { getPODetailRoute } from '@/config/routeConfig';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { PurchaseOrder } from '@/services/sales/purchaseOrder';
-import { formatDate } from '@/utils/time';
+import { formatDate, formatDateTime } from '@/utils/time';
 
 import { POCustomer } from './POCustomer';
 import { PODeliveryBadge } from './PODeliveryBadge';
@@ -92,7 +92,7 @@ export function POCard({ purchaseOrder, style, className }: POCardProps) {
               {t('po.orderDate')}:
             </Text>
             <Text size="xs" fw={500}>
-              {formatDate(purchaseOrder.orderDate)}
+              {formatDateTime(purchaseOrder.orderDate)}
             </Text>
           </Group>
 

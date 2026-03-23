@@ -23,7 +23,7 @@ export function PODatesSection({ purchaseOrder }: PODatesSectionProps) {
           </Text>
           <Group gap="xs">
             <IconCalendar size={16} color="var(--mantine-color-gray-6)" />
-            <Text>{formatDate(purchaseOrder.orderDate)}</Text>
+            <Text>{formatDateTime(purchaseOrder.orderDate)}</Text>
           </Group>
         </div>
       </Grid.Col>
