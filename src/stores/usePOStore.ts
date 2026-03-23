@@ -163,8 +163,8 @@ export const usePOStore = create<POState>()(
           purchaseOrders.sort((a, b) => {
             if (a.isUrgentPO && !b.isUrgentPO) return -1;
             if (!a.isUrgentPO && b.isUrgentPO) return 1;
-            if (!a.isInternalDelivery && b.isInternalDelivery) return -1;
-            if (a.isInternalDelivery && !b.isInternalDelivery) return 1;
+            if (!a.isInternalDelivery && b.isInternalDelivery) return 1;
+            if (a.isInternalDelivery && !b.isInternalDelivery) return -1;
             return b.orderDate.getTime() - a.orderDate.getTime();
           })
           set({
