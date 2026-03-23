@@ -153,7 +153,7 @@ export const usePOStore = create<POState>()(
           const params = {
             ...filters,
             cursor: reset ? undefined : state.currentCursor,
-            limit: 20, // Default page size
+            limit: 100, // Default page size
           };
 
           const response = await purchaseOrderService.getPOsWithFilter(params);
@@ -163,6 +163,8 @@ export const usePOStore = create<POState>()(
           purchaseOrders.sort((a, b) => {
             if (a.isUrgentPO && !b.isUrgentPO) return -1;
             if (!a.isUrgentPO && b.isUrgentPO) return 1;
+            if (!a.isInternalDelivery && b.isInternalDelivery) return -1;
+            if (a.isInternalDelivery && !b.isInternalDelivery) return 1;
             return b.orderDate.getTime() - a.orderDate.getTime();
           })
           set({
@@ -210,7 +212,7 @@ export const usePOStore = create<POState>()(
           const params = {
             ...state.activeFilters,
             cursor: state.currentCursor,
-            limit: 20,
+            limit: 100,
           };
 
           const response = await purchaseOrderService.getPOsWithFilter(params);
@@ -245,7 +247,7 @@ export const usePOStore = create<POState>()(
           const params = {
             ...state.activeFilters,
             cursor: previousCursor || undefined,
-            limit: 20,
+            limit: 100,
           };
 
           const response = await purchaseOrderService.getPOsWithFilter(params);
