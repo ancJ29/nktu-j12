@@ -10,19 +10,6 @@ export async function delay(ms: number): Promise<void> {
 }
 
 /**
- * Get the proper locale format based on language code
- * @param language - Language code (e.g., 'vi', 'en')
- * @returns Proper locale format (e.g., 'vi-VN', 'en-US')
- */
-export function getLocaleFormat(language: string): string {
-  const localeMap: Record<string, string> = {
-    vi: 'vi-VN',
-    en: 'en-US',
-  };
-  return localeMap[language] || 'en-US';
-}
-
-/**
  * Format a date to a readable string
  * @param date - The date to format
  * @param locale - Optional locale string (defaults to 'vi-VN')
@@ -40,7 +27,7 @@ export function formatDate(date: Date | string | undefined, emptyValue = '-'): s
   const month = (dateObj.getMonth() + 1).toString().padStart(2, '0');
   const day = dateObj.getDate().toString().padStart(2, '0');
 
-  return `${year}-${month}-${day}`;
+  return `${day}-${month}-${year}`;
 }
 
 export function formatShortDate(date: Date | string | undefined, emptyValue = '-'): string {
@@ -76,10 +63,10 @@ export function formatDateTime(date: Date | string | undefined): string {
   const minute = dateObj.getMinutes().toString().padStart(2, '0');
 
   if (clientCode === 'NKTU') {
-    return `${hour}:${minute} ${day}/${month}/${year}`;
+    return `${hour}:${minute} ${day}-${month}-${year}`;
   }
 
-  return `${year}-${month}-${day} ${hour}:${minute}`;
+  return `${day}-${month}-${year} ${hour}:${minute}`;
 }
 
 export type EndDateStatus = 'none' | 'ending_soon' | 'ended_but_active';
