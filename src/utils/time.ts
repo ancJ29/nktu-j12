@@ -1,4 +1,5 @@
 import type React from 'react';
+import { getClientCodeFromHost } from '@/utils/env';
 
 export async function delay(ms: number): Promise<void> {
   return new Promise((resolve) => {
@@ -52,6 +53,8 @@ export function formatShortDate(date: Date | string | undefined, emptyValue = '-
   return `${day}/${month}`;
 }
 
+const clientCode = getClientCodeFromHost();
+
 /**
  * Format a date with time to show hours and minutes
  * @param date - The date to format
@@ -71,6 +74,10 @@ export function formatDateTime(date: Date | string | undefined): string {
   const day = dateObj.getDate().toString().padStart(2, '0');
   const hour = dateObj.getHours().toString().padStart(2, '0');
   const minute = dateObj.getMinutes().toString().padStart(2, '0');
+
+  if (clientCode === 'NKTU') {
+    return `${hour}:${minute} ${day}/${month}/${year}`;
+  }
 
   return `${year}-${month}-${day} ${hour}:${minute}`;
 }
