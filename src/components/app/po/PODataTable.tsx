@@ -107,12 +107,12 @@ function PODataTableComponent({
               </Table.Th>
             )}
             <Table.Th>#</Table.Th>
-            <Table.Th>{t('po.poNumber')}</Table.Th>
+            <Table.Th w="300px">{t('po.poNumber')}</Table.Th>
             <Table.Th>{t('common.customer')}</Table.Th>
-            <Table.Th>{t('po.salesPerson')}</Table.Th>
-            <Table.Th>{t('po.orderDate')}</Table.Th>
-            <Table.Th>{t('po.deliveryDate')}</Table.Th>
-            <Table.Th>{t('po.items')}</Table.Th>
+            <Table.Th w="250px">{t('po.salesPerson')}</Table.Th>
+            <Table.Th w="200px">{t('po.orderDate')}</Table.Th>
+            <Table.Th w="150px">{t('po.deliveryDate')}</Table.Th>
+            {/* <Table.Th>{t('po.items')}</Table.Th> */}
             <Table.Th w="150px">{t('po.poStatus')}</Table.Th>
           </Table.Tr>
         </Table.Thead>
@@ -166,11 +166,11 @@ function PODataTableComponent({
                 </Table.Td>
                 <Table.Td>{formatDateTime(po.orderDate)}</Table.Td>
                 <Table.Td>{formatDate(po.deliveryDate)}</Table.Td>
-                <Table.Td>
+                {/* <Table.Td>
                   <Text size="sm">
                     {po.items.length} {t('po.itemsCount')}
                   </Text>
-                </Table.Td>
+                </Table.Td> */}
                 <Table.Td>
                   <Group gap="xs" m={0} mb="xs" justify="space-between">
                     <POStatusBadge status={po.status} />

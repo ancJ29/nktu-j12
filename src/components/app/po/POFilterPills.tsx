@@ -5,6 +5,7 @@ import { IconX } from '@tabler/icons-react';
 import { PO_STATUS, type POStatusType } from '@/constants/purchaseOrder';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useCustomerOptions, useEmployees } from '@/stores/useAppStore';
+import { formatDate } from '@/utils/time';
 
 interface POFilterPillsProps {
   readonly customerId?: string;
@@ -51,8 +52,8 @@ export function POFilterPills({
   // Format date range for display
   const formatDateRange = (start?: Date, end?: Date) => {
     if (!start && !end) return null;
-    const startStr = start ? start.toLocaleDateString() : '';
-    const endStr = end ? end.toLocaleDateString() : '';
+    const startStr = start ? formatDate(start) : '';
+    const endStr = end ? formatDate(end) : '';
     if (start && end) return `${startStr} - ${endStr}`;
     if (start) return `${t('common.from')} ${startStr}`;
     if (end) return `${t('common.to')} ${endStr}`;

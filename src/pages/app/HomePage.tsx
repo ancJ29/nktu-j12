@@ -40,6 +40,7 @@ import {
   canViewDeliveryRequest,
   canViewPurchaseOrder,
 } from '@/utils/permission.utils';
+import { formatDate } from '@/utils/time';
 
 export function HomePage() {
   const { isMobile } = useDeviceType();
@@ -579,7 +580,7 @@ export function HomePage() {
                           <Table.Td>
                             <POStatusBadge status={po.status} />
                           </Table.Td>
-                          <Table.Td>{new Date(po.orderDate).toLocaleDateString()}</Table.Td>
+                          <Table.Td>{formatDate(po.orderDate)}</Table.Td>
                         </Table.Tr>
                       ))
                     )}
@@ -769,7 +770,7 @@ function POCard({ po, onClick }: { readonly po: PurchaseOrder; readonly onClick:
           <Group gap="xs">
             <Text size="sm">{po.salesPerson ?? '-'}</Text>
             <Text size="sm" c="dimmed">
-              {new Date(po.orderDate).toLocaleDateString()}
+              {formatDate(po.orderDate)}
             </Text>
           </Group>
         </Stack>

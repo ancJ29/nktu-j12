@@ -8,7 +8,7 @@ import { chatService, type Message } from '@/services/chat/chat';
 import { useMe } from '@/stores/useAppStore';
 import { isDevelopment } from '@/utils/env';
 import { logLastAccessed } from '@/utils/message';
-import { formatDateTime } from '@/utils/time';
+import { formatDate, formatDateTime } from '@/utils/time';
 
 type ChatPanelProps = {
   readonly targetId: string;
@@ -112,7 +112,7 @@ export function ChatPanel({ targetId, type }: ChatPanelProps) {
   const groupedMessages = useMemo(() => {
     const groups: Record<string, Message[]> = {};
     for (const message of messages) {
-      const date = new Date(message.createdAt).toLocaleDateString();
+      const date = formatDate(message.createdAt);
       if (!groups[date]) {
         groups[date] = [];
       }
