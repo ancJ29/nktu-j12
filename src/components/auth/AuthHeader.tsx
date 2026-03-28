@@ -8,9 +8,11 @@ type AuthHeaderProps = {
 
 // Use environment variable as default fallback
 const defaultAppName = import.meta.env.VITE_APP_NAME || 'CMngt';
+const logoUrl = '/icons/logo.svg';
 
 export function AuthHeader({ title: pageTitle }: AuthHeaderProps) {
-  const { logoUrl, title } = useLogoAndTitle({ color: true });
+  // logoUrl
+  const { title } = useLogoAndTitle({ color: true });
   return (
     <Group justify="center" gap="md" mb="lg">
       <img

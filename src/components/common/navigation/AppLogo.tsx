@@ -11,16 +11,19 @@ type AppLogoProps = {
   readonly link?: string;
   readonly noTitle?: boolean;
 };
+
+const logoUrl = '/icons/logo-white.svg';
 export function AppLogo({ noTitle = false, c, fw, link = '/home' }: AppLogoProps) {
   const navigate = useNavigate();
-  const { logoUrl, title } = useLogoAndTitle();
+  // logoUrl,
+  const { title } = useLogoAndTitle();
 
   return (
     <Group gap="xs" style={{ cursor: 'pointer' }} onClick={() => navigate(link)}>
       {/* {isDevelopment ? <IconCubeSpark color='var(--app-shell-color)' />} */}
       <Box
         component="img"
-        src={logoUrl || '/icons/logo-black-and-white.svg'}
+        src={logoUrl}
         alt="Logo"
         fw={fw}
         style={{
