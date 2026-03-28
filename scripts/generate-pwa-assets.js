@@ -8,7 +8,7 @@ const rootDir = join(__dirname, '..');
 const publicDir = join(rootDir, 'public');
 
 // Theme color from the app configuration
-const THEME_COLOR = `#${process.env.VITE_APP_THEME_COLOR || '324e71'}`;
+const THEME_COLOR = `#${process.env.VITE_APP_THEME_COLOR || '7d9b47'}`;
 
 // Ensure public directory exists
 if (!existsSync(publicDir)) {

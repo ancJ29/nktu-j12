@@ -263,7 +263,7 @@ const customs: Record<string, CustomThemeConfig> = {
       '#5f91c6', // [5]
       '#4a76a9', // [6]
       '#3e618c', // [7]
-      '#324e71', // [8]
+      '#7d9b47', // [8]
       '#273c59', // [9] darkest
     ],
     default: {
@@ -385,7 +385,7 @@ export const themeConfig: Record<string, CustomThemeConfig> = {
       '#5f91c6', // [5]
       '#4a76a9', // [6]
       '#3e618c', // [7]
-      '#324e71', // [8]
+      '#7d9b47', // [8]
       '#273c59', // [9] darkest
     ],
     default: {

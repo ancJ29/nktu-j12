@@ -24,8 +24,8 @@ const manifest = {
   start_url: '/',
   display: 'standalone',
   orientation: 'portrait',
-  theme_color: '#324e71',
-  background_color: '#324e71',
+  theme_color: '#7d9b47',
+  background_color: '#7d9b47',
   icons: [
     {
       src: '/favicon-16x16.png',

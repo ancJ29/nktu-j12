@@ -21,7 +21,7 @@ dotenv.config({ path: join(rootDir, '.env.local') });
 dotenv.config({ path: join(rootDir, '.env') });
 
 // Get theme color from environment or use default
-const THEME_COLOR_HEX = process.env.VITE_APP_THEME_COLOR || '324e71';
+const THEME_COLOR_HEX = process.env.VITE_APP_THEME_COLOR || '7d9b47';
 const THEME_COLOR = `#${THEME_COLOR_HEX}`;
 
 // Get app branding from environment
@@ -48,7 +48,7 @@ function hexToRgb(hex) {
         g: parseInt(result[2], 16),
         b: parseInt(result[3], 16),
       }
-    : { r: 50, g: 78, b: 113 }; // Default to #324e71
+    : { r: 50, g: 78, b: 113 }; // Default to #7d9b47
 }
 
 /**
