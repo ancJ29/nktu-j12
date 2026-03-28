@@ -24,7 +24,7 @@ export const DELIVERY_STATUS_COLORS: Record<DeliveryStatusType, string> = {
   [DELIVERY_STATUS.DRAFT]: 'gray',
   [DELIVERY_STATUS.PENDING]: 'blue',
   [DELIVERY_STATUS.IN_TRANSIT]: 'orange',
-  [DELIVERY_STATUS.COMPLETED]: 'green',
+  [DELIVERY_STATUS.COMPLETED]: 'brand',
 };
 
 // Status labels for display

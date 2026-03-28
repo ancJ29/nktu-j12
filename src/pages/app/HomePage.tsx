@@ -17,7 +17,7 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { IconChevronRight, IconX } from '@tabler/icons-react';
+import { IconChevronDown, IconChevronRight, IconX } from '@tabler/icons-react';
 
 import { DeliveryStatusBadge } from '@/components/app/delivery/DeliveryStatusBadge';
 import { DeliveryTypeBadge } from '@/components/app/delivery/DeliveryTypeBadge';
@@ -76,6 +76,22 @@ export function HomePage() {
 
   // Collapsible state for mobile sections
   const [open, setOpen] = useState<'none' | 'sales' | 'delivery' | 'warehouse'>('sales');
+
+  // Collapsible state for desktop sections (multiple can be open)
+  const [desktopOpen, setDesktopOpen] = useState<Set<string>>(
+    () => new Set(['sales', 'delivery', 'warehouse']),
+  );
+  const toggleDesktopSection = (section: string) => {
+    setDesktopOpen((prev) => {
+      const next = new Set(prev);
+      if (next.has(section)) {
+        next.delete(section);
+      } else {
+        next.add(section);
+      }
+      return next;
+    });
+  };
 
   // Fullscreen modal state
   const [fullscreenOpen, setFullscreenOpen] = useState(false);
@@ -194,7 +210,7 @@ export function HomePage() {
                   <Group gap="xs">
                     <Title order={5}>{t('home.sales.sectionTitle')}</Title>
                     {(canViewAllPO || canViewMyPO) && (
-                      <Badge color="blue" variant="filled">
+                      <Badge color="brand" variant="filled">
                         {filteredActivePOs.length}
                       </Badge>
                     )}
@@ -515,11 +531,23 @@ export function HomePage() {
           {/* Sales Section */}
           {canViewPO && (
             <Card shadow="sm" padding="lg">
-              <Group justify="space-between" mb="md">
+              <Group
+                justify="space-between"
+                mb={desktopOpen.has('sales') ? 'md' : 0}
+                style={{ cursor: 'pointer' }}
+                onClick={() => toggleDesktopSection('sales')}
+              >
                 <Group gap="xs">
+                  <IconChevronDown
+                    size={18}
+                    style={{
+                      transform: desktopOpen.has('sales') ? 'rotate(0deg)' : 'rotate(-90deg)',
+                      transition: 'transform 200ms ease',
+                    }}
+                  />
                   <Title order={4}>{t('home.sales.sectionTitle')}</Title>
                   {(canViewAllPO || canViewMyPO) && (
-                    <Badge ml="lg" color="blue" variant="filled" size="sm">
+                    <Badge ml="lg" color="brand" variant="filled" size="sm">
                       {filteredActivePOs.length}
                     </Badge>
                   )}
@@ -535,6 +563,7 @@ export function HomePage() {
                   <IconChevronRight size={20} />
                 </ActionIcon>
               </Group>
+              <Collapse in={desktopOpen.has('sales')}>
               <Box style={{ maxHeight: 400, overflow: 'auto' }}>
                 <Table highlightOnHover>
                   <Table.Thead>
@@ -587,14 +616,27 @@ export function HomePage() {
                   </Table.Tbody>
                 </Table>
               </Box>
+              </Collapse>
             </Card>
           )}
 
           {/* Delivery Section */}
           {canViewDR && (
             <Card shadow="sm" padding="lg">
-              <Group justify="space-between" mb="md">
+              <Group
+                justify="space-between"
+                mb={desktopOpen.has('delivery') ? 'md' : 0}
+                style={{ cursor: 'pointer' }}
+                onClick={() => toggleDesktopSection('delivery')}
+              >
                 <Group gap="xs">
+                  <IconChevronDown
+                    size={18}
+                    style={{
+                      transform: desktopOpen.has('delivery') ? 'rotate(0deg)' : 'rotate(-90deg)',
+                      transition: 'transform 200ms ease',
+                    }}
+                  />
                   <Title order={4}>{t('home.delivery.sectionTitle')}</Title>
                   {(canViewAllDR || canViewMyDR) && (
                     <Badge ml="lg" color="orange" variant="filled" size="sm">
@@ -613,6 +655,7 @@ export function HomePage() {
                   <IconChevronRight size={20} />
                 </ActionIcon>
               </Group>
+              <Collapse in={desktopOpen.has('delivery')}>
               <Box style={{ maxHeight: 400, overflow: 'auto' }}>
                 <Table highlightOnHover>
                   <Table.Thead>
@@ -676,14 +719,27 @@ export function HomePage() {
                   </Table.Tbody>
                 </Table>
               </Box>
+              </Collapse>
             </Card>
           )}
 
           {/* Warehouse Section */}
           {canViewWarehouse && (
             <Card shadow="sm" padding="lg">
-              <Group justify="space-between" mb="md">
+              <Group
+                justify="space-between"
+                mb={desktopOpen.has('warehouse') ? 'md' : 0}
+                style={{ cursor: 'pointer' }}
+                onClick={() => toggleDesktopSection('warehouse')}
+              >
                 <Group gap="xs">
+                  <IconChevronDown
+                    size={18}
+                    style={{
+                      transform: desktopOpen.has('warehouse') ? 'rotate(0deg)' : 'rotate(-90deg)',
+                      transition: 'transform 200ms ease',
+                    }}
+                  />
                   <Title order={4}>{t('home.warehouse.sectionTitle')}</Title>
                   {(canViewAllPO || canViewMyPO) && (
                     <Badge ml="lg" color="teal" variant="filled" size="sm">
@@ -702,6 +758,7 @@ export function HomePage() {
                   <IconChevronRight size={20} />
                 </ActionIcon>
               </Group>
+              <Collapse in={desktopOpen.has('warehouse')}>
               <Box style={{ maxHeight: 400, overflow: 'auto' }}>
                 <Table highlightOnHover>
                   <Table.Thead>
@@ -752,6 +809,7 @@ export function HomePage() {
                   </Table.Tbody>
                 </Table>
               </Box>
+              </Collapse>
             </Card>
           )}
         </Stack>

@@ -59,7 +59,7 @@ export default defineConfig({
         name: `${APP_NAME} App`,
         short_name: APP_SHORT_NAME,
         description: APP_DESCRIPTION,
-        theme_color: '#324e71',
+        theme_color: '#7d9b47',
         background_color: '#ffffff',
         display: 'standalone',
         orientation: 'portrait',

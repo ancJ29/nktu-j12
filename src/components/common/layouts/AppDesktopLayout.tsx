@@ -30,7 +30,7 @@ export function AppDesktopLayout({
       {isDevelopment && (
         <Affix position={{ top: 10, left: window.innerWidth / 2 }}>
           <Text
-            c="orange"
+            c="var(--app-shell-color)"
             fz={20}
             fw={600}
             w="100%"

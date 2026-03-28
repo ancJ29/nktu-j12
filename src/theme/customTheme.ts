@@ -27,7 +27,282 @@ type CustomThemeConfig = {
   dark?: CustomColors;
 };
 
+const backgroundColors = {
+  brown: '#a68168',
+  green: '#5d772f',
+  cyan: '#5090ab',
+  blue: '#217ca3',
+  red: '#b15757',
+  orange: '#b34800',
+}
+
+const customs: Record<string, CustomThemeConfig> = {
+  brown: {
+    brandColors: [
+      "#fff2e8",
+      "#f4e5db",
+      "#e1cab9",
+      "#cfad94",
+      "#c09475",
+      "#b78461",
+      "#b0774f",
+      "#9d6a45",
+      "#8d5d3b",
+      "#7c4f2e"
+    ],
+    default: {
+      appShell: {
+        backgroundColor: backgroundColors.brown, // dark brown background
+        color: '#ffffff',
+        menu: {
+          color: '#D9D9D9',
+          active: {
+            color: '#ffffff',
+            background: backgroundColors.brown,
+          },
+          border: backgroundColors.brown, // deep brown-gray border
+          background: backgroundColors.brown, // menu background dark brown
+          hover: backgroundColors.brown, // same as main background
+          inactive: backgroundColors.brown, // slightly lighter than background
+        },
+      },
+      inputBorderColor: backgroundColors.brown,
+      borderColor: backgroundColors.brown,
+      dangerColor: '#CE3210',
+      activeColor: '#2B8A3E',
+      inActiveColor: '#2e2e2e',
+    },
+  },
+  green: {
+    brandColors: [
+      "#f4fae9",
+      "#e9f0db",
+      "#d2dfba",
+      "#bace96",
+      "#a5bf77",
+      "#98b563",
+      "#8bab50",
+      "#7d9b47",
+      "#6e8a3c",
+      "#5d772f"
+    ],
+    default: {
+      appShell: {
+        backgroundColor: backgroundColors.green, // dark brown background
+        color: '#ffffff',
+        menu: {
+          color: '#D9D9D9',
+          active: {
+            color: '#ffffff',
+            background: '#7d9b47',
+          },
+          border: backgroundColors.green, // deep brown-gray border
+          background: backgroundColors.green, // menu background dark brown
+          hover: backgroundColors.green, // same as main background
+          inactive: backgroundColors.green, // slightly lighter than background
+        },
+      },
+      inputBorderColor: backgroundColors.green,
+      borderColor: backgroundColors.green,
+      dangerColor: '#CE3210',
+      activeColor: '#2B8A3E',
+      inActiveColor: '#2e2e2e',
+    },
+  },
+  cyan: {
+    brandColors: [
+      "#e6f9ff",
+      "#daecf3",
+      "#bad5e0",
+      "#96bdce",
+      "#78a9be",
+      "#649cb4",
+      "#5090ab",
+      "#46829c",
+      "#38748c",
+      "#23657d",
+    ],
+    default: {
+      appShell: {
+        backgroundColor: backgroundColors.blue, // dark brown background
+        color: '#ffffff',
+        menu: {
+          color: '#D9D9D9',
+          active: {
+            color: '#ffffff',
+            background: backgroundColors.blue,
+          },
+          border: backgroundColors.blue, // deep brown-gray border
+          background: backgroundColors.blue, // menu background dark brown
+          hover: backgroundColors.blue, // same as main background
+          inactive: backgroundColors.blue, // slightly lighter than background
+        },
+      },
+      inputBorderColor: backgroundColors.blue,
+      borderColor: backgroundColors.blue,
+      dangerColor: '#CE3210',
+      activeColor: '#2B8A3E',
+      inActiveColor: '#2e2e2e',
+    },
+  },
+  blue: {
+    brandColors: [
+      "#e8f9ff",
+      "#d8eef7",
+      "#b0daec",
+      "#85c5e2",
+      "#63b4d9",
+      "#4ea9d3",
+      "#40a4d2",
+      "#308fba",
+      "#217ca3",
+      "#006e95"
+    ],
+    default: {
+      appShell: {
+        backgroundColor: backgroundColors.blue, // dark brown background
+        color: '#ffffff',
+        menu: {
+          color: '#D9D9D9',
+          active: {
+            color: '#ffffff',
+            background: backgroundColors.blue,
+          },
+          border: backgroundColors.blue, // deep brown-gray border
+          background: backgroundColors.blue, // menu background dark brown
+          hover: backgroundColors.blue, // same as main background
+          inactive: backgroundColors.blue, // slightly lighter than background
+        },
+      },
+      inputBorderColor: backgroundColors.blue,
+      borderColor: backgroundColors.blue,
+      dangerColor: '#CE3210',
+      activeColor: '#2B8A3E',
+      inActiveColor: '#2e2e2e',
+    },
+  },
+  red: {
+    brandColors: [
+      "#ffeeef",
+      "#f3ddde",
+      "#e0bbbb",
+      "#ce9596",
+      "#be7576",
+      "#b56162",
+      "#b15757",
+      "#964445",
+      "#8c3e3f",
+      "#7c3234"
+    ],
+    default: {
+      appShell: {
+        backgroundColor: backgroundColors.red, // dark brown background
+        color: '#ffffff',
+        menu: {
+          color: '#D9D9D9',
+          active: {
+            color: '#ffffff',
+            background: backgroundColors.red,
+          },
+          border: backgroundColors.red, // deep brown-gray border
+          background: backgroundColors.red, // menu background dark brown
+          hover: backgroundColors.red, // same as main background
+          inactive: backgroundColors.red, // slightly lighter than background
+        },
+      },
+      inputBorderColor: backgroundColors.red,
+      borderColor: backgroundColors.red,
+      dangerColor: '#CE3210',
+      activeColor: '#2B8A3E',
+      inActiveColor: '#2e2e2e',
+    },
+  },
+  orange: {
+    brandColors: [
+      "#fff3eb",
+      "#fbe4d4",
+      "#fac5a3",
+      "#faa56d",
+      "#fa8a40",
+      "#fa7926",
+      "#fb701a",
+      "#df5e10",
+      "#c75309",
+      "#b34800"
+    ],
+    default: {
+      appShell: {
+        backgroundColor: backgroundColors.orange, // dark brown background
+        color: '#ffffff',
+        menu: {
+          color: '#D9D9D9',
+          active: {
+            color: '#ffffff',
+            background: backgroundColors.orange,
+          },
+          border: backgroundColors.orange, // deep brown-gray border
+          background: backgroundColors.orange, // menu background dark brown
+          hover: backgroundColors.orange, // same as main background
+          inactive: backgroundColors.orange, // slightly lighter than background
+        },
+      },
+      inputBorderColor: backgroundColors.orange,
+      borderColor: backgroundColors.orange,
+      dangerColor: '#CE3210',
+      activeColor: '#2B8A3E',
+      inActiveColor: '#2e2e2e',
+    },
+  },
+  elegant: {
+    brandColors: [
+      '#eaf3fb', // [0] lightest
+      '#d6e6f7', // [1]
+      '#bcd6f0', // [2]
+      '#9bc1e7', // [3]
+      '#79aadb', // [4]
+      '#5f91c6', // [5]
+      '#4a76a9', // [6]
+      '#3e618c', // [7]
+      '#324e71', // [8]
+      '#273c59', // [9] darkest
+    ],
+    default: {
+      appShell: {
+        backgroundColor: '#17233B',
+        color: '#ffffff',
+        menu: {
+          color: '#D9D9D9',
+          active: {
+            color: '#ffffff',
+            background: '#3e618c',
+          },
+          border: '#3E4958',
+          background: '#232D40',
+          hover: '#17233B',
+          inactive: '#222D40',
+        },
+      },
+      inputBorderColor: '#9bc1e7',
+      borderColor: '#3e618c',
+      dangerColor: '#F2340A',
+      activeColor: '#2b8a3e',
+      inActiveColor: '#F2340A',
+    },
+  },
+}
+
+// const nktu = customs.brown;
+// const nktu = customs.green;
+// const nktu = customs.cyan;
+// const nktu = customs.blue;
+// const nktu = customs.red;
+
+const nktu = customs.green;
+
+
 export const themeConfig: Record<string, CustomThemeConfig> = {
+  // cspell:words nktu
+  nktu,
   orange: {
     brandColors: [
       '#f9f3eb', // [0] lightest

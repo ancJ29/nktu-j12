@@ -34,7 +34,7 @@ export type ProductCategoryType = (typeof PRODUCT_CATEGORIES)[number];
 
 // Status colors for UI
 export const PO_STATUS_COLORS: Record<Exclude<POStatusType, 'all'>, string> = {
-  [PO_STATUS.NEW]: 'blue',
+  [PO_STATUS.NEW]: 'brand',
   [PO_STATUS.CONFIRMED]: 'cyan',
   [PO_STATUS.PROCESSING]: 'yellow',
   [PO_STATUS.READY_FOR_PICKUP]: 'teal',

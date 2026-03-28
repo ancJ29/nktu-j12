@@ -1,4 +1,5 @@
 import type { ClientPublicConfigResponse } from '@/lib/api';
+import { isNKTU } from './env';
 
 /**
  * Updates the browser favicon with the client's logo
@@ -46,7 +47,13 @@ export const updateDocumentTitle = (clientName: string | undefined): void => {
  */
 export const updateClientBranding = (config: ClientPublicConfigResponse | undefined): void => {
   if (!config) return;
+  // cspell:words nktu
 
-  updateFavicon(config.logoUrl);
   updateDocumentTitle(config.clientName);
+  if (isNKTU) {
+    updateFavicon('/clients/NKTU/favicon.svg');
+    return;
+  }
+  updateFavicon(config.logoUrl);
+
 };
