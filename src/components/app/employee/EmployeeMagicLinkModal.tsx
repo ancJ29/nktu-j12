@@ -86,7 +86,7 @@ export function EmployeeMagicLinkModal({
             <Button
               fullWidth
               leftSection={copiedImage ? <IconCheck size={16} /> : <IconPhoto size={16} />}
-              color={copiedImage ? 'green' : 'blue'}
+              color={copiedImage ? 'green' : 'primary'}
               variant="light"
               onClick={handleCopyQrCode}
             >
@@ -106,7 +106,7 @@ export function EmployeeMagicLinkModal({
               <Button
                 fullWidth
                 leftSection={copied ? <IconCheck size={16} /> : <IconCopy size={16} />}
-                color={copied ? 'green' : 'blue'}
+                color={copied ? 'green' : 'primary'}
                 variant="light"
                 onClick={copy}
               >

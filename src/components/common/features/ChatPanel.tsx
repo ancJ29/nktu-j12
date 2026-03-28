@@ -166,7 +166,7 @@ export function ChatPanel({ targetId, type }: ChatPanelProps) {
                         <Text
                           size="xs"
                           fw={600}
-                          c={isOwnMessage ? 'blue' : 'dark'}
+                          c={isOwnMessage ? 'brand' : 'dark'}
                           ta={isOwnMessage ? 'right' : 'left'}
                         >
                           {senderName}

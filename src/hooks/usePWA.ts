@@ -140,7 +140,7 @@ export function usePWA() {
             id: 'safari-update',
             title: t('common.pwa.newVersionAvailable'),
             message: t('common.pwa.safari.closeCompletelyInstructions'),
-            color: 'blue',
+            color: 'brand',
             autoClose: false,
             withCloseButton: true,
             onClose() {
@@ -154,7 +154,7 @@ export function usePWA() {
             id: 'auto-update',
             title: t('common.pwa.updating'),
             message: t('common.pwa.reloadIn3Seconds'),
-            color: 'blue',
+            color: 'brand',
             autoClose: 3000,
           });
 
@@ -170,7 +170,7 @@ export function usePWA() {
             id: 'manual-update',
             title: t('common.pwa.newVersionAvailable'),
             message: t('common.pwa.clickToUpdate'),
-            color: 'blue',
+            color: 'brand',
             autoClose: false,
             onClick() {
               // Update stored version before reload
@@ -241,7 +241,7 @@ export function usePWA() {
             id: 'pwa-updating',
             title: t('common.pwa.updating'),
             message: t('common.pwa.reloadAutomatically'),
-            color: 'blue',
+            color: 'brand',
             autoClose: 3000,
           });
         } else {
@@ -250,7 +250,7 @@ export function usePWA() {
             id: 'pwa-update-sw',
             title: t('common.pwa.newVersionAvailableForBrowser'),
             message: t('common.pwa.clickToUpdateShort'),
-            color: 'blue',
+            color: 'brand',
             autoClose: false,
             onClick: async () => {
               // Fetch and update stored version before reload
@@ -271,7 +271,7 @@ export function usePWA() {
           message: t('common.pwa.newVersionOfApp', {
             appName: import.meta.env.VITE_APP_NAME || 'CMngt',
           }),
-          color: 'blue',
+          color: 'brand',
           autoClose: false,
           onClick: async () => {
             // Fetch and update stored version before reload
