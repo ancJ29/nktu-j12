@@ -8,6 +8,7 @@
     "prebuild": "node scripts/generate-theme-assets.js",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "typecheck": "tsc -p tsconfig.app.json --noEmit",
     "generate-pwa-assets": "node scripts/generate-pwa-assets.js",
     "generate-theme-assets": "node scripts/generate-theme-assets.js"
   },
