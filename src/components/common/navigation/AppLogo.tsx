@@ -4,6 +4,7 @@ import { Box, Group, type MantineStyleProps, Title } from '@mantine/core';
 
 import { useLogoAndTitle } from '@/hooks/useLogoAndTitle';
 
+
 type AppLogoProps = {
   readonly c?: string;
   readonly fw?: MantineStyleProps['fw'];
@@ -19,7 +20,7 @@ export function AppLogo({ noTitle = false, c, fw, link = '/home' }: AppLogoProps
       {/* {isDevelopment ? <IconCubeSpark color='var(--app-shell-color)' />} */}
       <Box
         component="img"
-        src={logoUrl || '/icons/logo-black-and-white.svg')
+        src={logoUrl || '/icons/logo-black-and-white.svg'}
         alt="Logo"
         fw={fw}
         style={{
