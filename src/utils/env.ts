@@ -6,19 +6,34 @@ export const isDebug = Boolean('Sxk7g9MDjfCE' === localStorage.getItem(STORAGE_K
 // export const isProduction = true;
 // export const isDevelopment = false;
 
-
+// cspell:words kimtri gom-va-hoa artemis nktu
 export function getClientCodeFromHost() {
+  localStorage.setItem('__CUSTOM_MANTINE_THEME__', 'elegant');
   const host = window.location.host.toLowerCase();
+
   if (host.includes('sigma')) {
-    localStorage.setItem('__CUSTOM_MANTINE_THEME__', 'elegant');
     return 'SIGMA';
   }
-  // cspell:words kimtri
   if (host.includes('kimtri')) {
     localStorage.setItem('__CUSTOM_MANTINE_THEME__', 'forest');
     return 'KIMTRI';
   }
-  // cspell:words nktu
-  localStorage.setItem('__CUSTOM_MANTINE_THEME__', 'elegant');
+  if (host.includes('gom-va-hoa')) {
+    // gom-va-hoa.cr3do.dev
+    return 'GOM_VA_HOA';
+  }
+  // artemis.cr3do.dev
+  if (host.includes('artemis')) {
+    return 'ARTEMIS';
+  }
+  if (host.includes('nktu')) {
+    localStorage.setItem('__CUSTOM_MANTINE_THEME__', 'nktu');
+    return 'NKTU';
+  }
+
+  localStorage.setItem('__CUSTOM_MANTINE_THEME__', 'nktu');
   return 'NKTU';
 }
+
+
+export const isNKTU = getClientCodeFromHost() === 'NKTU';
