@@ -36,10 +36,10 @@ export type ProductCategoryType = (typeof PRODUCT_CATEGORIES)[number];
 export const PO_STATUS_COLORS: Record<Exclude<POStatusType, 'all'>, string> = {
   [PO_STATUS.NEW]: 'brand',
   [PO_STATUS.CONFIRMED]: 'cyan',
-  [PO_STATUS.PROCESSING]: 'yellow',
-  [PO_STATUS.READY_FOR_PICKUP]: 'teal',
-  [PO_STATUS.SHIPPED]: 'orange',
-  [PO_STATUS.DELIVERED]: 'green',
+  [PO_STATUS.PROCESSING]: '#e0ae2f',
+  [PO_STATUS.READY_FOR_PICKUP]: '#2183d9',
+  [PO_STATUS.SHIPPED]: '#de7a1d',
+  [PO_STATUS.DELIVERED]: '#075da8',
   [PO_STATUS.CANCELLED]: 'gray',
   [PO_STATUS.REFUNDED]: 'red',
 };
