@@ -22,7 +22,7 @@ interface DeliveryFilterBarDesktopProps {
   readonly hasActiveFilters: boolean;
   readonly onSearchChange: (query: string) => void;
   readonly onCustomerChange: (customerId: string | undefined) => void;
-  readonly onVendorChange: (vendorId: string | undefined) => void;
+  readonly onVendorChange: (vendorId: string | undefined, vendorName: string | undefined) => void;
   readonly onAssignedToChange: (assignedTo: string | undefined) => void;
   readonly onStatusesChange: (statuses: DeliveryStatusType[]) => void;
   readonly onScheduledDateChange: (start: Date | undefined, end: Date | undefined) => void;
@@ -137,7 +137,10 @@ export function DeliveryFilterBarDesktop({
         data={vendorOptions}
         value={vendorId ?? null}
         style={{ flex: 1, minWidth: 150, borderRadius: '5px' }}
-        onChange={(value) => onVendorChange(value || undefined)}
+        onChange={(value) => {
+          const vendor = vendorOptions.find((v) => v.id === value);
+          onVendorChange(value || undefined, vendor?.label || undefined);
+        }}
         label={t('common.vendor')}
       />
 

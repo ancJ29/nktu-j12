@@ -38,6 +38,7 @@ export interface DeliveryRequestFilters {
   assignedTo: string | undefined;
   customerId: string | undefined;
   vendorId: string | undefined;
+  vendorName: string | undefined;
   scheduledDateRange: {
     start: Date | undefined;
     end: Date | undefined;
@@ -50,7 +51,7 @@ export interface DeliveryRequestFilterHandlers {
   toggleStatus: (status: DeliveryStatusType) => void;
   setAssignedTo: (assignedTo: string | undefined) => void;
   setCustomerId: (customerId: string | undefined) => void;
-  setVendorId: (vendorId: string | undefined) => void;
+  setVendor: (vendorId: string | undefined, vendorName: string | undefined) => void;
   setScheduledDateRange: (start: Date | undefined, end: Date | undefined) => void;
   updateFilters: (updates: Partial<DeliveryRequestFilters>) => void;
   resetFilters: () => void;
@@ -63,6 +64,7 @@ function getDefaultFilters(): DeliveryRequestFilters {
     assignedTo: undefined,
     customerId: undefined,
     vendorId: undefined,
+    vendorName: undefined,
     scheduledDateRange: getDefault3WeekRange(),
   };
 }
@@ -81,6 +83,9 @@ export function useDeliveryRequestFilters() {
       return true;
     }
     if (filters.vendorId) {
+      return true;
+    }
+    if (filters.vendorName) {
       return true;
     }
     if (filters.searchQuery) {
@@ -128,8 +133,8 @@ export function useDeliveryRequestFilters() {
     setFilters((prev) => ({ ...prev, customerId }));
   }, []);
 
-  const setVendorId = useCallback((vendorId: string | undefined) => {
-    setFilters((prev) => ({ ...prev, vendorId }));
+  const setVendor = useCallback((vendorId: string | undefined, vendorName: string | undefined) => {
+    setFilters((prev) => ({ ...prev, vendorId, vendorName }));
   }, []);
 
   const setScheduledDateRange = useCallback((start: Date | undefined, end: Date | undefined) => {
@@ -154,7 +159,7 @@ export function useDeliveryRequestFilters() {
       toggleStatus,
       setAssignedTo,
       setCustomerId,
-      setVendorId,
+      setVendor,
       setScheduledDateRange,
       updateFilters,
       resetFilters,
@@ -165,7 +170,7 @@ export function useDeliveryRequestFilters() {
       toggleStatus,
       setAssignedTo,
       setCustomerId,
-      setVendorId,
+      setVendor,
       setScheduledDateRange,
       updateFilters,
       resetFilters,

@@ -21,7 +21,7 @@ interface DeliveryFilterBarMobileProps {
   readonly onStatusClick: () => void;
   readonly onEmployeeClick: () => void;
   readonly onCustomerChange: (customerId: string | undefined) => void;
-  readonly onVendorChange: (vendorId: string | undefined) => void;
+  readonly onVendorChange: (vendorId: string | undefined, vendorName: string | undefined) => void;
   readonly onClearFilters: () => void;
 }
 
@@ -99,7 +99,10 @@ export function DeliveryFilterBarMobile({
           placeholder={t('common.filters.selectVendor')}
           data={vendorOptions}
           value={vendorId ?? null}
-          onChange={(value) => onVendorChange(value || undefined)}
+          onChange={(value) => {
+            const vendor = vendorOptions.find((v) => v.id === value);
+            onVendorChange(value || undefined, vendor?.label || undefined);
+          }}
           size="sm"
         />
       </Group>

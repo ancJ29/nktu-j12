@@ -38,6 +38,7 @@ export class DeliveryRequestApi extends BaseApiClient {
     deliveryRequestNumber?: string;
     customerId?: string;
     vendorId?: string;
+    vendorName?: string;
     cursor?: string;
     limit?: number;
     sortBy?: 'createdAt' | 'scheduledDate' | 'status' | 'updatedAt';
@@ -59,6 +60,7 @@ export class DeliveryRequestApi extends BaseApiClient {
       queryParams.append('deliveryRequestNumber', params.deliveryRequestNumber);
     if (params?.customerId) queryParams.append('customerId', params.customerId);
     if (params?.vendorId) queryParams.append('vendorId', params.vendorId);
+    if (params?.vendorName) queryParams.append('vendorName', params.vendorName);
     if (params?.cursor) queryParams.append('cursor', params.cursor);
     if (params?.limit) queryParams.append('limit', String(params.limit));
     if (params?.sortBy) queryParams.append('sortBy', params.sortBy);

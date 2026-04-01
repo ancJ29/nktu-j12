@@ -93,6 +93,7 @@ export type DeliveryRequestFilterParams = {
   deliveryRequestNumber?: string;
   customerId?: string;
   vendorId?: string;
+  vendorName?: string;
   cursor?: string;
   limit?: number;
   sortBy?: 'createdAt' | 'scheduledDate' | 'status' | 'updatedAt';
@@ -129,6 +130,7 @@ export const deliveryRequestService = {
           deliveryRequestNumber: filters.deliveryRequestNumber,
           customerId: filters.customerId,
           vendorId: filters.vendorId,
+          vendorName: filters.vendorName,
           cursor: filters.cursor,
           limit: filters.limit,
           sortBy: filters.sortBy,

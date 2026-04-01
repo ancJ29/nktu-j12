@@ -142,6 +142,7 @@ export function DeliveryListPage() {
     return {
       customerId: filters.customerId,
       vendorId: filters.vendorId,
+      vendorName: filters.vendorName,
       statuses: validStatuses.length > 1 ? validStatuses : undefined,
       status: validStatuses.length === 1 ? validStatuses[0] : undefined,
       assignedTo: canViewAll ? filters.assignedTo : currentEmployeeId,
@@ -372,7 +373,7 @@ export function DeliveryListPage() {
             onStatusClick={() => setStatusDrawerOpened(true)}
             onEmployeeClick={() => setEmployeeDrawerOpened(true)}
             onCustomerChange={filterHandlers.setCustomerId}
-            onVendorChange={filterHandlers.setVendorId}
+            onVendorChange={filterHandlers.setVendor}
             onClearFilters={() => {
               filterHandlers.resetFilters();
               setSelectedQuickAction(undefined);
@@ -531,7 +532,7 @@ export function DeliveryListPage() {
             hasActiveFilters={hasActiveFilters}
             onSearchChange={filterHandlers.setSearchQuery}
             onCustomerChange={filterHandlers.setCustomerId}
-            onVendorChange={filterHandlers.setVendorId}
+            onVendorChange={filterHandlers.setVendor}
             onAssignedToChange={(assignedTo) => {
               filterHandlers.setAssignedTo(canViewAll ? assignedTo : currentEmployeeId);
             }}
