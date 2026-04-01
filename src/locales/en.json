@@ -111,7 +111,8 @@
     "filters": {
       "allStatus": "All Status",
       "selectCustomer": "Select Customer",
-      "selectStatus": "Select Status"
+      "selectStatus": "Select Status",
+      "selectVendor": "Select Vendor"
     },
     "form": {
       "email": "Email",
@@ -286,9 +287,11 @@
     "exportExcelSuccess": "Delivery requests exported successfully",
     "noDataToExport": "No data to export",
     "filters": {
+      "allCustomers": "All Customers",
       "allEmployees": "All Employees",
       "searchPlaceholder": "Search by delivery number",
       "selectAssignee": "Select Assignee",
+      "selectCustomer": "Select Customer",
       "selectEmployee": "Select Employee",
       "selectScheduledDate": "Select scheduled data"
     },

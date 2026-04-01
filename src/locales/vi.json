@@ -111,7 +111,8 @@
     "filters": {
       "allStatus": "Tất Cả",
       "selectCustomer": "Chọn Khách Hàng",
-      "selectStatus": "Chọn Trạng Thái"
+      "selectStatus": "Chọn Trạng Thái",
+      "selectVendor": "Chọn Nhà Cung Cấp"
     },
     "form": {
       "email": "Email",
@@ -286,9 +287,11 @@
     "exportExcelSuccess": "Xuất danh sách giao nhận thành công",
     "noDataToExport": "Không có dữ liệu để xuất",
     "filters": {
+      "allCustomers": "Tất Cả Khách Hàng",
       "allEmployees": "Tất Cả Nhân Viên",
       "searchPlaceholder": "Tìm kiếm theo mã giao nhận",
       "selectAssignee": "Chọn Người Phụ Trách",
+      "selectCustomer": "Chọn Khách Hàng",
       "selectEmployee": "Chọn Nhân Viên",
       "selectScheduledDate": "Chọn ngày dự kiến"
     },

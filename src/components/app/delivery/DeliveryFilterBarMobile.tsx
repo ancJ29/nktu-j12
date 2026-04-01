@@ -1,45 +1,50 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useMemo } from 'react';
 
-import { Button, Group, Stack } from '@mantine/core';
+import { Button, Group, Select, Stack } from '@mantine/core';
 import { IconCalendar, IconChevronDown, IconClearAll, IconUser } from '@tabler/icons-react';
 
-import { SearchBar } from '@/components/common';
 import type { DeliveryStatusType } from '@/constants/deliveryRequest';
 import { useTranslation } from '@/hooks/useTranslation';
-import { useEmployees, usePermissions } from '@/stores/useAppStore';
+import { useCustomerOptions, useEmployees, usePermissions, useVendorOptions } from '@/stores/useAppStore';
 import { canFilterDeliveryRequest } from '@/utils/permission.utils';
 
 interface DeliveryFilterBarMobileProps {
-  readonly searchQuery: string;
   readonly selectedStatuses: DeliveryStatusType[];
   readonly assignedTo?: string;
+  readonly customerId?: string;
+  readonly vendorId?: string;
   readonly hasDateFilter: boolean;
   readonly quickAction?: string;
   readonly hasActiveFilters: boolean;
-  readonly onSearchChange: (query: string) => void;
   readonly onQuickActionsClick: () => void;
   readonly onStatusClick: () => void;
   readonly onEmployeeClick: () => void;
+  readonly onCustomerChange: (customerId: string | undefined) => void;
+  readonly onVendorChange: (vendorId: string | undefined) => void;
   readonly onClearFilters: () => void;
 }
 
 export function DeliveryFilterBarMobile({
-  searchQuery,
   selectedStatuses,
   assignedTo,
+  customerId,
+  vendorId,
   hasDateFilter,
   quickAction,
   hasActiveFilters,
-  onSearchChange,
   onQuickActionsClick,
   onStatusClick,
   onEmployeeClick,
+  onCustomerChange,
+  onVendorChange,
   onClearFilters,
 }: DeliveryFilterBarMobileProps) {
   const { t } = useTranslation();
   const permissions = usePermissions();
   const employees = useEmployees();
+  const customerOptions = useCustomerOptions();
+  const vendorOptions = useVendorOptions();
 
   const canFilter = useMemo(() => canFilterDeliveryRequest(permissions), [permissions]);
 
@@ -77,12 +82,27 @@ export function DeliveryFilterBarMobile({
 
   return (
     <Stack p="sm" gap="sm" style={{ borderBottom: '1px solid var(--mantine-color-gray-3)' }}>
-      {/* Search Input for Delivery Number */}
-      <SearchBar
-        placeholder={t('delivery.filters.searchPlaceholder')}
-        searchQuery={searchQuery}
-        setSearchQuery={onSearchChange}
-      />
+      {/* Customer & Vendor Select */}
+      <Group gap="xs" grow>
+        <Select
+          clearable
+          searchable
+          placeholder={t('delivery.filters.selectCustomer')}
+          data={customerOptions}
+          value={customerId ?? null}
+          onChange={(value) => onCustomerChange(value || undefined)}
+          size="sm"
+        />
+        <Select
+          clearable
+          searchable
+          placeholder={t('common.filters.selectVendor')}
+          data={vendorOptions}
+          value={vendorId ?? null}
+          onChange={(value) => onVendorChange(value || undefined)}
+          size="sm"
+        />
+      </Group>
 
       {/* Filter Buttons */}
       <Group gap="xs">

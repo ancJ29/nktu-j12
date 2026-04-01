@@ -4,14 +4,23 @@ import { z } from 'zod';
 
 import { DELIVERY_STATUS, type DeliveryStatusType } from '@/constants/deliveryRequest';
 import { STORAGE_KEYS } from '@/utils/storageKeys';
+import { endOfDay, startOfDay } from '@/utils/time';
 
 import { useOnce } from './useOnce';
+
+function getDefault3WeekRange() {
+  const ONE_DAY = 24 * 60 * 60 * 1000;
+  const end = new Date(Date.now() + ONE_DAY);
+  const start = new Date(end.getTime() - 21 * ONE_DAY);
+  return { start: startOfDay(start), end: endOfDay(end) };
+}
 
 const DeliveryRequestFiltersSchema = z.object({
   searchQuery: z.string(),
   statuses: z.array(z.enum(Object.values(DELIVERY_STATUS) as [string, ...string[]])),
   assignedTo: z.string().optional(),
   customerId: z.string().optional(),
+  vendorId: z.string().optional(),
   scheduledDateRange: z
     .object({
       start: z.string().optional(),
@@ -28,6 +37,7 @@ export interface DeliveryRequestFilters {
   statuses: DeliveryStatusType[]; // Changed to array for multi-select
   assignedTo: string | undefined;
   customerId: string | undefined;
+  vendorId: string | undefined;
   scheduledDateRange: {
     start: Date | undefined;
     end: Date | undefined;
@@ -40,25 +50,25 @@ export interface DeliveryRequestFilterHandlers {
   toggleStatus: (status: DeliveryStatusType) => void;
   setAssignedTo: (assignedTo: string | undefined) => void;
   setCustomerId: (customerId: string | undefined) => void;
+  setVendorId: (vendorId: string | undefined) => void;
   setScheduledDateRange: (start: Date | undefined, end: Date | undefined) => void;
   updateFilters: (updates: Partial<DeliveryRequestFilters>) => void;
   resetFilters: () => void;
 }
 
-const defaultFilters: DeliveryRequestFilters = {
-  searchQuery: '',
-  // statuses: [DELIVERY_STATUS.PENDING],
-  statuses: [], // All statuses
-  assignedTo: undefined,
-  customerId: undefined,
-  scheduledDateRange: {
-    start: undefined,
-    end: undefined,
-  },
-};
+function getDefaultFilters(): DeliveryRequestFilters {
+  return {
+    searchQuery: '',
+    statuses: [],
+    assignedTo: undefined,
+    customerId: undefined,
+    vendorId: undefined,
+    scheduledDateRange: getDefault3WeekRange(),
+  };
+}
 
 export function useDeliveryRequestFilters() {
-  const [filters, setFilters] = useState<DeliveryRequestFilters>(defaultFilters);
+  const [filters, setFilters] = useState<DeliveryRequestFilters>(getDefaultFilters());
 
   const hasActiveFilters = useMemo(() => {
     if (filters.statuses.length > 0 && !filters.statuses.includes(DELIVERY_STATUS.ALL)) {
@@ -68,6 +78,9 @@ export function useDeliveryRequestFilters() {
       return true;
     }
     if (filters.customerId) {
+      return true;
+    }
+    if (filters.vendorId) {
       return true;
     }
     if (filters.searchQuery) {
@@ -115,6 +128,10 @@ export function useDeliveryRequestFilters() {
     setFilters((prev) => ({ ...prev, customerId }));
   }, []);
 
+  const setVendorId = useCallback((vendorId: string | undefined) => {
+    setFilters((prev) => ({ ...prev, vendorId }));
+  }, []);
+
   const setScheduledDateRange = useCallback((start: Date | undefined, end: Date | undefined) => {
     setFilters((prev) => ({
       ...prev,
@@ -127,16 +144,7 @@ export function useDeliveryRequestFilters() {
   }, []);
 
   const resetFilters = useCallback(() => {
-    setFilters({
-      searchQuery: '',
-      statuses: [],
-      assignedTo: undefined,
-      customerId: undefined,
-      scheduledDateRange: {
-        start: undefined,
-        end: undefined,
-      },
-    });
+    setFilters(getDefaultFilters());
   }, []);
 
   const filterHandlers: DeliveryRequestFilterHandlers = useMemo(
@@ -146,6 +154,7 @@ export function useDeliveryRequestFilters() {
       toggleStatus,
       setAssignedTo,
       setCustomerId,
+      setVendorId,
       setScheduledDateRange,
       updateFilters,
       resetFilters,
@@ -156,6 +165,7 @@ export function useDeliveryRequestFilters() {
       toggleStatus,
       setAssignedTo,
       setCustomerId,
+      setVendorId,
       setScheduledDateRange,
       updateFilters,
       resetFilters,
@@ -169,7 +179,7 @@ export function useDeliveryRequestFilters() {
       if (parsedFilters.success) {
         setFilters(parsedFilters.data as DeliveryRequestFilters);
       } else {
-        setFilters(defaultFilters);
+        setFilters(getDefaultFilters());
       }
     }
   });

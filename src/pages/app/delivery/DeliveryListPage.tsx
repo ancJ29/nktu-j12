@@ -141,6 +141,7 @@ export function DeliveryListPage() {
 
     return {
       customerId: filters.customerId,
+      vendorId: filters.vendorId,
       statuses: validStatuses.length > 1 ? validStatuses : undefined,
       status: validStatuses.length === 1 ? validStatuses[0] : undefined,
       assignedTo: canViewAll ? filters.assignedTo : currentEmployeeId,
@@ -360,24 +361,32 @@ export function DeliveryListPage() {
         <DeliveryErrorBoundary componentName="DeliveryListPage">
           {/* Mobile Filter Bar */}
           <DeliveryFilterBarMobile
-            searchQuery={filters.searchQuery}
             selectedStatuses={filters.statuses}
             assignedTo={canViewAll ? filters.assignedTo : currentEmployeeId}
+            customerId={filters.customerId}
+            vendorId={filters.vendorId}
             hasDateFilter={!!filters.scheduledDateRange.start || !!filters.scheduledDateRange.end}
             quickAction={selectedQuickAction}
             hasActiveFilters={hasActiveFilters}
-            onSearchChange={filterHandlers.setSearchQuery}
             onQuickActionsClick={() => setQuickActionsDrawerOpened(true)}
             onStatusClick={() => setStatusDrawerOpened(true)}
             onEmployeeClick={() => setEmployeeDrawerOpened(true)}
+            onCustomerChange={filterHandlers.setCustomerId}
+            onVendorChange={filterHandlers.setVendorId}
             onClearFilters={() => {
               filterHandlers.resetFilters();
               setSelectedQuickAction(undefined);
             }}
           />
+          {/* Date range indicator */}
+          {(filters.scheduledDateRange.start || filters.scheduledDateRange.end) && (
+            <Text size="xs" c="dimmed" ta="center" px="sm" py={4} mb={0}>
+              {formatDate(filters.scheduledDateRange.start)} ~ {formatDate(filters.scheduledDateRange.end)}
+            </Text>
+          )}
 
           <BlankState {...blankStateProps} />
-          <Stack mt="md" gap={0}>
+          <Stack mt="xs" gap={0}>
             {isLoading && deliveryRequests.length === 0 ? (
               <DeliveryListSkeleton count={5} />
             ) : (
@@ -514,6 +523,7 @@ export function DeliveryListPage() {
           <DeliveryFilterBarDesktop
             searchQuery={filters.searchQuery}
             customerId={filters.customerId}
+            vendorId={filters.vendorId}
             assignedTo={canViewAll ? filters.assignedTo : currentEmployeeId}
             selectedStatuses={filters.statuses}
             scheduledDateStart={filters.scheduledDateRange.start}
@@ -521,6 +531,7 @@ export function DeliveryListPage() {
             hasActiveFilters={hasActiveFilters}
             onSearchChange={filterHandlers.setSearchQuery}
             onCustomerChange={filterHandlers.setCustomerId}
+            onVendorChange={filterHandlers.setVendorId}
             onAssignedToChange={(assignedTo) => {
               filterHandlers.setAssignedTo(canViewAll ? assignedTo : currentEmployeeId);
             }}

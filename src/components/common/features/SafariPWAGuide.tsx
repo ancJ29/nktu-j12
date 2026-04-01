@@ -104,7 +104,7 @@ export function SafariPWAGuide() {
           <List spacing="xs" size="xs" center>
             <List.Item
               icon={
-                <ThemeIcon color="blue" size={20} radius="xl">
+                <ThemeIcon color="brand" size={20} radius="xl">
                   <IconShare size={12} />
                 </ThemeIcon>
               }
@@ -113,7 +113,7 @@ export function SafariPWAGuide() {
             </List.Item>
             <List.Item
               icon={
-                <ThemeIcon color="blue" size={20} radius="xl">
+                <ThemeIcon color="brand" size={20} radius="xl">
                   <IconSquareRoundedPlus size={12} />
                 </ThemeIcon>
               }
@@ -122,7 +122,7 @@ export function SafariPWAGuide() {
             </List.Item>
             <List.Item
               icon={
-                <ThemeIcon color="blue" size={20} radius="xl">
+                <ThemeIcon color="brand" size={20} radius="xl">
                   <IconCheckbox size={12} />
                 </ThemeIcon>
               }
@@ -134,7 +134,7 @@ export function SafariPWAGuide() {
           <List spacing="xs" size="xs" center>
             <List.Item
               icon={
-                <ThemeIcon color="blue" size={20} radius="xl">
+                <ThemeIcon color="brand" size={20} radius="xl">
                   <Text size="xs" fw={700}>
                     1
                   </Text>
@@ -145,7 +145,7 @@ export function SafariPWAGuide() {
             </List.Item>
             <List.Item
               icon={
-                <ThemeIcon color="blue" size={20} radius="xl">
+                <ThemeIcon color="brand" size={20} radius="xl">
                   <Text size="xs" fw={700}>
                     2
                   </Text>
@@ -156,7 +156,7 @@ export function SafariPWAGuide() {
             </List.Item>
             <List.Item
               icon={
-                <ThemeIcon color="blue" size={20} radius="xl">
+                <ThemeIcon color="brand" size={20} radius="xl">
                   <Text size="xs" fw={700}>
                     3
                   </Text>

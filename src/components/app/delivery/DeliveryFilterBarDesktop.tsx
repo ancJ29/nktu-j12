@@ -6,7 +6,7 @@ import { IconCheck, IconClearAll } from '@tabler/icons-react';
 import { SearchBar } from '@/components/common';
 import { DELIVERY_STATUS, type DeliveryStatusType } from '@/constants/deliveryRequest';
 import { useTranslation } from '@/hooks/useTranslation';
-import { useCustomerOptions, usePermissions } from '@/stores/useAppStore';
+import { useCustomerOptions, usePermissions, useVendorOptions } from '@/stores/useAppStore';
 import { canFilterDeliveryRequest } from '@/utils/permission.utils';
 
 import { DeliveryAdvancedFiltersPopover } from './DeliveryAdvancedFiltersPopover';
@@ -14,6 +14,7 @@ import { DeliveryAdvancedFiltersPopover } from './DeliveryAdvancedFiltersPopover
 interface DeliveryFilterBarDesktopProps {
   readonly searchQuery: string;
   readonly customerId?: string;
+  readonly vendorId?: string;
   readonly assignedTo?: string;
   readonly selectedStatuses: DeliveryStatusType[];
   readonly scheduledDateStart?: Date;
@@ -21,6 +22,7 @@ interface DeliveryFilterBarDesktopProps {
   readonly hasActiveFilters: boolean;
   readonly onSearchChange: (query: string) => void;
   readonly onCustomerChange: (customerId: string | undefined) => void;
+  readonly onVendorChange: (vendorId: string | undefined) => void;
   readonly onAssignedToChange: (assignedTo: string | undefined) => void;
   readonly onStatusesChange: (statuses: DeliveryStatusType[]) => void;
   readonly onScheduledDateChange: (start: Date | undefined, end: Date | undefined) => void;
@@ -30,6 +32,7 @@ interface DeliveryFilterBarDesktopProps {
 export function DeliveryFilterBarDesktop({
   searchQuery,
   customerId,
+  vendorId,
   assignedTo,
   selectedStatuses,
   scheduledDateStart,
@@ -37,6 +40,7 @@ export function DeliveryFilterBarDesktop({
   hasActiveFilters,
   onSearchChange,
   onCustomerChange,
+  onVendorChange,
   onAssignedToChange,
   onStatusesChange,
   onScheduledDateChange,
@@ -45,6 +49,7 @@ export function DeliveryFilterBarDesktop({
   const { t } = useTranslation();
   const permissions = usePermissions();
   const customerOptions = useCustomerOptions();
+  const vendorOptions = useVendorOptions();
 
   const canFilter = useMemo(() => canFilterDeliveryRequest(permissions), [permissions]);
 
@@ -122,6 +127,18 @@ export function DeliveryFilterBarDesktop({
         style={{ flex: 1, minWidth: 150, borderRadius: '5px' }}
         onChange={(value) => onCustomerChange(value || undefined)}
         label={t('common.customer')}
+      />
+
+      {/* Vendor Select - flex 1 */}
+      <Select
+        clearable
+        searchable
+        placeholder={t('common.filters.selectVendor')}
+        data={vendorOptions}
+        value={vendorId ?? null}
+        style={{ flex: 1, minWidth: 150, borderRadius: '5px' }}
+        onChange={(value) => onVendorChange(value || undefined)}
+        label={t('common.vendor')}
       />
 
       {/* Status MultiSelect - flex 1 */}
