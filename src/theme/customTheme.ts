@@ -94,7 +94,7 @@ const customs: Record<string, CustomThemeConfig> = {
           color: '#D9D9D9',
           active: {
             color: '#ffffff',
-            background: '#7d9b47',
+            background: '#324e71',
           },
           border: backgroundColors.green, // deep brown-gray border
           background: backgroundColors.green, // menu background dark brown
@@ -263,7 +263,7 @@ const customs: Record<string, CustomThemeConfig> = {
       '#5f91c6', // [5]
       '#4a76a9', // [6]
       '#3e618c', // [7]
-      '#7d9b47', // [8]
+      '#324e71', // [8]
       '#273c59', // [9] darkest
     ],
     default: {
@@ -291,14 +291,7 @@ const customs: Record<string, CustomThemeConfig> = {
   },
 }
 
-// const nktu = customs.brown;
-// const nktu = customs.green;
-// const nktu = customs.cyan;
-// const nktu = customs.blue;
-// const nktu = customs.red;
-
 const nktu = customs.green;
-
 
 export const themeConfig: Record<string, CustomThemeConfig> = {
   // cspell:words nktu
@@ -385,7 +378,7 @@ export const themeConfig: Record<string, CustomThemeConfig> = {
       '#5f91c6', // [5]
       '#4a76a9', // [6]
       '#3e618c', // [7]
-      '#7d9b47', // [8]
+      '#324e71', // [8]
       '#273c59', // [9] darkest
     ],
     default: {

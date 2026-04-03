@@ -4,7 +4,11 @@ import type { POStatusHistory, PurchaseOrder } from '@/lib/api/schemas/sales.sch
  * Check if a Purchase Order is editable (only NEW status can be edited)
  */
 export function isPOEditable(po: Pick<PurchaseOrder, 'status'>): boolean {
-  return po.status === 'NEW';
+  return [
+    'NEW',
+    'CONFIRMED',
+    'PROCESSING',
+  ].includes(po.status);
 }
 
 /**
