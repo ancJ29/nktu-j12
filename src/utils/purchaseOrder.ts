@@ -22,7 +22,11 @@ export function isPOStatusNew(status: PurchaseOrder['status']): boolean {
  * Check if a Purchase Order is not NEW (locked for editing)
  */
 export function isPOLocked(po: Pick<PurchaseOrder, 'status'>): boolean {
-  return po.status !== 'NEW';
+  return ![
+    'NEW',
+    'CONFIRMED',
+    'PROCESSING',
+  ].includes(po.status);
 }
 
 /**
