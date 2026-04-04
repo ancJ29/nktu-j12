@@ -27,11 +27,11 @@ export function getClientCodeFromHost() {
     return 'ARTEMIS';
   }
   if (host.includes('nktu')) {
-    localStorage.setItem('__CUSTOM_MANTINE_THEME__', 'nktu');
+    localStorage.setItem('__CUSTOM_MANTINE_THEME__', 'elegant');
     return 'NKTU';
   }
 
-  localStorage.setItem('__CUSTOM_MANTINE_THEME__', 'nktu');
+  localStorage.setItem('__CUSTOM_MANTINE_THEME__', 'elegant');
   return 'NKTU';
 }
 
