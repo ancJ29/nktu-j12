@@ -26,7 +26,6 @@ import type {
   BulkUpsertCustomersResponse,
   Customer,
 } from '@/services/sales';
-// eslint-disable-next-line import/order
 import { customerService } from '@/services/sales';
 
 // Use the service's expected types
@@ -320,11 +319,6 @@ export function CustomerConfigPage() {
                   <Stack gap={4}>
                     <Group gap="xs">
                       <Text>{customer.companyName || '-'}</Text>
-                      {customer.taxCode && (
-                        <Text c="dimmed" size="xs" fw={600}>
-                          (MST: {customer.taxCode})
-                        </Text>
-                      )}
                       <ViewOnMap googleMapsUrl={googleMapsUrl} />
                     </Group>
                     {customer.address && (

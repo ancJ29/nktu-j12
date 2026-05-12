@@ -228,7 +228,7 @@ export function DeliveryDetailTabs({
                 </Card>
 
                 {/* Delivery Address */}
-                {deliveryRequest.isDelivery && (
+                {(deliveryRequest.isDelivery || deliveryRequest.isAdditionalDelivery) && (
                   <Card
                     withBorder
                     style={{

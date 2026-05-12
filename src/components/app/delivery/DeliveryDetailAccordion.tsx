@@ -217,7 +217,7 @@ export function DeliveryDetailAccordion({
         </Accordion.Item>
 
         {/* Delivery Address */}
-        {deliveryRequest.isDelivery && (
+        {(deliveryRequest.isDelivery || deliveryRequest.isAdditionalDelivery) && (
           <Accordion.Item value="address">
             <Accordion.Control icon={<IconMapPin size={20} />}>
               <Group justify="start" align="center" gap="sm">
