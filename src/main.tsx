@@ -33,16 +33,27 @@ registerLogger();
 // Initialize screen orientation lock for PWA
 initializeOrientationLock();
 
-createRoot(document.querySelector('#root')!).render(
-  <StrictMode>
-    <ThemeProvider>
-      <Suspense fallback={<AppLoader />}>
-        <Notifications />
-        <ModalsProvider>
-          <ErrorModal />
-          <App />
-        </ModalsProvider>
-      </Suspense>
-    </ThemeProvider>
-  </StrictMode>,
-);
+// TODO: remove this later
+const redirectConfigs: Record<string, string> = {
+  // 'try-credo.internal.cr3do.dev': 'https://use-credo.cr3do.dev/',
+  'nktu-j17.vercel.app': 'https://nktu.cr3do.dev/',
+  'nktu-j12.vercel.app': 'https://nktu.cr3do.dev/',
+};
+
+if (redirectConfigs[window.location.host]) {
+  window.location.href = redirectConfigs[window.location.host];
+} else {
+  createRoot(document.querySelector('#root')!).render(
+    <StrictMode>
+      <ThemeProvider>
+        <Suspense fallback={<AppLoader />}>
+          <Notifications />
+          <ModalsProvider>
+            <ErrorModal />
+            <App />
+          </ModalsProvider>
+        </Suspense>
+      </ThemeProvider>
+    </StrictMode>,
+  );
+}
